@@ -8,23 +8,26 @@ function App() {
 
   const handleInput = (e) => {
     setInputText(e.target.value);
-    if (e === "Enter") {
-      getCommand(inputText).then((cmd) => {
-        console.log("promise fulfilled");
-        setCommands(cmd)
-        setInputText("")
-      });
-    }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    getCommand(inputText).then((res) => {
+      console.log("promise fulfilled");
+      setCommands(res.data);
+      setInputText("");
+    });
   };
 
   return (
     <div>
       <h1>Commander Terminal</h1>
-      <Form onChange={handleInput} value={inputText} />
+      <Form
+        onChange={handleInput}
+        value={inputText}
+        handleSubmit={handleFormSubmit}
+      />
     </div>
   );
 }
