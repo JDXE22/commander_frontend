@@ -18,7 +18,7 @@ function App() {
       setInputText("");
       setTimeout(() => {
         setCommands("")
-      }, 5000);
+      }, 7000);
     });
   };
 
