@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Form } from "./components/input/Form";
 import { getCommand } from "./services/commands";
-import { CommandList } from "./components/commands/Command";
 import { Navbar } from "./components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "./components/home/Home";
@@ -26,13 +24,15 @@ function App() {
   };
 
   return (
-    <div>
+    <>
       <h1>Commander Terminal</h1>
       <Navbar />
+      <div className="container">
       <Routes>
         <Route path="/" element={<Home handleInput={handleInput} inputText={inputText} handleFormSubmit={handleFormSubmit} commands={commands} />}/>
       </Routes>
-    </div>
+      </div>
+    </>
   );
 }
 
