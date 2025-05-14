@@ -8,11 +8,7 @@ export const CommandList = ({command}) => {
     }
     return (
         <div>
-            <p>{command.map((cmd)=> {
-                name: cmd.name
-                text: cmd.text
-                command: cmd.command
-            })}</p>
+            <p>{command.text}</p>
             <Button/>
         </div>
     )

@@ -13,11 +13,12 @@ function App() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
-    getCommand(inputText).then((res) => {
-      console.log("promise fulfilled");
-      setCommands(res.data);
+    getCommand(inputText).then((command) => {
+      setCommands(command);
       setInputText("");
+      setTimeout(() => {
+        setCommands("")
+      }, 5000);
     });
   };
 
@@ -29,7 +30,7 @@ function App() {
         value={inputText}
         handleSubmit={handleFormSubmit}
       />
-      <CommandList command={commands}/>
+      <CommandList command={commands} />
     </div>
   );
 }
