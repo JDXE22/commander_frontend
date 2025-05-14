@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form } from "./components/input/Form";
 import { getCommand } from "./services/commands";
+import { CommandList } from "./components/commands/Command";
 
 function App() {
   const [inputText, setInputText] = useState("");
@@ -28,6 +29,7 @@ function App() {
         value={inputText}
         handleSubmit={handleFormSubmit}
       />
+      <CommandList command={commands}/>
     </div>
   );
 }
