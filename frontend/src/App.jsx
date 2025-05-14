@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Form } from "./components/input/Form";
 import { getCommand } from "./services/commands";
 import { CommandList } from "./components/commands/Command";
+import { Navbar } from "./components/navbar/Navbar";
 
 function App() {
   const [inputText, setInputText] = useState("");
@@ -25,6 +26,7 @@ function App() {
   return (
     <div>
       <h1>Commander Terminal</h1>
+      <Navbar />
       <Form
         onChange={handleInput}
         value={inputText}
