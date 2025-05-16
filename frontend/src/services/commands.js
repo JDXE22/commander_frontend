@@ -7,4 +7,11 @@ export const getCommand = (cmd) => {
 
   
   return request.then((res) => res.data);
+
 };
+
+export const getCommands = () => {
+  const request = axios.get(`${URL}`);
+
+  return request.then((res) => res.data);
+}

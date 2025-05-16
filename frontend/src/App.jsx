@@ -3,6 +3,7 @@ import { getCommand } from "./services/commands";
 import { Navbar } from "./components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "./components/home/Home";
+import { FilterCmd } from "./components/pages/Filter/FilterCmd";
 
 function App() {
   const [inputText, setInputText] = useState("");
@@ -30,6 +31,7 @@ function App() {
       <div className="container">
       <Routes>
         <Route path="/" element={<Home handleInput={handleInput} inputText={inputText} handleFormSubmit={handleFormSubmit} commands={commands} />}/>
+        <Route path="/filter" element={<FilterCmd commands={commands} /> }/>
       </Routes>
       </div>
     </>
