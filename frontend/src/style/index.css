@@ -21,7 +21,6 @@ button {
 
 .container button {
   margin: 2px;
-  
 }
 
 nav {
@@ -32,6 +31,11 @@ nav {
   padding: 1vh;
   border-radius: 5px;
   gap: 20px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 h1 {
@@ -50,7 +54,33 @@ input {
   font-size: medium;
 }
 
-nav a {
+.filter {
   color: #ffffff;
-  text-decoration: none;
+  font-size: medium;
+  margin: 2px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+.filter input {
+  margin: 2px;
+  justify-content: center;
+}
+
+.filter div {
+  color: #ffffff;
+  font-size: medium;
+  margin: 2px;
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+}
+
+.commands {
+  color: #ffffff;
+  font-size: medium;
+  margin: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
