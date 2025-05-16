@@ -25,7 +25,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="App">
       <h1>Commander Terminal</h1>
       <Navbar />
       <div className="container">
@@ -34,7 +34,7 @@ function App() {
         <Route path="/filter" element={<FilterCmd commands={commands} /> }/>
       </Routes>
       </div>
-    </>
+    </div>
   );
 }
 

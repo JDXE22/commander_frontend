@@ -13,8 +13,10 @@ export const FilterCmd = ({ value, handle, commands }) => {
   useEffect(() => {
     getCommands({page: page}).then((cmds) => {
       setFilteredCommands(cmds);
+    }).catch((err) => {
+      setFilteredCommands([]);
     });
-  }, [page]);
+  }, [page]) ;
 
   const handleForm = (e) => {
     e.preventDefault();
@@ -25,12 +27,12 @@ export const FilterCmd = ({ value, handle, commands }) => {
   };
 
   return (
-    <div>
+    <div className="filter">
       <h3>Filter all Commands</h3>
       <form onSubmit={handleForm}>
         <input onChange={handleCommand} />
         <div>
-          <ul>
+          <ul className="commands">
             {filteredCommands.length > 0 ? (
               <ul>
                 {filteredCommands.map((cmd) => (

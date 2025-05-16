@@ -1,0 +1,86 @@
+body {
+  background-color: #121212;
+  font-family: "Courier New", Courier, monospace;
+}
+button {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: medium;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container button {
+  margin: 2px;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #1e1e1e;
+  padding: 1vh;
+  border-radius: 5px;
+  gap: 20px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+h1 {
+  color: #ffffff;
+  font-size: large;
+  text-align: center;
+}
+
+input {
+  color: gray;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.responseArea {
+  color: #ffffff;
+  font-size: medium;
+}
+
+.filter {
+  color: #ffffff;
+  font-size: medium;
+  margin: 2px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+.filter input {
+  margin: 2px;
+  justify-content: center;
+}
+
+.filter div {
+  color: #ffffff;
+  font-size: medium;
+  margin: 2px;
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+}
+
+.commands {
+  color: #ffffff;
+  font-size: medium;
+  margin: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}

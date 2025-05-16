@@ -3,10 +3,10 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 export const Navbar = () => {
   return (
     <nav to="/" className="nav">
-      <ul>
+      <>
        <CustomLink to="/"> Home </CustomLink >
        <CustomLink to="/filter"> Filter </CustomLink >
-      </ul>
+      </>
     </nav>
   );
 };
