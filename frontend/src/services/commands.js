@@ -11,7 +11,7 @@ export const getCommand = (cmd) => {
 };
 
 export const getCommands = ({page}) => {
-  const request = axios.get(`${URL}?page=${parseInt(page)}`);
+  const request = axios.get(`${URL}?page=${(page)}`);
 
   return request.then((res) => res.data);
 }

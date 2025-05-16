@@ -11,10 +11,10 @@ export const FilterCmd = ({ value, handle, commands }) => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    getCommands().then((cmds) => {
+    getCommands({page: page}).then((cmds) => {
       setFilteredCommands(cmds);
     });
-  }, []);
+  }, [page]);
 
   const handleForm = (e) => {
     e.preventDefault();
@@ -32,14 +32,14 @@ export const FilterCmd = ({ value, handle, commands }) => {
         <div>
           <ul>
             {filteredCommands.length > 0 ? (
-              <ol>
+              <ul>
                 {filteredCommands.map((cmd) => (
                   <li key={cmd._id}>
                     {cmd.command} <br />
                     {cmd.text}
                   </li>
                 ))}
-              </ol>
+              </ul>
             ) : (
               "No commands found"
             )}
