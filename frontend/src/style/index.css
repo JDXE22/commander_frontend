@@ -1,0 +1,47 @@
+body {
+    background-color: #121212;
+    font-family: 'Courier New', Courier, monospace;
+}
+button {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: medium;
+}
+
+nav {
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 5px;
+    
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1 {
+    color: #ffffff;
+    font-size: medium;
+}
+
+input {
+    color: gray;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.responseArea{
+    color: #ffffff;
+    font-size: medium;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+}

@@ -20,7 +20,7 @@ const Button = ({text}) => {
 
 export const CommandList = ({ command }) => {
   return (
-    <div>
+    <div className="responseArea">
       <p>{command.text}</p>
       <Button text ={command.text} />
     </div>
