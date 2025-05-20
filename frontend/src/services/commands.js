@@ -13,5 +13,9 @@ export const getCommand = (cmd) => {
 export const getCommands = ({page}) => {
   const request = axios.get(`${URL}?page=${(page)}`);
 
-  return request.then((res) => res.data);
+  return request.then((res) => res.data).catch((err) => {
+    console.log(err);
+    
+    return [];
+  });
 }

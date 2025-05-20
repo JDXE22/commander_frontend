@@ -4,7 +4,7 @@ body {
 }
 button {
   background-color: #1e1e1e;
-  color: #ffffff;
+  color: #e0e0e0;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -34,12 +34,12 @@ nav {
 }
 
 nav a {
-  color: #ffffff;
+  color: #e0e0e0;
   text-decoration: none;
 }
 
 h1 {
-  color: #ffffff;
+  color: #e0e0e0;
   font-size: large;
   text-align: center;
 }
@@ -50,12 +50,12 @@ input {
 }
 
 .responseArea {
-  color: #ffffff;
+  color: #e0e0e0;
   font-size: medium;
 }
 
 .filter {
-  color: #ffffff;
+  color: #e0e0e0;
   font-size: medium;
   margin: 2px;
   padding: 2px;
@@ -68,7 +68,7 @@ input {
 }
 
 .filter div {
-  color: #ffffff;
+  color: #e0e0e0;
   font-size: medium;
   margin: 2px;
   padding: 2px;
@@ -77,10 +77,21 @@ input {
 }
 
 .commands {
-  color: #ffffff;
+  color: #e0e0e0;
   font-size: medium;
   margin: 2px;
   padding: 20px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+
+}
+.commands li {
+  border: 1px solid #061772;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
