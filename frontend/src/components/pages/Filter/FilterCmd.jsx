@@ -5,51 +5,65 @@ const Button = ({ handle, text }) => {
   return <button onClick={handle}>{text}</button>;
 };
 
-export const FilterCmd = ({ value, handle, commands }) => {
-  const [filter, setFilter] = useState("");
-  const [filteredCommands, setFilteredCommands] = useState([]);
+export const FilterCmd = () => {
+  const [filteredCommands, setFilteredCommands] = useState({
+    commands: [],
+    totalPages: 1,
+  });
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    getCommands({page: page}).then((cmds) => {
-      setFilteredCommands(cmds);
-    }).catch((err) => {
-      setFilteredCommands([]);
-    });
-  }, [page]) ;
-
-  const handleForm = (e) => {
-    e.preventDefault();
+  const commands = () => {
+    getCommands({ page: page }).then(
+      ({ commands: cmds, totalPages: total }) => {
+        setFilteredCommands(cmds || []);
+        setTotalPages(total || 1);
+      }
+    );
   };
 
-  const handleCommand = (e) => {
-    setFilter(e.target.value);
+  useEffect(commands, [page]);
+
+  const renderPageNumbers = () => {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    return (
+      <div>
+        {pageNumbers.map((number) => {
+          return (
+            <Button
+              key={number}
+              handle={() => setPage(number)}
+              text={number}
+            />
+          );
+        })}
+      </div>
+    );
   };
 
   return (
     <div className="filter">
       <h3>Filter all Commands</h3>
-      <form onSubmit={handleForm}>
-        <input onChange={handleCommand} />
-        <div>
-          <ul className="commands">
-            {filteredCommands.length > 0 ? (
-              <ul>
-                {filteredCommands.map((cmd) => (
-                  <li key={cmd._id}>
-                    {cmd.command} <br />
-                    {cmd.text}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              "No commands found"
-            )}
-          </ul>
-        </div>
-      </form>
+      <div>
+        <ul className="commands">
+          {filteredCommands.length > 0 ? (
+            <ul>
+              {filteredCommands.map((cmd) => (
+                <li key={cmd._id}>
+                  {cmd.command} <br />
+                  {cmd.text}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            "No commands found"
+          )}
+        </ul>
+      </div>
       <div>
         <Button handle={() => setPage(page - 1)} text="Previous" />
+        {renderPageNumbers()}
         <Button handle={() => setPage(page + 1)} text="Next" />
       </div>
     </div>

@@ -1,17 +1,20 @@
 import axios from "axios";
 const URL = import.meta.env.VITE_API_URL;
 
-export const getCommand = (cmd) => {
-
-  const request = axios.get(`${URL}/${encodeURIComponent(cmd)}`);
-
-  
-  return request.then((res) => res.data);
-
+export const getCommand = async (cmd) => {
+  try {
+    const response = await axios.get(`${URL}/${encodeURIComponent(cmd)}`);
+    return response.data;
+  } catch (error) {
+    return { error: true, message: error?.response?.data?.message || error.message || "Unknown error" };
+  }
 };
 
-export const getCommands = ({page}) => {
-  const request = axios.get(`${URL}?page=${(page)}`);
-
-  return request.then((res) => res.data);
-}
+export const getCommands = async ({ page }) => {
+  try {
+    const response = await axios.get(`${URL}?page=${page}`);
+    return response.data;
+  } catch (error) {
+    return [];
+  }
+};
