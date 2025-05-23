@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export const CreateCmd = ({ refresh }) => {
   const [commandInput, setCommandInput] = useState("");
-  const [valuesInput, setValuesInput] = useState([]);
+  const [valuesInput, setValuesInput] = useState("");
   const [text, setText] = useState("");
 
   const handleChange = (e) => {
@@ -13,7 +13,7 @@ export const CreateCmd = ({ refresh }) => {
     setText(e.target.value);
   };
   const handleValuesChange = (e) => {
-    setValuesInput(e.target.value.split(","));
+    setValuesInput(e.target.value);
   };
 
   const handleSubmit = (e) => {
@@ -21,14 +21,14 @@ export const CreateCmd = ({ refresh }) => {
     const payload = {
       command: commandInput,
       text: text,
-      values: valuesInput,
+      name: valuesInput,
     };
     const res = saveCommand({ command: payload });
     if (!res.error) {
       refresh();
       setCommandInput("");
       setText("");
-      setValuesInput([]);
+      setValuesInput("");
     }
   };
 
@@ -50,9 +50,9 @@ export const CreateCmd = ({ refresh }) => {
         />
         <input
           type="text"
-          value={valuesInput.join(",")}
+          value={valuesInput}
           onChange={handleValuesChange}
-          placeholder="Values (comma separated)"
+          placeholder="Name (comma separated)"
         />
         <button type="submit">Create Command</button>
       </form>
