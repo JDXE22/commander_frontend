@@ -19,9 +19,9 @@ export const CreateCmd = ({ refresh }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
-      command,
-      text,
-      values,
+      command: commandInput,
+      text: text,
+      values: valuesInput,
     };
     const res = saveCommand({ command: payload });
     if (!res.error) {

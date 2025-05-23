@@ -6,6 +6,7 @@ export const Navbar = () => {
       <>
        <CustomLink to="/"> Home </CustomLink >
        <CustomLink to="/filter"> Filter </CustomLink >
+        <CustomLink to="/create"> Create </CustomLink >
       </>
     </nav>
   );
