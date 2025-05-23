@@ -4,13 +4,13 @@ import { useState } from "react";
 export const CreateCmd = ({ refresh }) => {
   const [commandInput, setCommandInput] = useState("");
   const [valuesInput, setValuesInput] = useState("");
-  const [text, setText] = useState("");
+  const [textInput, setTextInput] = useState("");
 
   const handleChange = (e) => {
     setCommandInput(e.target.value);
   };
   const handleTextChange = (e) => {
-    setText(e.target.value);
+    setTextInput(e.target.value);
   };
   const handleValuesChange = (e) => {
     setValuesInput(e.target.value);
@@ -20,14 +20,18 @@ export const CreateCmd = ({ refresh }) => {
     e.preventDefault();
     const payload = {
       command: commandInput,
-      text: text,
+      text: textInput,
       name: valuesInput,
     };
+    if (!commandInput || !textInput || !valuesInput) {
+      alert("Please fill all fields");
+      return;
+    }
     const res = saveCommand({ command: payload });
     if (!res.error) {
       refresh();
       setCommandInput("");
-      setText("");
+      setTextInput("");
       setValuesInput("");
     }
   };
@@ -44,7 +48,7 @@ export const CreateCmd = ({ refresh }) => {
         />
         <input
           type="text"
-          value={text}
+          value={textInput}
           onChange={handleTextChange}
           placeholder="Text"
         />
@@ -52,7 +56,7 @@ export const CreateCmd = ({ refresh }) => {
           type="text"
           value={valuesInput}
           onChange={handleValuesChange}
-          placeholder="Name (comma separated)"
+          placeholder="Name"
         />
         <button type="submit">Create Command</button>
       </form>
