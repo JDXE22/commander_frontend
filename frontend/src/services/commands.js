@@ -25,11 +25,19 @@ export const getCommands = async ({ page }) => {
 
 export const saveCommand = async ({ command }) => {
   try {
+    const existingCommand = await getCommand(command.command);
+    if (existingCommand) {
+      return {
+        error: true,
+        message: "Command already exists",
+      };
+    }
+
     const response = await axios.post(`${URL}`, command);
+
     return response.data;
   } catch (error) {
     return {
-      error: true,
       message:
         error?.response?.data?.message || error.message || "Unknown error",
     };
