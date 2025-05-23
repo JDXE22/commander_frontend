@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { getCommands } from "./services/commands";
+import { getCommands, getCommand } from "./services/commands";
 import { Navbar } from "./components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "./components/home/Home";
 import { FilterCmd } from "./components/pages/Filter/FilterCmd";
 import { CreateCmd } from "./components/pages/Filter/CreateCmd";
+
 
 function App() {
   const [inputText, setInputText] = useState("");
