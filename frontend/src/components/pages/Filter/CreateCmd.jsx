@@ -28,12 +28,20 @@ export const CreateCmd = ({ refresh }) => {
       return;
     }
     const res = saveCommand({ command: payload });
-    if (!res.error) {
-      refresh();
-      setCommandInput("");
-      setTextInput("");
-      setValuesInput("");
-    }
+
+    res
+      .then((res) => {
+        if (!res.error) {
+          alert(`Command created successfully`);
+          refresh();
+          setCommandInput("");
+          setTextInput("");
+          setValuesInput("");
+        }
+      })
+      .catch((err) => {
+        alert(`Error: ${err.message}`);
+      });
   };
 
   return (
