@@ -19,7 +19,11 @@ export const getCommands = async ({ page }) => {
     const response = await axios.get(`${URL}?page=${page}`);
     return response.data;
   } catch (error) {
-    return [];
+    return {
+      error: true,
+      message:
+        error?.response?.data?.message || error.message || "Unknown error",
+    };
   }
 };
 
