@@ -22,21 +22,24 @@ export const FilterCmd = () => {
   useEffect(fetchCommands, [page]);
 
   const renderPageNumbers = () => {
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
       <div>
         {pageNumbers.map((number) => {
           return (
-            <Button
-              key={number}
-              handle={() => setPage(number)}
-              text={number}
-            />
+            <Button key={number} handle={() => setPage(number)} text={number} />
           );
         })}
       </div>
     );
+  };
+
+  const handlePageChange = (delta) => {
+    setPage((p) => {
+      const next = p + delta;
+      return next < 1 || next > totalPages ? p : next;
+    });
   };
 
   return (
@@ -45,23 +48,29 @@ export const FilterCmd = () => {
       <div>
         <ul className="commands">
           {filteredCommands.length > 0 ? (
-            <ul>
-              {filteredCommands.map((cmd) => (
-                <li key={cmd._id}>
-                  {cmd.command} <br />
-                  {cmd.text}
-                </li>
-              ))}
-            </ul>
+            filteredCommands.map((cmd) => (
+              <li key={cmd._id}>
+                {cmd.command} <br />
+                {cmd.text}
+              </li>
+            ))
           ) : (
-            "No commands found"
+            <li>No commands found</li>
           )}
         </ul>
       </div>
-      <div>
-        <Button handle={() => setPage(page - 1)} text="Previous" />
+      <div className="pagination">
+        <Button
+          handle={() => handlePageChange(-1)}
+          text="Previous"
+          disabled={page === 1}
+        />
         {renderPageNumbers()}
-        <Button handle={() => setPage(page + 1)} text="Next" />
+        <Button
+          handle={() => handlePageChange(1)}
+          text="Next"
+          disabled={page === totalPages}
+        />
       </div>
     </div>
   );
