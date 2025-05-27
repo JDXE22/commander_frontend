@@ -6,14 +6,11 @@ const Button = ({ handle, text }) => {
 };
 
 export const FilterCmd = () => {
-  const [filteredCommands, setFilteredCommands] = useState({
-    commands: [],
-    totalPages: 1,
-  });
+  const [filteredCommands, setFilteredCommands] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const commands = () => {
+  const fetchCommands = () => {
     getCommands({ page: page }).then(
       ({ commands: cmds, totalPages: total }) => {
         setFilteredCommands(cmds || []);
@@ -22,7 +19,7 @@ export const FilterCmd = () => {
     );
   };
 
-  useEffect(commands, [page]);
+  useEffect(fetchCommands, [page]);
 
   const renderPageNumbers = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
