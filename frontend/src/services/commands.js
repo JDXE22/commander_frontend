@@ -6,7 +6,11 @@ export const getCommand = async (cmd) => {
     const response = await axios.get(`${URL}/${encodeURIComponent(cmd)}`);
     return response.data;
   } catch (error) {
-    return { error: true, message: error?.response?.data?.message || error.message || "Unknown error" };
+    return {
+      error: true,
+      message:
+        error?.response?.data?.message || error.message || "Unknown error",
+    };
   }
 };
 
@@ -15,6 +19,31 @@ export const getCommands = async ({ page }) => {
     const response = await axios.get(`${URL}?page=${page}`);
     return response.data;
   } catch (error) {
-    return [];
+    return {
+      error: true,
+      message:
+        error?.response?.data?.message || error.message || "Unknown error",
+    };
+  }
+};
+
+export const saveCommand = async ({ command }) => {
+  try {
+    const existingCommand = await getCommand(command.command);
+    if (existingCommand) {
+      return {
+        error: true,
+        message: "Command already exists",
+      };
+    }
+
+    const response = await axios.post(`${URL}`, command);
+
+    return response.data;
+  } catch (error) {
+    return {
+      message:
+        error?.response?.data?.message || error.message || "Unknown error",
+    };
   }
 };
