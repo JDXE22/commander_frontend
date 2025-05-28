@@ -1,12 +1,13 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
 import { Button } from "../../button/Button";
 import copyIcon from "../../../utils/img/copyIcon.svg";
 import copiedIcon from "../../../utils/img/copiedIcon.png";
+import { handleCopyClick } from "../../commands/Command";
 
+const copyImageSrc = copyIcon;
+const copiedImageSrc = copiedIcon;
 
-const copyImageSrc = copyIcon
-const copiedImageSrc = copiedIcon
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
   const [page, setPage] = useState(1);
@@ -48,42 +49,6 @@ export const FilterCmd = () => {
     });
   };
 
-  const handleCopyClick = ({ commandText, e }) => {
-    const btn = e.currentTarget;
-    const imgElement = btn.querySelector("img");
-    if (!imgElement) {
-      navigator.clipboard
-        .writeText(commandText)
-        .then(() => {
-          const originalText = btn.textContent;
-          btn.textContent = "Copied!";
-          setTimeout(() => {
-            btn.textContent = originalText;
-          }, 2000);
-        })
-        .catch((err) => {
-          console.error("Copy failed:", err);
-        });
-      return;
-    }
-    const originalSrc = imgElement.src;
-    
-    navigator.clipboard
-      .writeText(commandText)
-      .then(() => {
-        imgElement.src = copiedImageSrc;
-        setTimeout(() => {
-          imgElement.src = copyIcon;
-        }, 2000);
-      })
-      .catch((err) => {
-        console.error("Copy failed:", err);
-        if (imgElement) {
-          imgElement.src = originalSrc;
-        }
-      });
-  };
-
   return (
     <div className="filter">
       <h3>Filter all Commands</h3>
@@ -96,7 +61,7 @@ export const FilterCmd = () => {
                 <p>{cmd.text}</p>
                 <Button
                   handle={(e) =>
-                    handleCopyClick({ commandText: cmd.text, e: e })
+                    handleCopyClick({ commandText: cmd.text, e: e , img1: copyImageSrc, img2: copiedImageSrc})
                   }
                   content={<img src={copyImageSrc} alt="Copy" />}
                   className="copy-button"
