@@ -2,11 +2,11 @@ import { use, useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
 import { Button } from "../../button/Button";
 import copyIcon from "../../../utils/img/copyIcon.svg";
+import copiedIcon from "../../../utils/img/copiedIcon.png";
 
 
 const copyImageSrc = copyIcon
-const copiedImageSrc = "/path/to/your/copied-icon.svg";
-
+const copiedImageSrc = copiedIcon
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
   const [page, setPage] = useState(1);
@@ -67,11 +67,14 @@ export const FilterCmd = () => {
       return;
     }
     const originalSrc = imgElement.src;
+    
     navigator.clipboard
       .writeText(commandText)
       .then(() => {
         imgElement.src = copiedImageSrc;
-    
+        setTimeout(() => {
+          imgElement.src = copyIcon;
+        }, 2000);
       })
       .catch((err) => {
         console.error("Copy failed:", err);
