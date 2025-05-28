@@ -1,19 +1,19 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
+import { Button } from "../../button/Button";
+import copyIcon from "../../../utils/img/copyIcon.svg";
+import copiedIcon from "../../../utils/img/copiedIcon.png";
+import { handleCopyClick } from "../../commands/Command";
 
-const Button = ({ handle, text }) => {
-  return <button onClick={handle}>{text}</button>;
-};
+const copyImageSrc = copyIcon;
+const copiedImageSrc = copiedIcon;
 
 export const FilterCmd = () => {
-  const [filteredCommands, setFilteredCommands] = useState({
-    commands: [],
-    totalPages: 1,
-  });
+  const [filteredCommands, setFilteredCommands] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const commands = () => {
+  const fetchCommands = () => {
     getCommands({ page: page }).then(
       ({ commands: cmds, totalPages: total }) => {
         setFilteredCommands(cmds || []);
@@ -22,10 +22,10 @@ export const FilterCmd = () => {
     );
   };
 
-  useEffect(commands, [page]);
+  useEffect(fetchCommands, [page]);
 
   const renderPageNumbers = () => {
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
       <div>
@@ -34,12 +34,19 @@ export const FilterCmd = () => {
             <Button
               key={number}
               handle={() => setPage(number)}
-              text={number}
+              content={number}
             />
           );
         })}
       </div>
     );
+  };
+
+  const handlePageChange = (delta) => {
+    setPage((p) => {
+      const next = p + delta;
+      return next < 1 || next > totalPages ? p : next;
+    });
   };
 
   return (
@@ -48,23 +55,36 @@ export const FilterCmd = () => {
       <div>
         <ul className="commands">
           {filteredCommands.length > 0 ? (
-            <ul>
-              {filteredCommands.map((cmd) => (
-                <li key={cmd._id}>
-                  {cmd.command} <br />
-                  {cmd.text}
-                </li>
-              ))}
-            </ul>
+            filteredCommands.map((cmd) => (
+              <li key={cmd._id}>
+                <strong>{cmd.command}</strong> <br />
+                <p>{cmd.text}</p>
+                <Button
+                  handle={(e) =>
+                    handleCopyClick({ commandText: cmd.text, e: e , img1: copyImageSrc, img2: copiedImageSrc})
+                  }
+                  content={<img src={copyImageSrc} alt="Copy" />}
+                  className="copy-button"
+                />
+              </li>
+            ))
           ) : (
-            "No commands found"
+            <li>No commands found</li>
           )}
         </ul>
       </div>
-      <div>
-        <Button handle={() => setPage(page - 1)} text="Previous" />
+      <div className="pagination">
+        <Button
+          handle={() => handlePageChange(-1)}
+          content="Previous"
+          disabled={page === 1}
+        />
         {renderPageNumbers()}
-        <Button handle={() => setPage(page + 1)} text="Next" />
+        <Button
+          handle={() => handlePageChange(1)}
+          content="Next"
+          disabled={page === totalPages}
+        />
       </div>
     </div>
   );

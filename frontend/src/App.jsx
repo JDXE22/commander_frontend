@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getCommands, getCommand } from "./services/commands";
+import { getCommand, getCommands } from "./services/commands";
 import { Navbar } from "./components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "./components/home/Home";
