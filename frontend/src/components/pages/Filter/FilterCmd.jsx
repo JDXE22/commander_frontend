@@ -1,8 +1,8 @@
 import { use, useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
 
-const Button = ({ handle, text }) => {
-  return <button onClick={handle}>{text}</button>;
+const Button = ({ handle, content, disabled, placeholderText}) => {
+  return <button onClick={handle} disabled={disabled}> {content} </button>;
 };
 
 export const FilterCmd = () => {
@@ -28,7 +28,7 @@ export const FilterCmd = () => {
       <div>
         {pageNumbers.map((number) => {
           return (
-            <Button key={number} handle={() => setPage(number)} text={number} />
+            <Button key={number} handle={() => setPage(number)} content={number} />
           );
         })}
       </div>
@@ -42,6 +42,22 @@ export const FilterCmd = () => {
     });
   };
 
+  const handleCopyClick = ({commandText, e}) => {
+      const btn = e.currentTarget;
+
+    navigator.clipboard
+      .writeText(commandText)
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = "Copy";
+        }, 2000);
+      })
+      .catch((err) => {
+        console.error("Copy failed:", err);
+      });
+  };
+
   return (
     <div className="filter">
       <h3>Filter all Commands</h3>
@@ -50,8 +66,13 @@ export const FilterCmd = () => {
           {filteredCommands.length > 0 ? (
             filteredCommands.map((cmd) => (
               <li key={cmd._id}>
-                {cmd.command} <br />
-                {cmd.text}
+                <strong>{cmd.command}</strong> <br />
+                <p>{cmd.text}</p>
+                <Button
+                  handle={(e) => handleCopyClick({ commandText: cmd.text, e: e})}
+                  content="Copy"
+                  className="copy-button"
+                />
               </li>
             ))
           ) : (
@@ -62,13 +83,13 @@ export const FilterCmd = () => {
       <div className="pagination">
         <Button
           handle={() => handlePageChange(-1)}
-          text="Previous"
+          content="Previous"
           disabled={page === 1}
         />
         {renderPageNumbers()}
         <Button
           handle={() => handlePageChange(1)}
-          text="Next"
+          content="Next"
           disabled={page === totalPages}
         />
       </div>
