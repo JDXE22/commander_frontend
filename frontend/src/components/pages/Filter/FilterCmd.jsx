@@ -1,9 +1,6 @@
 import { use, useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
-
-const Button = ({ handle, content, disabled, placeholderText}) => {
-  return <button onClick={handle} disabled={disabled}> {content} </button>;
-};
+import { Button } from "../../button/Button";
 
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
@@ -28,7 +25,11 @@ export const FilterCmd = () => {
       <div>
         {pageNumbers.map((number) => {
           return (
-            <Button key={number} handle={() => setPage(number)} content={number} />
+            <Button
+              key={number}
+              handle={() => setPage(number)}
+              content={number}
+            />
           );
         })}
       </div>
@@ -42,8 +43,8 @@ export const FilterCmd = () => {
     });
   };
 
-  const handleCopyClick = ({commandText, e}) => {
-      const btn = e.currentTarget;
+  const handleCopyClick = ({ commandText, e }) => {
+    const btn = e.currentTarget;
 
     navigator.clipboard
       .writeText(commandText)
@@ -69,7 +70,9 @@ export const FilterCmd = () => {
                 <strong>{cmd.command}</strong> <br />
                 <p>{cmd.text}</p>
                 <Button
-                  handle={(e) => handleCopyClick({ commandText: cmd.text, e: e})}
+                  handle={(e) =>
+                    handleCopyClick({ commandText: cmd.text, e: e })
+                  }
                   content="Copy"
                   className="copy-button"
                 />
