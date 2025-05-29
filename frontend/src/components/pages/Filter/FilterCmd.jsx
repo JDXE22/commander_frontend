@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
 import { Button, CopyButton } from "../../button/Button";
-import copyIcon from "../../../utils/img/copyIcon.svg";
-import copiedIcon from "../../../utils/img/copiedIcon.png";
-
-const copyImageSrc = copyIcon;
-const copiedImageSrc = copiedIcon;
 
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
