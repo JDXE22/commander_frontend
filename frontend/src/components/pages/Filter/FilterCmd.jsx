@@ -66,7 +66,8 @@ export const FilterCmd = () => {
                 <li key={command._id}>
                   <span className="command-name">{command.command}</span>
                   <span className="command-text">
-                    <input
+                    <textarea
+                      rows={4}
                       type="text"
                       value={currentText}
                       onChange={(e) =>
@@ -77,7 +78,7 @@ export const FilterCmd = () => {
                       }
                     />
                   </span>
-                  <CopyButton text={command.command} />
+                  <CopyButton text={command.command} className="copy-button" />
                   <UpdateButton
                     handle={() =>
                       handleUpdate({
