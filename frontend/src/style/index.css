@@ -164,7 +164,7 @@ input {
 }
 
 .commands textarea {
-  width: 110vh;
+  width: 50vw;
   min-height: 80px;
   padding: 5px;
   margin-top: 10px;
