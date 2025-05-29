@@ -78,8 +78,10 @@ export const FilterCmd = () => {
                       }
                     />
                   </span>
+                  <div className="buttons-container">
                   <CopyButton text={command.command} className="copy-button" />
-                  <UpdateButton
+                  <UpdateButton className="update-button"
+                    disabled={currentText === command.text}
                     handle={() =>
                       handleUpdate({
                         id: command._id,
@@ -87,6 +89,7 @@ export const FilterCmd = () => {
                       })
                     }
                   />
+                  </div>
                 </li>
               );
             })

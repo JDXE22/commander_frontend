@@ -153,6 +153,16 @@ input {
   justify-content: center;
 }
 
+.update-button {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: small;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .commands textarea {
   width: 110vh;
   min-height: 80px;
@@ -165,4 +175,13 @@ input {
   font-family: inherit;
   font-size: inherit;
   resize: vertical;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px; 
+  margin-top: 10px; 
+  align-items: center;
+  justify-content: center; 
 }
