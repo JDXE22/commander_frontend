@@ -46,6 +46,7 @@ export const saveCommand = async ({ command }) => {
     return response.data;
   } catch (error) {
     return {
+      error: true,
       message:
         error?.response?.data?.message || error.message || "Unknown error",
     };
