@@ -1,6 +1,7 @@
 import copyIcon from "../../../src/utils/img/copyIcon.svg";
 import copiedIcon from "../../../src/utils/img/copiedIcon.png";
 import { useEffect, useRef, useState } from "react";
+
 export const Button = ({ handle, content, disabled }) => {
   return (
     <button onClick={handle} disabled={disabled}>
@@ -46,6 +47,20 @@ export const CopyButton = ({
   return (
     <button onClick={handleCopyClick} className={className}>
       {copied ? copiedIconElement : icon}
+    </button>
+  );
+};
+
+export const UpdateButton = ({
+  handle,
+  content = "Update",
+  disabled = false,
+  className = "",
+  icon = <img src={copyIcon} alt="Update" />,
+}) => {
+  return (
+    <button onClick={handle} disabled={disabled} className={className}>
+      {content}
     </button>
   );
 };
