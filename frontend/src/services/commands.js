@@ -16,10 +16,14 @@ export const getCommand = async (cmd) => {
 
 export const getCommands = async ({ page }) => {
   try {
-    const response = await axios.get(`${URL}?page=${page}`);
-    return response.data;
+    const { commands = [], totalPages = 0 } = (
+      await axios.get(`${URL}?page=${page}`)
+    ).data;
+    return { commands, totalPages };
   } catch (error) {
     return {
+      commands: [],
+      totalPages: 0,
       error: true,
       message:
         error?.response?.data?.message || error.message || "Unknown error",
