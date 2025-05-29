@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <h1>Commander Terminal</h1>
       <Navbar />
-      <div className="container">
+      <div className="homeContainer">
       <Routes>
         <Route path="/" element={<Home handleInput={handleInput} inputText={inputText} handleFormSubmit={handleFormSubmit} commands={commands} />}/>
         <Route path="/filter" element={<FilterCmd commands={commands} /> }/>

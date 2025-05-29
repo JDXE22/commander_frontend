@@ -10,6 +10,26 @@ button {
   cursor: pointer;
   font-size: medium;
 }
+.app {
+  display: flex;
+  flex-direction: column;
+  max-width: max-content;
+  width: 100%;
+}
+
+.homeContainer {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  align-items: center;
+  justify-content: center;
+}
 
 .container {
   display: flex;
@@ -17,7 +37,6 @@ button {
   align-items: center;
   justify-content: flex-start;
   min-height: 100vh;
-
 }
 
 .container button {
@@ -53,8 +72,18 @@ input {
 }
 
 .responseArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: #e0e0e0;
   font-size: medium;
+}
+
+
+.responseArea button img {
+  width: 20px;
+  height: 20px;
 }
 
 .filter {
@@ -67,7 +96,6 @@ input {
   text-align: center;
   width: 100%;
   max-width: 1200px;
-
 }
 .filter input {
   margin: 2px;
@@ -123,4 +151,3 @@ input {
   height: 16px;
   margin-left: 5px;
 }
-
