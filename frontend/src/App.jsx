@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getCommands, getCommand } from "./services/commands";
+import { getCommand, getCommands } from "./services/commands";
 import { Navbar } from "./components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "./components/home/Home";
@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <h1>Commander Terminal</h1>
       <Navbar />
-      <div className="container">
+      <div className="homeContainer">
       <Routes>
         <Route path="/" element={<Home handleInput={handleInput} inputText={inputText} handleFormSubmit={handleFormSubmit} commands={commands} />}/>
         <Route path="/filter" element={<FilterCmd commands={commands} /> }/>

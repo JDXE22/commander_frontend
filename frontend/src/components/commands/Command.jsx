@@ -1,28 +1,14 @@
-const Button = ({text}) => {    
-  const handleClick = (e) => {
-    const btn = e.currentTarget;
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        btn.textContent = "Copied!";
-        setTimeout(() => {
-          btn.textContent = "Copy text";
-        }, 2000);
-      })
-      .catch((err) => console.error(err));
-  };
-  return (
-    <>
-      <button onClick={handleClick}>Copy text</button>
-    </>
-  );
-};
+import { CopyButton } from "../button/Button";
 
 export const CommandList = ({ command }) => {
   return (
     <div className="responseArea">
       <p>{command.text}</p>
-      <Button text ={command.text} />
+      <CopyButton
+        textToCopy={command.text}
+        timeout={2000}
+        className="copy-button"
+      />
     </div>
   );
 };
