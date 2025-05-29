@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { getCommands } from "../../../services/commands";
-import { Button } from "../../button/Button";
+import { Button, CopyButton } from "../../button/Button";
 import copyIcon from "../../../utils/img/copyIcon.svg";
 import copiedIcon from "../../../utils/img/copiedIcon.png";
-import { handleCopyClick } from "../../commands/Command";
 
 const copyImageSrc = copyIcon;
 const copiedImageSrc = copiedIcon;
@@ -59,11 +58,8 @@ export const FilterCmd = () => {
               <li key={cmd._id}>
                 <strong>{cmd.command}</strong> <br />
                 <p>{cmd.text}</p>
-                <Button
-                  handle={(e) =>
-                    handleCopyClick({ commandText: cmd.text, e: e , img1: copyImageSrc, img2: copiedImageSrc})
-                  }
-                  content={<img src={copyImageSrc} alt="Copy" />}
+                <CopyButton
+                  textToCopy={cmd.text}
                   className="copy-button"
                 />
               </li>
