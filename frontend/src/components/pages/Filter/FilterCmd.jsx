@@ -79,7 +79,7 @@ export const FilterCmd = () => {
                     />
                   </span>
                   <div className="buttons-container">
-                  <CopyButton textToCopy={command.command} className="copy-button" />
+                  <CopyButton textToCopy={command.text} className="copy-button" />
                   <UpdateButton className="update-button"
                     disabled={currentText === command.text}
                     handle={() =>
