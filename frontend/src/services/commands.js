@@ -53,10 +53,10 @@ export const saveCommand = async ({ command }) => {
   }
 };
 
-export const updateCommand = async ({ updatedInput, id }) => {
+export const updateCommand = async ({ updatedData, id }) => {
   try {
-    const updatedCommand = await axios.patch(`${URL}/${id}`, updatedInput);
-    return updatedCommand.data;
+    const {data: updated} = await axios.patch(`${URL}/${id}`, updatedData);
+    return {data: updated, error: false, message: "Command updated successfully"};
   } catch (error) {
     const message =
       error?.response?.data?.message || error.message || "Unknown error";

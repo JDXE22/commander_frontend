@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { getCommands } from "../../../services/commands";
-import { Button, CopyButton } from "../../button/Button";
+import { getCommands, updateCommand } from "../../../services/commands";
+import { Button, CopyButton, UpdateButton } from "../../button/Button";
 
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [updatedInput, setUpdatedInput] = useState({});
 
   const fetchCommands = () => {
     getCommands({ page: page }).then(
@@ -43,22 +44,51 @@ export const FilterCmd = () => {
     });
   };
 
+  const handleUpdate = async ({ id, updatedData }) => {
+    await updateCommand({ updatedData, id });
+    setUpdatedInput((prev) => {
+      const newInput = { ...prev };
+      delete newInput[id];
+      return newInput;
+    });
+    fetchCommands();
+  };
+
   return (
     <div className="filter">
       <h3>Filter all Commands</h3>
       <div>
         <ul className="commands">
           {filteredCommands.length > 0 ? (
-            filteredCommands.map((cmd) => (
-              <li key={cmd._id}>
-                <strong>{cmd.command}</strong> <br />
-                <p>{cmd.text}</p>
-                <CopyButton
-                  textToCopy={cmd.text}
-                  className="copy-button"
-                />
-              </li>
-            ))
+            filteredCommands.map((command) => {
+              const currentText = updatedInput[command._id] ?? command.text;
+              return (
+                <li key={command._id}>
+                  <span className="command-name">{command.command}</span>
+                  <span className="command-text">
+                    <input
+                      type="text"
+                      value={currentText}
+                      onChange={(e) =>
+                        setUpdatedInput((prev) => ({
+                          ...prev,
+                          [command._id]: e.target.value,
+                        }))
+                      }
+                    />
+                  </span>
+                  <CopyButton text={command.command} />
+                  <UpdateButton
+                    handle={() =>
+                      handleUpdate({
+                        id: command._id,
+                        updatedData: { text: currentText },
+                      })
+                    }
+                  />
+                </li>
+              );
+            })
           ) : (
             <li>No commands found</li>
           )}
