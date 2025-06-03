@@ -1,4 +1,4 @@
-import { CommandList } from "../commands/Command";
+import { CommandList } from "../../features/commands/list/Command";
 import { Form } from "../input/Form";
 
 export const Home = ({
