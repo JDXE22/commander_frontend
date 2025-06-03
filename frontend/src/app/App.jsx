@@ -4,7 +4,7 @@ import { Navbar } from "./layout/Navbar";
 import { Route, Routes } from "react-router-dom";
 import { Home } from "../features/commands/lookup/Home";
 import { FilterCmd } from "../features/commands/dashboard/FilterCmd";
-import { CreateCmd } from "../components/pages/Filter/CreateCmd";
+import { CreateCmd } from "../features/commands/create/CreateCmd";
 
 
 function App() {
