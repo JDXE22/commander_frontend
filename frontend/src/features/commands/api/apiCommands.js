@@ -32,15 +32,12 @@ export const getCommands = async ({ page }) => {
 };
 
 export const saveCommand = async ({ command }) => {
-  try {
-    const existingCommand = await getCommand(command.command);
-    if (existingCommand) {
-      return {
-        error: true,
-        message: "Command already exists",
-      };
-    }
+  const existingCommand = await getCommand(command.command);
 
+  if (existingCommand && existingCommand.error === false) {
+    return { error: true, message: "Command already exists" };
+  }
+  try {
     const response = await axios.post(`${URL}`, command);
 
     return response.data;
@@ -55,8 +52,12 @@ export const saveCommand = async ({ command }) => {
 
 export const updateCommand = async ({ updatedData, id }) => {
   try {
-    const {data: updated} = await axios.patch(`${URL}/${id}`, updatedData);
-    return {data: updated, error: false, message: "Command updated successfully"};
+    const { data: updated } = await axios.patch(`${URL}/${id}`, updatedData);
+    return {
+      data: updated,
+      error: false,
+      message: "Command updated successfully",
+    };
   } catch (error) {
     const message =
       error?.response?.data?.message || error.message || "Unknown error";

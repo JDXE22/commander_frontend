@@ -1,9 +1,10 @@
-import { saveCommand } from "../../../services/commands";
+import { saveCommand } from "../../../features/commands/api/apiCommands";
 import { useState } from "react";
+import { UIForm } from "../../../shared/ui/Form/Form";
 
 export const CreateCmd = ({ refresh }) => {
   const [commandInput, setCommandInput] = useState("");
-  const [valuesInput, setValuesInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [textInput, setTextInput] = useState("");
 
   const handleChange = (e) => {
@@ -13,7 +14,7 @@ export const CreateCmd = ({ refresh }) => {
     setTextInput(e.target.value);
   };
   const handleValuesChange = (e) => {
-    setValuesInput(e.target.value);
+    setNameInput(e.target.value);
   };
 
   const handleSubmit = (e) => {
@@ -21,9 +22,9 @@ export const CreateCmd = ({ refresh }) => {
     const payload = {
       command: commandInput,
       text: textInput,
-      name: valuesInput,
+      name: nameInput,
     };
-    if (!commandInput || !textInput || !valuesInput) {
+    if (!commandInput || !textInput || !nameInput) {
       alert("Please fill all fields");
       return;
     }
@@ -31,12 +32,14 @@ export const CreateCmd = ({ refresh }) => {
 
     res
       .then((res) => {
+        console.log(res);
+
         if (!res.error) {
           alert(`Command created successfully`);
           refresh();
           setCommandInput("");
           setTextInput("");
-          setValuesInput("");
+          setNameInput("");
         }
       })
       .catch((err) => {
@@ -47,7 +50,7 @@ export const CreateCmd = ({ refresh }) => {
   return (
     <div>
       <h2>Create Command</h2>
-      <form onSubmit={handleSubmit}>
+      <UIForm handleSubmit={handleSubmit} className="inputForm">
         <input
           type="text"
           value={commandInput}
@@ -62,12 +65,12 @@ export const CreateCmd = ({ refresh }) => {
         />
         <input
           type="text"
-          value={valuesInput}
+          value={nameInput}
           onChange={handleValuesChange}
           placeholder="Name"
         />
         <button type="submit">Create Command</button>
-      </form>
+      </UIForm>
     </div>
   );
 };
