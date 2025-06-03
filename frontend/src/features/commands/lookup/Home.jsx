@@ -1,5 +1,5 @@
 import { CommandList } from "../list/Command";
-import { Form } from "../../../shared/ui/Form/Form";
+import { UIForm } from "../../../shared/ui/Form/Form";
 
 export const Home = ({
   handleInput,
@@ -9,11 +9,15 @@ export const Home = ({
 }) => {
   return (
     <>
-      <Form
-        onChange={handleInput}
-        value={inputText}
-        handleSubmit={handleFormSubmit}
-      />
+      <UIForm handleSubmit={handleFormSubmit} className="">
+        <input
+          type="text"
+          value={inputText}
+          onChange={handleInput}
+          placeholder="Enter command to lookup"
+          className="commandInput"
+        />
+      </UIForm>
       <CommandList command={commands} />
     </>
   );
