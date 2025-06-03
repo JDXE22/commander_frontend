@@ -7,7 +7,7 @@ export const CommandList = ({ command, className = "" }) => {
         <div key={cmd._id} >
           <span className="commandText">{cmd.text}</span>
           <div className="commandActions">
-            <CopyButton text={cmd.command} />
+            <CopyButton text={cmd.text} />
           </div>
         </div>
       ))}

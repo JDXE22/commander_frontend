@@ -68,7 +68,37 @@ h1 {
 
 input {
   color: gray;
-  font-family: "Courier New", Courier, monospace;
+}
+
+
+.homeContainer h2 {
+  font-size: 2rem;          
+  color: #e0e0e0;           
+  margin-bottom: 1rem;
+}
+
+.homeContainer p {
+  font-size: 1.125rem;       
+  color: #e0e0e0;
+  margin: 0.5rem 0;
+}
+
+.homeContainer .form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.commandInput {
+  width: 90%;               
+  max-width: 400px;         
+  font-size: 1.125rem;      
+  padding: 0.5rem 0.75rem;  
+  margin: 0.75rem 0;
+  border: 1px solid #061772;
+  border-radius: 4px;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
 }
 
 .responseArea {
@@ -78,9 +108,25 @@ input {
   align-items: center;
   color: #e0e0e0;
   font-size: medium;
+  gap: 30px;
 }
 
-.responseArea button img {
+
+.commandActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.commandText {
+  color: #e0e0e0;
+  font-size: large;
+}
+
+.commandActions img {
   width: 20px;
   height: 20px;
 }
@@ -185,3 +231,5 @@ input {
   align-items: center;
   justify-content: center; 
 }
+
+
