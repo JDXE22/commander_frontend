@@ -8,7 +8,8 @@ export const Home = ({
   commands,
 }) => {
   return (
-    <>
+    <div className="homeContainer">
+      <h2>Command Lookup</h2>
       <UIForm handleSubmit={handleFormSubmit} className="">
         <input
           type="text"
@@ -18,7 +19,14 @@ export const Home = ({
           className="commandInput"
         />
       </UIForm>
-      <CommandList command={commands} />
-    </>
+
+      {commands == null ? (
+        <p>Loading commands…</p>
+      ) : commands.length > 0 ? (
+        <CommandList command={commands} className="responseArea" />
+      ) : (
+        <p>No commands found…</p>
+      )}
+    </div>
   );
 };

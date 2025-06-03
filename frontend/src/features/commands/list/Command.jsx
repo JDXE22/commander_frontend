@@ -1,14 +1,16 @@
 import { CopyButton } from "../../../shared/ui/Button/Button";
 
-export const CommandList = ({ command }) => {
+export const CommandList = ({ command, className = "" }) => {
   return (
-    <div className="responseArea">
-      <p>{command.text}</p>
-      <CopyButton
-        textToCopy={command.text}
-        timeout={2000}
-        className="copy-button"
-      />
+    <div className={className} >
+      {command.map((cmd) => (
+        <div key={cmd._id} >
+          <span className="commandText">{cmd.text}</span>
+          <div className="commandActions">
+            <CopyButton text={cmd.command} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -6,10 +6,9 @@ import { Home } from "../features/commands/lookup/Home";
 import { FilterCmd } from "../features/commands/dashboard/FilterCmd";
 import { CreateCmd } from "../features/commands/create/CreateCmd";
 
-
 function App() {
   const [inputText, setInputText] = useState("");
-  const [commands, setCommands] = useState([]);
+  const [commands, setCommands] = useState(null);
 
   const handleInput = (e) => {
     setInputText(e.target.value);
@@ -18,7 +17,8 @@ function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     getCommand(inputText).then((command) => {
-      setCommands(command);
+      const list = !command || command.error ? [] : [command];
+      setCommands(list);
       setInputText("");
       setTimeout(() => {
         setCommands("");
@@ -26,21 +26,34 @@ function App() {
     });
   };
   const fetchAllCommands = () => {
-    getCommands({page: 1}).then((command) => {
+    getCommands({ page: 1 }).then((command) => {
       setCommands(command);
     });
-  }
+  };
 
   return (
     <div className="App">
       <h1>Commander Terminal</h1>
       <Navbar />
       <div className="homeContainer">
-      <Routes>
-        <Route path="/" element={<Home handleInput={handleInput} inputText={inputText} handleFormSubmit={handleFormSubmit} commands={commands} />}/>
-        <Route path="/filter" element={<FilterCmd commands={commands} /> }/>
-        <Route path="/create" element={<CreateCmd refresh={fetchAllCommands} />} />
-      </Routes>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Home
+                handleInput={handleInput}
+                inputText={inputText}
+                handleFormSubmit={handleFormSubmit}
+                commands={commands}
+              />
+            }
+          />
+          <Route path="/filter" element={<FilterCmd commands={commands} />} />
+          <Route
+            path="/create"
+            element={<CreateCmd refresh={fetchAllCommands} />}
+          />
+        </Routes>
       </div>
     </div>
   );
