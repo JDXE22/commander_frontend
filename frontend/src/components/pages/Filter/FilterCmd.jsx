@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCommands, updateCommand } from "../../../features/commands/api/apiCommands";
-import { Button, CopyButton, UpdateButton } from "../../button/Button";
+import { Button, CopyButton, UpdateButton } from "../../../shared/ui/Button/Button";
 
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);

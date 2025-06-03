@@ -1,4 +1,4 @@
-import { CopyButton } from "../../../components/button/Button";
+import { CopyButton } from "../../../shared/ui/Button/Button";
 
 export const CommandList = ({ command }) => {
   return (
