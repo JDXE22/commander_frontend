@@ -1,5 +1,5 @@
 import { CommandList } from "../list/Command";
-import { Form } from "../create/Form";
+import { Form } from "../../../shared/ui/Form/Form";
 
 export const Home = ({
   handleInput,
