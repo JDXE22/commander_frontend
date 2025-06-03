@@ -1,5 +1,5 @@
-import { CommandList } from "../../features/commands/list/Command";
-import { Form } from "../../features/commands/create/CreateForm";
+import { CommandList } from "../list/Command";
+import { Form } from "../create/CreateForm";
 
 export const Home = ({
   handleInput,

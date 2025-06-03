@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getCommand, getCommands } from "../features/commands/api/apiCommands";
 import { Navbar } from "../components/navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
-import { Home } from "../components/home/Home";
+import { Home } from "../features/commands/lookup/Home";
 import { FilterCmd } from "../components/pages/Filter/FilterCmd";
 import { CreateCmd } from "../components/pages/Filter/CreateCmd";
 
