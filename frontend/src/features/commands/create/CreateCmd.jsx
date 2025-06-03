@@ -1,5 +1,6 @@
 import { saveCommand } from "../../../features/commands/api/apiCommands";
 import { useState } from "react";
+import { UIForm } from "../../../shared/ui/Form/Form";
 
 export const CreateCmd = ({ refresh }) => {
   const [commandInput, setCommandInput] = useState("");
@@ -32,7 +33,7 @@ export const CreateCmd = ({ refresh }) => {
     res
       .then((res) => {
         console.log(res);
-        
+
         if (!res.error) {
           alert(`Command created successfully`);
           refresh();
@@ -49,7 +50,7 @@ export const CreateCmd = ({ refresh }) => {
   return (
     <div>
       <h2>Create Command</h2>
-      <form onSubmit={handleSubmit}>
+      <UIForm handleSubmit={handleSubmit} className="inputForm">
         <input
           type="text"
           value={commandInput}
@@ -69,7 +70,7 @@ export const CreateCmd = ({ refresh }) => {
           placeholder="Name"
         />
         <button type="submit">Create Command</button>
-      </form>
+      </UIForm>
     </div>
   );
 };
