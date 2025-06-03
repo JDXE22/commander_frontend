@@ -1,4 +1,4 @@
-import { saveCommand } from "../../../services/commands";
+import { saveCommand } from "../../../features/commands/api/apiCommands";
 import { useState } from "react";
 
 export const CreateCmd = ({ refresh }) => {

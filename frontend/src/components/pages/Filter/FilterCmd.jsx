@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCommands, updateCommand } from "../../../services/commands";
+import { getCommands, updateCommand } from "../../../features/commands/api/apiCommands";
 import { Button, CopyButton, UpdateButton } from "../../button/Button";
 
 export const FilterCmd = () => {
