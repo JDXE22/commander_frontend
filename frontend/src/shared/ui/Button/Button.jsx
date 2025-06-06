@@ -1,5 +1,5 @@
-import copyIcon from "../../../src/utils/img/copyIcon.svg";
-import copiedIcon from "../../../src/utils/img/copiedIcon.png";
+import copyIcon from "../../../shared/utils/copyIcon.svg";
+import copiedIcon from "../../../shared/utils/copiedIcon.png";
 import { useEffect, useRef, useState } from "react";
 
 export const Button = ({ handle, content, disabled }) => {
