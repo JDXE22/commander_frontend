@@ -14,21 +14,21 @@ function App() {
     setInputText(e.target.value);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    getCommand(inputText).then((command) => {
-      const list = !command || command.error ? [] : [command];
-      setCommands(list);
+    const filteredCommand = await getCommand(inputText);
+    if (filteredCommand) {
+      setCommands([filteredCommand]);
       setInputText("");
       setTimeout(() => {
-        setCommands("");
-      }, 7000);
-    });
+        setCommands(null);
+      }, 5000);
+    }
+    setInputText(inputText.trim());
   };
-  const fetchAllCommands = () => {
-    getCommands({ page: 1 }).then((command) => {
-      setCommands(command);
-    });
+  const fetchAllCommands = async () => {
+    const { commands: allCommands } = await getCommands({ page: 1 });
+    setCommands(allCommands);
   };
 
   return (
