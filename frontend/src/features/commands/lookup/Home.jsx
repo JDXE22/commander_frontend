@@ -20,10 +20,12 @@ export const Home = ({
         />
       </UIForm>
 
-      {commands == null ? (
+      {commands === null ? (
         <p>Loading commands…</p>
       ) : commands.length > 0 ? (
-        <CommandList command={commands} className="responseArea" />
+        <>
+          <CommandList command={commands} className="responseArea" />
+        </>
       ) : (
         <p>No commands found…</p>
       )}
