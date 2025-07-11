@@ -29,22 +29,18 @@ export const CreateCmd = ({ refresh }) => {
       return;
     }
     const res = saveCommand({ command: payload });
+    if (res) {
+      alert("Command created successfully");
+      refresh();
+      setCommandInput("");
+      setTextInput("");
+      setNameInput("");
+    }
 
-    res
-      .then((res) => {
-        console.log(res);
+    alert("Failed to create command");
 
-        if (!res.error) {
-          alert(`Command created successfully`);
-          refresh();
-          setCommandInput("");
-          setTextInput("");
-          setNameInput("");
-        }
-      })
-      .catch((err) => {
-        alert(`Error: ${err.message}`);
-      });
+
+
   };
 
   return (
