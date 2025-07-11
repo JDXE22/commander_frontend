@@ -8,16 +8,20 @@ export const FilterCmd = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [updatedInput, setUpdatedInput] = useState({});
 
-  const fetchCommands = () => {
-    getCommands({ page: page }).then(
-      ({ commands: cmds, totalPages: total }) => {
-        setFilteredCommands(cmds || []);
-        setTotalPages(total || 1);
-      }
-    );
+  const fetchCommands = async () => {
+    const commands = await getCommands({ page });
+    if (commands) {
+      setFilteredCommands(commands.commands);
+      setTotalPages(commands.totalPages);
+    } else {
+      setFilteredCommands([]);
+      setTotalPages(1);
+    }
   };
 
-  useEffect(fetchCommands, [page]);
+  useEffect(()=> {
+    fetchCommands();
+  }, [page]);
 
   const renderPageNumbers = () => {
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
