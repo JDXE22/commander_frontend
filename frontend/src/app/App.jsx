@@ -16,15 +16,20 @@ function App() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const filteredCommand = await getCommand(inputText);
-    if (filteredCommand) {
+    try {
+      const filteredCommand = await getCommand(inputText);
       setCommands([filteredCommand]);
       setInputText("");
       setTimeout(() => {
         setCommands(null);
       }, 5000);
+
+    } catch (error) {
+      console.error("Error fetching command:", error);
+      return;
     }
-    setInputText(inputText.trim());
+    setInputText(inputText)
+
   };
   const fetchAllCommands = async () => {
     const { commands: allCommands } = await getCommands({ page: 1 });
