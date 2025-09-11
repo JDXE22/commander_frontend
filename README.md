@@ -28,8 +28,6 @@ commander_frontend is the JavaScript frontend for the Commander project. It live
 
 This README is intended to provide clear instructions for getting the frontend running locally, building for production, testing, and contributing.
 
-(If this project uses a specific framework such as React, Next.js, Vue, or Svelte, replace framework-specific commands and notes below with the correct ones.)
-
 ## Features
 
 - Frontend application to interact with the Commander backend API
