@@ -2,16 +2,6 @@
 
 A clean, user-friendly README template for the commander_frontend repository.
 
-> NOTE: I inspected the repository metadata while preparing this README:
-> - Repository: JDXE22/commander_frontend (public)
-> - Default branch: `main`
-> - Primary language: JavaScript
-> - Contains a `frontend/` directory
-> - Issues: enabled (1 open issue)
-> - Created: 13 May 2025
-
-Below is a comprehensive README you can drop into the repository's root README.md. Edit the placeholders (framework, environment variables, commands) to match the actual implementation in `frontend/`.
-
 ---
 
 ## Table of contents
