@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Antenna -->
+<line x1="256" y1="130" x2="256" y2="80" stroke="#95c14e" stroke-width="12" stroke-linecap="round"/>
+<circle cx="256" cy="70" r="15" fill="#95c14e"/>
+
+<!-- Body/Terminal Shell -->
+
+<rect x="86" y="130" width="340" height="260" rx="40" fill="#95c14e" fill-opacity="0.1" stroke="#95c14e" stroke-width="20"/>
+
+<!-- Screen Area -->
+
+<rect x="116" y="160" width="280" height="200" rx="20" fill="#141b1e"/>
+
+<!-- Terminal Prompt Eye (Left) -->
+
+<path d="M170 220L210 255L170 290" stroke="#95c14e" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- Cursor Eye (Right) -->
+
+<line x1="290" y1="255" x2="340" y2="255" stroke="#95c14e" stroke-width="18" stroke-linecap="round"/>
+
+<!-- Friendly Mouth -->
+
+<path d="M210 310C210 335 235 340 256 340C277 340 302 335 302 310" stroke="#95c14e" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+<!-- Integrated Copy Icon -->
+
+<g transform="translate(370, 95)">
+<rect x="0" y="8" width="35" height="45" rx="6" stroke="#95c14e" stroke-width="6" fill="#141b1e"/>
+<rect x="12" y="0" width="35" height="45" rx="6" stroke="#95c14e" stroke-width="6" fill="#141b1e"/>
+</g>
+</svg>

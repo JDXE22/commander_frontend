@@ -125,6 +125,26 @@ body {
   cursor: not-allowed;
 }
 
+.btn-clear {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-clear:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--terminal-green);
+  color: var(--terminal-green);
+}
+
 /* --- HOME VIEW SPECIFIC --- */
 .search-section {
   width: 100%;
@@ -238,6 +258,21 @@ body {
   align-items: center;
   gap: 12px;
   flex: 1;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.history-item:hover {
+  border-color: var(--terminal-green);
+  background-color: var(--bg-primary);
+}
+
+.history-text {
+  color: var(--text-primary);
+  font-size: 13px;
 }
 
 .history-icon {

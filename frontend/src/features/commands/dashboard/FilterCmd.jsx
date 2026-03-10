@@ -7,15 +7,23 @@ export const FilterCmd = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [updatedInput, setUpdatedInput] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const fetchCommands = async () => {
-    const commands = await getCommands({ page });
-    if (commands) {
-      setFilteredCommands(commands.commands);
-      setTotalPages(commands.totalPages);
-    } else {
-      setFilteredCommands([]);
-      setTotalPages(1);
+    setLoading(true);
+    try {
+      const commands = await getCommands({ page });
+      if (commands) {
+        setFilteredCommands(commands.commands);
+        setTotalPages(commands.totalPages);
+      } else {
+        setFilteredCommands([]);
+        setTotalPages(1);
+      }
+    } catch (error) {
+      console.error('Error fetching commands:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,19 +49,21 @@ export const FilterCmd = () => {
   };
 
   return (
-    <div className='main-content cmd-list-view'>
+    <main className='main-content cmd-list-view'>
       <div className='search-section'>
         <h1 className='search-title'>Filter all Commands</h1>
       </div>
 
-      <div className='cmd-list'>
-        {filteredCommands.length > 0 ? (
+      <div className='cmd-list' aria-busy={loading}>
+        {loading ? (
+          <p role="status">Loading commands...</p>
+        ) : filteredCommands.length > 0 ? (
           filteredCommands.map((command) => {
             const currentText = updatedInput[command._id] ?? command.text;
             return (
-              <div key={command._id} className='card'>
+              <article key={command._id} className='card' aria-labelledby={`title-${command._id}`}>
                 <div className='entry-header'>
-                  <span className='entry-title'>{command.command}</span>
+                  <span id={`title-${command._id}`} className='entry-title'>{command.command}</span>
                   <div className='entry-buttons'>
                     <CopyButton textToCopy={command.text} />
                     <Button
@@ -81,21 +91,23 @@ export const FilterCmd = () => {
                     }
                     className='entry-textarea'
                     placeholder="Enter the command response..."
+                    aria-label={`Edit response for command ${command.command}`}
                   />
                 </div>
-              </div>
+              </article>
             );
           })
         ) : (
-          <p>No commands found</p>
+          <p role="status">No commands found</p>
         )}
       </div>
 
-      <div className='pagination'>
+      <nav className='pagination' aria-label="Pagination Navigation">
         <button 
           className='page-number' 
           onClick={() => handlePageChange(-1)}
-          disabled={page === 1}
+          disabled={page === 1 || loading}
+          aria-label="Go to previous page"
         >
           Prev
         </button>
@@ -103,18 +115,23 @@ export const FilterCmd = () => {
           <button
             key={number}
             onClick={() => setPage(number)}
-            className={`page-number ${page === number ? 'active' : ''}`}>
+            className={`page-number ${page === number ? 'active' : ''}`}
+            disabled={loading}
+            aria-label={`Go to page ${number}`}
+            aria-current={page === number ? 'page' : undefined}
+          >
             {number}
           </button>
         ))}
         <button 
           className='page-number' 
           onClick={() => handlePageChange(1)}
-          disabled={page === totalPages}
+          disabled={page === totalPages || loading}
+          aria-label="Go to next page"
         >
           Next
         </button>
-      </div>
-    </div>
+      </nav>
+    </main>
   );
 };
