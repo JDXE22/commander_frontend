@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { getCommand, getCommands } from "../features/commands/api/apiCommands";
-import { Navbar } from "./layout/Navbar";
-import { Route, Routes } from "react-router-dom";
-import { Home } from "../features/commands/lookup/Home";
-import { FilterCmd } from "../features/commands/dashboard/FilterCmd";
-import { CreateCmd } from "../features/commands/create/CreateCmd";
+import { useState } from 'react';
+import { getCommand, getCommands } from '../features/commands/api/apiCommands';
+import { Navbar } from './layout/Navbar';
+import { Route, Routes } from 'react-router-dom';
+import { Home } from '../features/commands/lookup/Home';
+import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
+import { CreateCmd } from '../features/commands/create/CreateCmd';
 
 function App() {
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
   const [commands, setCommands] = useState(null);
 
   const handleInput = (e) => {
@@ -16,20 +16,16 @@ function App() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const filteredCommand = await getCommand(inputText);
-      setCommands([filteredCommand]);
-      setInputText("");
-      setTimeout(() => {
-        setCommands(null);
-      }, 5000);
-
-    } catch (error) {
-      console.error("Error fetching command:", error);
+    const filteredCommand = await getCommand(inputText);
+    if (filteredCommand?.error) {
+      console.error('Error fetching command:', filteredCommand.message);
       return;
     }
-    setInputText(inputText)
-
+    setCommands([filteredCommand]);
+    setInputText('');
+    setTimeout(() => {
+      setCommands(null);
+    }, 5000);
   };
   const fetchAllCommands = async () => {
     const { commands: allCommands } = await getCommands({ page: 1 });
@@ -37,29 +33,26 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Commander Terminal</h1>
+    <div className='App'>
       <Navbar />
-      <div className="homeContainer">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                handleInput={handleInput}
-                inputText={inputText}
-                handleFormSubmit={handleFormSubmit}
-                commands={commands}
-              />
-            }
-          />
-          <Route path="/filter" element={<FilterCmd commands={commands} />} />
-          <Route
-            path="/create"
-            element={<CreateCmd refresh={fetchAllCommands} />}
-          />
-        </Routes>
-      </div>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Home
+              handleInput={handleInput}
+              inputText={inputText}
+              handleFormSubmit={handleFormSubmit}
+              commands={commands}
+            />
+          }
+        />
+        <Route path='/filter' element={<FilterCmd commands={commands} />} />
+        <Route
+          path='/create'
+          element={<CreateCmd refresh={fetchAllCommands} />}
+        />
+      </Routes>
     </div>
   );
 }

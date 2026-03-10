@@ -1,5 +1,4 @@
-import { CommandList } from "../list/Command";
-import { UIForm } from "../../../shared/ui/Form/Form";
+import { CommandList } from '../list/Command';
 
 export const Home = ({
   handleInput,
@@ -8,27 +7,43 @@ export const Home = ({
   commands,
 }) => {
   return (
-    <div className="homeContainer">
-      <h2>Command Lookup</h2>
-      <UIForm handleSubmit={handleFormSubmit} className="">
-        <input
-          type="text"
-          value={inputText}
-          onChange={handleInput}
-          placeholder="Enter command to lookup"
-          className="commandInput"
-        />
-      </UIForm>
+    <div className='main-content'>
+      <div className='search-section'>
+        <h1 className='search-title'>Terminal</h1>
+        <form onSubmit={handleFormSubmit} className='input-wrapper'>
+          <span className='prompt-char'>$</span>
+          <input
+            type='text'
+            value={inputText}
+            onChange={handleInput}
+            placeholder='/command'
+            className='search-input'
+          />
+          <button type='submit' className='btn-primary'>
+            Run
+          </button>
+        </form>
+      </div>
 
-      {commands === null ? (
-        <p>Loading commands…</p>
-      ) : commands.length > 0 ? (
-        <>
-          <CommandList command={commands} className="responseArea" />
-        </>
-      ) : (
-        <p>No commands found…</p>
+      {commands && commands.length > 0 && (
+        <div className='results-area'>
+          <CommandList command={commands} />
+        </div>
       )}
+
+      <div className='recent-activity'>
+        <span className='history-header'>RECENT COMMANDS</span>
+        <div className='history-grid'>
+          <div className='history-item'>
+            <span className='history-icon'>$</span>
+            <span className='history-text'>/log -v</span>
+          </div>
+          <div className='history-item'>
+            <span className='history-icon'>$</span>
+            <span className='history-text'>/status</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

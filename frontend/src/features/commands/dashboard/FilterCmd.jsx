@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { getCommands, updateCommand } from "../api/apiCommands";
-import { Button, CopyButton, UpdateButton } from "../../../shared/ui/Button/Button";
+import { useEffect, useState } from 'react';
+import { getCommands, updateCommand } from '../api/apiCommands';
+import { Button, CopyButton } from '../../../shared/ui/Button/Button';
 
 export const FilterCmd = () => {
   const [filteredCommands, setFilteredCommands] = useState([]);
@@ -19,27 +19,9 @@ export const FilterCmd = () => {
     }
   };
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchCommands();
   }, [page]);
-
-  const renderPageNumbers = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-    return (
-      <div>
-        {pageNumbers.map((number) => {
-          return (
-            <Button
-              key={number}
-              handle={() => setPage(number)}
-              content={number}
-            />
-          );
-        })}
-      </div>
-    );
-  };
 
   const handlePageChange = (delta) => {
     setPage((p) => {
@@ -59,61 +41,79 @@ export const FilterCmd = () => {
   };
 
   return (
-    <div className="filter">
-      <h3>Filter all Commands</h3>
-      <div>
-        <ul className="commands">
-          {filteredCommands.length > 0 ? (
-            filteredCommands.map((command) => {
-              const currentText = updatedInput[command._id] ?? command.text;
-              return (
-                <li key={command._id}>
-                  <span className="command-name">{command.command}</span>
-                  <span className="command-text">
-                    <textarea
-                      rows={4}
-                      type="text"
-                      value={currentText}
-                      onChange={(e) =>
-                        setUpdatedInput((prev) => ({
-                          ...prev,
-                          [command._id]: e.target.value,
-                        }))
-                      }
-                    />
-                  </span>
-                  <div className="buttons-container">
-                  <CopyButton textToCopy={command.text} className="copy-button" />
-                  <UpdateButton className="update-button"
-                    disabled={currentText === command.text}
-                    handle={() =>
-                      handleUpdate({
-                        id: command._id,
-                        updatedData: { text: currentText },
-                      })
-                    }
-                  />
-                  </div>
-                </li>
-              );
-            })
-          ) : (
-            <li>No commands found</li>
-          )}
-        </ul>
+    <div className='main-content cmd-list-view'>
+      <div className='search-section'>
+        <h1 className='search-title'>Filter all Commands</h1>
       </div>
-      <div className="pagination">
-        <Button
-          handle={() => handlePageChange(-1)}
-          content="Previous"
+
+      <div className='cmd-list'>
+        {filteredCommands.length > 0 ? (
+          filteredCommands.map((command) => {
+            const currentText = updatedInput[command._id] ?? command.text;
+            return (
+              <div key={command._id} className='card'>
+                <div className='entry-header'>
+                  <span className='entry-title'>{command.command}</span>
+                  <div className='entry-buttons'>
+                    <CopyButton textToCopy={command.text} />
+                    <Button
+                      content='Update'
+                      disabled={currentText === command.text}
+                      handle={() =>
+                        handleUpdate({
+                          id: command._id,
+                          updatedData: { text: currentText },
+                        })
+                      }
+                      className='btn-primary'
+                    />
+                  </div>
+                </div>
+                <div className='entry-edit'>
+                  <textarea
+                    rows={4}
+                    value={currentText}
+                    onChange={(e) =>
+                      setUpdatedInput((prev) => ({
+                        ...prev,
+                        [command._id]: e.target.value,
+                      }))
+                    }
+                    className='entry-textarea'
+                    placeholder="Enter the command response..."
+                  />
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p>No commands found</p>
+        )}
+      </div>
+
+      <div className='pagination'>
+        <button 
+          className='page-number' 
+          onClick={() => handlePageChange(-1)}
           disabled={page === 1}
-        />
-        {renderPageNumbers()}
-        <Button
-          handle={() => handlePageChange(1)}
-          content="Next"
+        >
+          Prev
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+          <button
+            key={number}
+            onClick={() => setPage(number)}
+            className={`page-number ${page === number ? 'active' : ''}`}>
+            {number}
+          </button>
+        ))}
+        <button 
+          className='page-number' 
+          onClick={() => handlePageChange(1)}
           disabled={page === totalPages}
-        />
+        >
+          Next
+        </button>
       </div>
     </div>
   );
