@@ -1,76 +1,109 @@
-import { saveCommand } from "../../../features/commands/api/apiCommands";
-import { useState } from "react";
-import { UIForm } from "../../../shared/ui/Form/Form";
+import { saveCommand } from '../../../features/commands/api/apiCommands';
+import { useState } from 'react';
 
 export const CreateCmd = ({ refresh }) => {
-  const [commandInput, setCommandInput] = useState("");
-  const [nameInput, setNameInput] = useState("");
-  const [textInput, setTextInput] = useState("");
+  const [commandInput, setCommandInput] = useState('');
+  const [nameInput, setNameInput] = useState('');
+  const [textInput, setTextInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    setCommandInput(e.target.value);
-  };
-  const handleTextChange = (e) => {
-    setTextInput(e.target.value);
-  };
-  const handleValuesChange = (e) => {
-    setNameInput(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      command: commandInput,
-      text: textInput,
-      name: nameInput,
-    };
-    if (!commandInput || !textInput || !nameInput) {
-      alert("Please fill all fields");
+    if (!commandInput.trim() || !textInput.trim() || !nameInput.trim()) {
+      alert('Please fill all fields');
       return;
     }
-    const res = saveCommand({ command: payload });
-
-    res
-      .then((res) => {
-        console.log(res);
-
-        if (!res.error) {
-          alert(`Command created successfully`);
-          refresh();
-          setCommandInput("");
-          setTextInput("");
-          setNameInput("");
-        }
-      })
-      .catch((err) => {
-        alert(`Error: ${err.message}`);
-      });
+    
+    setIsSubmitting(true);
+    const payload = {
+      command: commandInput.trim(),
+      text: textInput.trim(),
+      name: nameInput.trim(),
+    };
+    
+    try {
+      const res = await saveCommand({ command: payload });
+      if (res) {
+        alert('Command created successfully');
+        refresh && refresh();
+        setCommandInput('');
+        setTextInput('');
+        setNameInput('');
+      } else {
+        alert('Failed to create command');
+      }
+    } catch (error) {
+      console.error('Error saving command:', error);
+      alert('Failed to create command');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div>
-      <h2>Create Command</h2>
-      <UIForm handleSubmit={handleSubmit} className="inputForm">
-        <input
-          type="text"
-          value={commandInput}
-          onChange={handleChange}
-          placeholder="Command"
-        />
-        <input
-          type="text"
-          value={textInput}
-          onChange={handleTextChange}
-          placeholder="Text"
-        />
-        <input
-          type="text"
-          value={nameInput}
-          onChange={handleValuesChange}
-          placeholder="Name"
-        />
-        <button type="submit">Create Command</button>
-      </UIForm>
-    </div>
+    <main className='main-content'>
+      <div className='search-section' style={{ alignItems: 'center', marginBottom: '40px' }}>
+        <h1 className='search-title'>Create New Command</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className='form-card' aria-label="Command creation form">
+        <div className='field-group'>
+          <label className='field-label' htmlFor="command-input">COMMAND</label>
+          <div className='field-input-wrapper'>
+            <input
+              id="command-input"
+              type='text'
+              value={commandInput}
+              onChange={(e) => setCommandInput(e.target.value)}
+              placeholder='/command'
+              className='field-input'
+              required
+              aria-required="true"
+            />
+          </div>
+        </div>
+
+        <div className='field-group'>
+          <label className='field-label' htmlFor="name-input">NAME</label>
+          <div className='field-input-wrapper'>
+            <input
+              id="name-input"
+              type='text'
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              placeholder='Enter a unique identifier'
+              className='field-input'
+              required
+              aria-required="true"
+            />
+          </div>
+        </div>
+
+        <div className='field-group'>
+          <label className='field-label' htmlFor="text-input">TEXT RESPONSE</label>
+          <div className='field-textarea-wrapper'>
+            <textarea
+              id="text-input"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder='Enter the text response for this command...'
+              className='field-textarea'
+              required
+              aria-required="true"
+              rows={5}
+            />
+          </div>
+        </div>
+
+        <button 
+          type='submit' 
+          className='submit-btn' 
+          disabled={isSubmitting}
+          aria-live="polite"
+        >
+          {isSubmitting ? 'Registering...' : 'Register Command'}
+        </button>
+      </form>
+    </main>
   );
 };

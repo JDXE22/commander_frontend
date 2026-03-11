@@ -1,60 +1,90 @@
-import { useState } from "react";
-import { getCommand, getCommands } from "../features/commands/api/apiCommands";
-import { Navbar } from "./layout/Navbar";
-import { Route, Routes } from "react-router-dom";
-import { Home } from "../features/commands/lookup/Home";
-import { FilterCmd } from "../features/commands/dashboard/FilterCmd";
-import { CreateCmd } from "../features/commands/create/CreateCmd";
+import { useState } from 'react';
+import { getCommand } from '../features/commands/api/apiCommands';
+import { Navbar } from './layout/Navbar';
+import { Route, Routes } from 'react-router-dom';
+import { Home } from '../features/commands/lookup/Home';
+import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
+import { CreateCmd } from '../features/commands/create/CreateCmd';
 
 function App() {
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
   const [commands, setCommands] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [recentCommands, setRecentCommands] = useState(['/log -v', '/status']);
 
   const handleInput = (e) => {
     setInputText(e.target.value);
   };
 
+  const executeCommand = async (commandText) => {
+    if (!commandText.trim() || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const filteredCommand = await getCommand(commandText);
+      
+      if (filteredCommand?.error) {
+        console.error('Error fetching command:', filteredCommand.message);
+        return;
+      }
+
+      setCommands([filteredCommand]);
+
+      // Update recent commands dynamically
+      setRecentCommands(prev => {
+        const cleaned = commandText.trim();
+        // Remove if exists to move to top
+        const filtered = prev.filter(c => c !== cleaned);
+        // Add to top and keep max 2
+        return [cleaned, ...filtered].slice(0, 2);
+      });
+
+    } catch (error) {
+      console.error('Error in request:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const filteredCommand = await getCommand(inputText);
-    if (filteredCommand) {
-      setCommands([filteredCommand]);
-      setInputText("");
-      setTimeout(() => {
-        setCommands(null);
-      }, 5000);
-    }
-    setInputText(inputText.trim());
+    await executeCommand(inputText);
+    setInputText('');
   };
-  const fetchAllCommands = async () => {
-    const { commands: allCommands } = await getCommands({ page: 1 });
-    setCommands(allCommands);
+
+  const handleRecentClick = async (cmd) => {
+    await executeCommand(cmd);
+  };
+
+  const handleClear = () => {
+    setCommands(null);
   };
 
   return (
-    <div className="App">
-      <h1>Commander Terminal</h1>
+    <div className='App'>
       <Navbar />
-      <div className="homeContainer">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                handleInput={handleInput}
-                inputText={inputText}
-                handleFormSubmit={handleFormSubmit}
-                commands={commands}
-              />
-            }
-          />
-          <Route path="/filter" element={<FilterCmd commands={commands} />} />
-          <Route
-            path="/create"
-            element={<CreateCmd refresh={fetchAllCommands} />}
-          />
-        </Routes>
-      </div>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Home
+              handleInput={handleInput}
+              inputText={inputText}
+              handleFormSubmit={handleFormSubmit}
+              commands={commands}
+              isLoading={isLoading}
+              handleClear={handleClear}
+              handleRecentClick={handleRecentClick}
+              recentCommands={recentCommands}
+            />
+          }
+        />
+        <Route path='/filter' element={<FilterCmd />} />
+        <Route
+          path='/create'
+          element={<CreateCmd />}
+        />
+      </Routes>
     </div>
   );
 }
