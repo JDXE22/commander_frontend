@@ -8,10 +8,10 @@
   --text-secondary: #8b949e;
   --font-mono: 'JetBrains Mono', monospace;
   --font-sans: 'Inter', sans-serif;
-  --bg-sidebar-main: #0d1504;
-  --bg-sidebar-item: #1b260d;
-  --bg-sidebar-active: #364720;
-  --border-sidebar: #2a3a14;
+  --bg-sidebar-main: #1b260d;
+  --bg-sidebar-item: #243311;
+  --bg-sidebar-active: #3e5225;
+  --border-sidebar: #364720;
   --text-sidebar-primary: #f5faeb;
   --text-sidebar-secondary: #bad87e;
   --terminal-green-bright: #bef264;
@@ -32,7 +32,7 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 64px 100px;
+  padding: 100px 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,7 +45,7 @@ body {
 
 .cmd-list-view {
   justify-content: flex-start !important;
-  padding-top: 64px;
+  padding: 48px;
 }
 
 .sidebar {
@@ -68,13 +68,6 @@ body {
   align-items: center;
 }
 
-.logo-icon {
-  width: 32px;
-  height: 32px;
-  background-color: var(--terminal-green);
-  border-radius: 6px;
-}
-
 .logo-text {
   color: var(--text-sidebar-primary);
   font-size: 16px;
@@ -84,7 +77,7 @@ body {
 .nav-links {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .nav-item {
@@ -354,21 +347,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0;
-  padding: 48px 0;
+  gap: 12px;
+  padding: 24px 0;
   width: 100%;
   flex-wrap: wrap;
 }
 
 .page-number {
-  min-width: 44px;
-  height: 36px;
+  min-width: 32px;
+  height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 0;
+  border-radius: 6px;
   border: 1px solid var(--border-subtle);
-  margin-left: -1px;
   color: var(--text-secondary);
   background: var(--bg-primary);
   cursor: pointer;
@@ -380,12 +372,11 @@ body {
 }
 
 .page-number:first-child {
-  border-radius: 6px 0 0 6px;
-  margin-left: 0;
+  border-radius: 6px;
 }
 
 .page-number:last-child {
-  border-radius: 0 6px 6px 0;
+  border-radius: 6px;
 }
 
 .page-number:hover:not(:disabled) {
@@ -411,7 +402,7 @@ body {
 /* --- CREATE VIEW SPECIFIC --- */
 .form-card {
   width: 100%;
-  max-width: 800px;
+  max-width: 640px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;

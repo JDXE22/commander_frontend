@@ -50,7 +50,7 @@ export const FilterCmd = () => {
 
   return (
     <main className='main-content cmd-list-view'>
-      <div className='search-section'>
+      <div className='search-section' style={{ marginBottom: '32px' }}>
         <h1 className='search-title'>Filter all Commands</h1>
       </div>
 
