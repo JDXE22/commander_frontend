@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { getCommand } from '../features/commands/api/apiCommands';
 import { Navbar } from './layout/Navbar';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { Home } from '../features/commands/lookup/Home';
@@ -7,13 +6,16 @@ import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
 import { Hero } from '../features/landing/Hero';
 import { Auth } from '../features/auth/Auth';
+import { TrialProvider, useTrial } from '../shared/context/TrialContext';
+import { TrialModal } from '../shared/ui/Modal/TrialModal';
 
-function App() {
+function AppContent() {
   const [inputText, setInputText] = useState('');
   const [commands, setCommands] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [recentCommands, setRecentCommands] = useState(['/log -v', '/status']);
+  const [recentCommands, setRecentCommands] = useState([]);
   const location = useLocation();
+  const { getTrialCommand } = useTrial();
 
   const handleInput = (e) => {
     setInputText(e.target.value);
@@ -24,14 +26,15 @@ function App() {
 
     setIsLoading(true);
     try {
-      const filteredCommand = await getCommand(commandText);
+      const result = getTrialCommand(commandText);
 
-      if (filteredCommand?.error) {
-        console.error('Error fetching command:', filteredCommand.message);
+      if (result?.error) {
+        console.error('Command not found:', result.message);
+        setCommands(null);
         return;
       }
 
-      setCommands([filteredCommand]);
+      setCommands([result]);
 
       setRecentCommands((prev) => {
         const cleaned = commandText.trim();
@@ -88,7 +91,16 @@ function App() {
         <Route path='/filter' element={<FilterCmd />} />
         <Route path='/create' element={<CreateCmd />} />
       </Routes>
+      <TrialModal />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <TrialProvider>
+      <AppContent />
+    </TrialProvider>
   );
 }
 

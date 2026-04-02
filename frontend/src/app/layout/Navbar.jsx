@@ -13,10 +13,15 @@ export const Navbar = () => {
           <span className="logo-text">Commander</span>
         </div>
         <nav className="nav-links">
-          <CustomLink to="/terminal">Home</CustomLink>
+          <CustomLink to="/terminal">Terminal</CustomLink>
           <CustomLink to="/filter">Filter</CustomLink>
           <CustomLink to="/create">Create</CustomLink>
         </nav>
+
+        <div className="nav-links secondary" style={{ marginTop: 'auto' }}>
+          <CustomLink to="/">Landing Page</CustomLink>
+          <CustomLink to="/auth">Sign In</CustomLink>
+        </div>
       </aside>
 
       <header className="mobile-header" role="banner">
@@ -45,9 +50,12 @@ export const Navbar = () => {
       {isOpen && (
         <nav className="mobile-nav" aria-label="Mobile Navigation">
           <div className="nav-links">
-            <CustomLink to="/terminal" onClick={() => setIsOpen(false)}>Home</CustomLink>
+            <CustomLink to="/terminal" onClick={() => setIsOpen(false)}>Terminal</CustomLink>
             <CustomLink to="/filter" onClick={() => setIsOpen(false)}>Filter</CustomLink>
             <CustomLink to="/create" onClick={() => setIsOpen(false)}>Create</CustomLink>
+            <div style={{ margin: '8px 0', borderTop: '1px solid var(--border-sidebar)' }}></div>
+            <CustomLink to="/" onClick={() => setIsOpen(false)}>Landing Page</CustomLink>
+            <CustomLink to="/auth" onClick={() => setIsOpen(false)}>Sign In</CustomLink>
           </div>
         </nav>
       )}

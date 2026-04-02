@@ -80,6 +80,12 @@ body {
   gap: 8px;
 }
 
+.nav-links.secondary {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-sidebar);
+}
+
 .nav-item {
   padding: 10px 12px;
   color: var(--text-sidebar-secondary);

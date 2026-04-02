@@ -1,51 +1,18 @@
-import { useEffect, useState } from 'react';
-import { getCommands, updateCommand } from '../api/apiCommands';
+import { useState } from 'react';
 import { Button, CopyButton } from '../../../shared/ui/Button/Button';
+import { useTrial } from '../../../shared/context/TrialContext';
 
 export const FilterCmd = () => {
-  const [filteredCommands, setFilteredCommands] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const { trialCommands, updateTrialCommand } = useTrial();
   const [updatedInput, setUpdatedInput] = useState({});
-  const [loading, setLoading] = useState(true);
 
-  const fetchCommands = async () => {
-    setLoading(true);
-    try {
-      const commands = await getCommands({ page });
-      if (commands) {
-        setFilteredCommands(commands.commands);
-        setTotalPages(commands.totalPages);
-      } else {
-        setFilteredCommands([]);
-        setTotalPages(1);
-      }
-    } catch (error) {
-      console.error('Error fetching commands:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCommands();
-  }, [page]);
-
-  const handlePageChange = (delta) => {
-    setPage((p) => {
-      const next = p + delta;
-      return next < 1 || next > totalPages ? p : next;
-    });
-  };
-
-  const handleUpdate = async ({ id, updatedData }) => {
-    await updateCommand({ updatedData, id });
+  const handleUpdate = ({ id, text }) => {
+    updateTrialCommand(id, text);
     setUpdatedInput((prev) => {
-      const newInput = { ...prev };
-      delete newInput[id];
-      return newInput;
+      const next = { ...prev };
+      delete next[id];
+      return next;
     });
-    fetchCommands();
   };
 
   return (
@@ -54,11 +21,9 @@ export const FilterCmd = () => {
         <h1 className='search-title'>Filter all Commands</h1>
       </div>
 
-      <div className='cmd-list' aria-busy={loading}>
-        {loading ? (
-          <p role="status">Loading commands...</p>
-        ) : filteredCommands.length > 0 ? (
-          filteredCommands.map((command) => {
+      <div className='cmd-list'>
+        {trialCommands.length > 0 ? (
+          trialCommands.map((command) => {
             const currentText = updatedInput[command._id] ?? command.text;
             return (
               <article key={command._id} className='card' aria-labelledby={`title-${command._id}`}>
@@ -69,12 +34,7 @@ export const FilterCmd = () => {
                     <Button
                       content='Update'
                       disabled={currentText === command.text}
-                      handle={() =>
-                        handleUpdate({
-                          id: command._id,
-                          updatedData: { text: currentText },
-                        })
-                      }
+                      handle={() => handleUpdate({ id: command._id, text: currentText })}
                       className='btn-primary'
                     />
                   </div>
@@ -98,40 +58,9 @@ export const FilterCmd = () => {
             );
           })
         ) : (
-          <p role="status">No commands found</p>
+          <p role="status">No commands yet — go to Create to add your first one!</p>
         )}
       </div>
-
-      <nav className='pagination' aria-label="Pagination Navigation">
-        <button 
-          className='page-number' 
-          onClick={() => handlePageChange(-1)}
-          disabled={page === 1 || loading}
-          aria-label="Go to previous page"
-        >
-          Prev
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-          <button
-            key={number}
-            onClick={() => setPage(number)}
-            className={`page-number ${page === number ? 'active' : ''}`}
-            disabled={loading}
-            aria-label={`Go to page ${number}`}
-            aria-current={page === number ? 'page' : undefined}
-          >
-            {number}
-          </button>
-        ))}
-        <button 
-          className='page-number' 
-          onClick={() => handlePageChange(1)}
-          disabled={page === totalPages || loading}
-          aria-label="Go to next page"
-        >
-          Next
-        </button>
-      </nav>
     </main>
   );
 };

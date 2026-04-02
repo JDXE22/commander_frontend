@@ -23,8 +23,8 @@ export const Hero = () => {
             The ultimate command center for modern developers. 
             Organize, filter, and execute with precision.
           </p>
-          <Link to="/auth?mode=register" className="btn-cta">
-            Get Started Free
+          <Link to="/terminal" className="btn-cta">
+            Try it out
           </Link>
         </div>
 

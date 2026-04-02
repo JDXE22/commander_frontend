@@ -1,37 +1,40 @@
-import { saveCommand } from '../../../features/commands/api/apiCommands';
 import { useState } from 'react';
+import { useTrial } from '../../../shared/context/TrialContext';
 
 export const CreateCmd = ({ refresh }) => {
   const [commandInput, setCommandInput] = useState('');
   const [nameInput, setNameInput] = useState('');
   const [textInput, setTextInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { canCreate, addTrialCommand, openModal } = useTrial();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!canCreate) {
+      openModal();
+      return;
+    }
+
     if (!commandInput.trim() || !textInput.trim() || !nameInput.trim()) {
       alert('Please fill all fields');
       return;
     }
-    
+
     setIsSubmitting(true);
     const payload = {
       command: commandInput.trim(),
       text: textInput.trim(),
       name: nameInput.trim(),
     };
-    
+
     try {
-      const res = await saveCommand({ command: payload });
-      if (res) {
-        alert('Command created successfully');
-        refresh && refresh();
-        setCommandInput('');
-        setTextInput('');
-        setNameInput('');
-      } else {
-        alert('Failed to create command');
-      }
+      addTrialCommand(payload);
+      alert('Command created successfully');
+      refresh && refresh();
+      setCommandInput('');
+      setTextInput('');
+      setNameInput('');
     } catch (error) {
       console.error('Error saving command:', error);
       alert('Failed to create command');
@@ -95,13 +98,13 @@ export const CreateCmd = ({ refresh }) => {
           </div>
         </div>
 
-        <button 
-          type='submit' 
-          className='submit-btn' 
+        <button
+          type='submit'
+          className='submit-btn'
           disabled={isSubmitting}
           aria-live="polite"
         >
-          {isSubmitting ? 'Registering...' : 'Register Command'}
+          {isSubmitting ? 'Registering...' : !canCreate ? 'Trial limit reached' : 'Register Command'}
         </button>
       </form>
     </main>
