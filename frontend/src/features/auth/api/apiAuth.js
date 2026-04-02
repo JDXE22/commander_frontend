@@ -27,3 +27,27 @@ export const registerUser = async (email, password) => {
     };
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${URL}/forgot-password`, { email });
+    return response.data;
+  } catch (error) {
+    return {
+      error: true,
+      message: error?.response?.data?.message || error.message || 'Reset request failed',
+    };
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await axios.post(`${URL}/reset-password/${token}`, { password: newPassword });
+    return response.data;
+  } catch (error) {
+    return {
+      error: true,
+      message: error?.response?.data?.message || error.message || 'Password reset failed',
+    };
+  }
+};
