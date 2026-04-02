@@ -29,12 +29,16 @@ export const CreateCmd = ({ refresh }) => {
     };
 
     try {
-      addTrialCommand(payload);
-      alert('Command created successfully');
-      refresh && refresh();
-      setCommandInput('');
-      setTextInput('');
-      setNameInput('');
+      const res = await addTrialCommand(payload);
+      if (res && !res.error) {
+        alert('Command created successfully');
+        refresh && refresh();
+        setCommandInput('');
+        setTextInput('');
+        setNameInput('');
+      } else {
+        alert(res?.message || 'Failed to create command');
+      }
     } catch (error) {
       console.error('Error saving command:', error);
       alert('Failed to create command');
@@ -45,55 +49,51 @@ export const CreateCmd = ({ refresh }) => {
 
   return (
     <main className='main-content'>
-      <div className='search-section' style={{ alignItems: 'center', marginBottom: '40px' }}>
-        <h1 className='search-title'>Create New Command</h1>
-      </div>
-
-      <form onSubmit={handleSubmit} className='form-card' aria-label="Command creation form">
-        <div className='field-group'>
-          <label className='field-label' htmlFor="command-input">COMMAND</label>
-          <div className='field-input-wrapper'>
-            <input
-              id="command-input"
-              type='text'
-              value={commandInput}
-              onChange={(e) => setCommandInput(e.target.value)}
-              placeholder='/command'
-              className='field-input'
-              required
-              aria-required="true"
-            />
-          </div>
+      <div className='page-container'>
+        <div className='search-section'>
+          <h1 className='search-title'>Register a Command</h1>
         </div>
 
-        <div className='field-group'>
-          <label className='field-label' htmlFor="name-input">NAME</label>
-          <div className='field-input-wrapper'>
+        <form onSubmit={handleSubmit} className='create-form'>
+        <div className='form-grid'>
+          <div className='form-group'>
+            <label htmlFor="name-input">Command Name</label>
             <input
               id="name-input"
               type='text'
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder='Enter a unique identifier'
-              className='field-input'
+              placeholder='Help Text 1'
+              className='form-input'
               required
-              aria-required="true"
             />
           </div>
-        </div>
 
-        <div className='field-group'>
-          <label className='field-label' htmlFor="text-input">TEXT RESPONSE</label>
-          <div className='field-textarea-wrapper'>
+          <div className='form-group'>
+            <label htmlFor="trigger-input">Trigger Command</label>
+            <div className='input-container'>
+              <span className='input-prefix' aria-hidden="true">/</span>
+              <input
+                id="trigger-input"
+                type='text'
+                value={commandInput}
+                onChange={(e) => setCommandInput(e.target.value)}
+                placeholder='h1'
+                className='form-input-prefixed'
+                required
+              />
+            </div>
+          </div>
+
+          <div className='form-group full-width'>
+            <label htmlFor="content-input">Command Content</label>
             <textarea
-              id="text-input"
+              id="content-input"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
-              placeholder='Enter the text response for this command...'
-              className='field-textarea'
+              placeholder='This command will return...'
+              className='form-textarea'
               required
-              aria-required="true"
-              rows={5}
             />
           </div>
         </div>
@@ -106,7 +106,8 @@ export const CreateCmd = ({ refresh }) => {
         >
           {isSubmitting ? 'Registering...' : !canCreate ? 'Trial limit reached' : 'Register Command'}
         </button>
-      </form>
+        </form>
+      </div>
     </main>
   );
 };

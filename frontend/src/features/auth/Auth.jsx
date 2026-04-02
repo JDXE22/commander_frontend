@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
+import { useAuth } from '../../shared/context/AuthContext';
+import { loginUser, registerUser } from './api/apiAuth';
 import './Auth.css';
 
 export const Auth = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [mode, setMode] = useState('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -16,6 +24,32 @@ export const Auth = () => {
       setMode('login');
     }
   }, [location]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      let result;
+      if (mode === 'login') {
+        result = await loginUser(email, password);
+      } else {
+        result = await registerUser(email, password);
+      }
+
+      if (result.error) {
+        setError(result.message);
+      } else {
+        login(result);
+        navigate('/terminal');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="auth-page">
@@ -47,29 +81,47 @@ export const Auth = () => {
             <button 
               className={`auth-tab ${mode === 'login' ? 'active' : ''}`}
               onClick={() => setMode('login')}
+              type="button"
             >
               Login
             </button>
             <button 
               className={`auth-tab ${mode === 'register' ? 'active' : ''}`}
               onClick={() => setMode('register')}
+              type="button"
             >
               Register
             </button>
           </div>
 
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            {error && <div className="auth-error-msg">{error}</div>}
+            
             <div className="auth-field">
               <label className="auth-label">Email Address</label>
               <div className="auth-input-box">
-                <input type="email" placeholder="name@example.com" className="auth-input" />
+                <input 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  className="auth-input" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
             </div>
 
             <div className="auth-field">
               <label className="auth-label">Password</label>
               <div className="auth-input-box">
-                <input type="password" placeholder="••••••••" className="auth-input" />
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  className="auth-input" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
               {mode === 'login' && (
                 <div className="forgot-pass-container">
@@ -78,9 +130,9 @@ export const Auth = () => {
               )}
             </div>
 
-            <Link to="/" className="btn-auth-submit">
-              {mode === 'login' ? 'Continue' : 'Create Account'}
-            </Link>
+            <button type="submit" className="btn-auth-submit" disabled={isLoading}>
+              {isLoading ? 'Processing...' : mode === 'login' ? 'Continue' : 'Create Account'}
+            </button>
           </form>
 
           <p className="auth-footer">

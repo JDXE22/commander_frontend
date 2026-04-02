@@ -1,15 +1,24 @@
 import { useState } from "react";
-import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import { Link, useMatch, useResolvedPath, useNavigate } from "react-router-dom";
 import buddyLogo from "../../assets/buddy.svg";
+import { useAuth } from "../../shared/context/AuthContext";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    navigate('/');
+  };
 
   return (
     <>
       <aside className="sidebar" role="navigation" aria-label="Main Sidebar">
         <div className="logo-group">
-          <img src={buddyLogo} alt="Commander Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+          <img src={buddyLogo} alt="Commander Logo" className="logo-img" />
           <span className="logo-text">Commander</span>
         </div>
         <nav className="nav-links">
@@ -18,15 +27,21 @@ export const Navbar = () => {
           <CustomLink to="/create">Create</CustomLink>
         </nav>
 
-        <div className="nav-links secondary" style={{ marginTop: 'auto' }}>
+        <div className="nav-links secondary">
           <CustomLink to="/">Landing Page</CustomLink>
-          <CustomLink to="/auth">Sign In</CustomLink>
+          {isAuthenticated ? (
+            <button className="nav-item logout-btn" onClick={handleLogout}>
+              Logout ({user?.email?.split('@')[0]})
+            </button>
+          ) : (
+            <CustomLink to="/auth">Sign In</CustomLink>
+          )}
         </div>
       </aside>
 
       <header className="mobile-header" role="banner">
         <div className="logo-group">
-          <img src={buddyLogo} alt="Commander Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+          <img src={buddyLogo} alt="Commander Logo" className="logo-img" />
           <span className="logo-text">Commander</span>
         </div>
         <button className="hamburger" onClick={() => setIsOpen(!isOpen)} aria-label={isOpen ? "Close Menu" : "Open Menu"} aria-expanded={isOpen}>
@@ -53,9 +68,15 @@ export const Navbar = () => {
             <CustomLink to="/terminal" onClick={() => setIsOpen(false)}>Terminal</CustomLink>
             <CustomLink to="/filter" onClick={() => setIsOpen(false)}>Filter</CustomLink>
             <CustomLink to="/create" onClick={() => setIsOpen(false)}>Create</CustomLink>
-            <div style={{ margin: '8px 0', borderTop: '1px solid var(--border-sidebar)' }}></div>
+            <div className="mobile-nav-divider"></div>
             <CustomLink to="/" onClick={() => setIsOpen(false)}>Landing Page</CustomLink>
-            <CustomLink to="/auth" onClick={() => setIsOpen(false)}>Sign In</CustomLink>
+            {isAuthenticated ? (
+              <button className="nav-item logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            ) : (
+              <CustomLink to="/auth" onClick={() => setIsOpen(false)}>Sign In</CustomLink>
+            )}
           </div>
         </nav>
       )}

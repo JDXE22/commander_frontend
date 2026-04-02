@@ -7,6 +7,7 @@ import { CreateCmd } from '../features/commands/create/CreateCmd';
 import { Hero } from '../features/landing/Hero';
 import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
+import { AuthProvider } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 
 function AppContent() {
@@ -26,7 +27,7 @@ function AppContent() {
 
     setIsLoading(true);
     try {
-      const result = getTrialCommand(commandText);
+      const result = await getTrialCommand(commandText);
 
       if (result?.error) {
         console.error('Command not found:', result.message);
@@ -66,9 +67,7 @@ function AppContent() {
   const showNavbar = !noNavbarPaths.includes(location.pathname);
 
   return (
-    <div
-      className='App'
-      style={{ flexDirection: showNavbar ? 'row' : 'column' }}>
+    <div className={`App ${!showNavbar ? 'no-sidebar' : ''}`}>
       {showNavbar && <Navbar />}
       <Routes>
         <Route path='/' element={<Hero />} />
@@ -98,9 +97,11 @@ function AppContent() {
 
 function App() {
   return (
-    <TrialProvider>
-      <AppContent />
-    </TrialProvider>
+    <AuthProvider>
+      <TrialProvider>
+        <AppContent />
+      </TrialProvider>
+    </AuthProvider>
   );
 }
 
