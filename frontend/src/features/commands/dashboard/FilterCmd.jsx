@@ -7,62 +7,64 @@ import { getCommands } from '../api/apiCommands';
 export const FilterCmd = () => {
   const { trialCommands, updateTrialCommand } = useTrial();
   const { isAuthenticated } = useAuth();
-  const [apiCommands, setApiCommands] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [updatedInput, setUpdatedInput] = useState({});
+  
+  const [persistentCommands, setPersistentCommands] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPageCount, setTotalPageCount] = useState(1);
+  const [isLoadingCommands, setIsLoadingCommands] = useState(false);
+  const [pendingUpdateInput, setPendingUpdateInput] = useState({});
 
   useEffect(() => {
     if (isAuthenticated) {
-      const fetchApiCommands = async () => {
-        setLoading(true);
+      const loadPersistentCommands = async () => {
+        setIsLoadingCommands(true);
         try {
-          const res = await getCommands({ page });
-          if (res && !res.error) {
-            setApiCommands(res.commands);
-            setTotalPages(res.totalPages);
+          const fetchResponse = await getCommands({ page: currentPage });
+          if (fetchResponse && !fetchResponse.error) {
+            setPersistentCommands(fetchResponse.commands);
+            setTotalPageCount(fetchResponse.totalPages);
           }
-        } catch (err) {
-          console.error('Error fetching API commands:', err);
+        } catch (fetchError) {
+          console.error('Error loading account commands:', fetchError);
         } finally {
-          setLoading(false);
+          setIsLoadingCommands(false);
         }
       };
-      fetchApiCommands();
+      loadPersistentCommands();
     }
-  }, [isAuthenticated, page]);
+  }, [isAuthenticated, currentPage]);
 
-  const displayCommands = isAuthenticated ? apiCommands : trialCommands;
+  const activeCommandList = isAuthenticated ? persistentCommands : trialCommands;
 
-  const handleUpdate = async ({ id, text }) => {
-    await updateTrialCommand(id, text);
-    setUpdatedInput((prev) => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
+  const handleCommandUpdate = async ({ commandId, updatedText }) => {
+    await updateTrialCommand(commandId, updatedText);
+    
+    setPendingUpdateInput((prevPending) => {
+      const nextPending = { ...prevPending };
+      delete nextPending[commandId];
+      return nextPending;
     });
+
     if (isAuthenticated) {
-      const res = await getCommands({ page });
-      if (res && !res.error) {
-        setApiCommands(res.commands);
+      const refreshResponse = await getCommands({ page: currentPage });
+      if (refreshResponse && !refreshResponse.error) {
+        setPersistentCommands(refreshResponse.commands);
       }
     }
   };
 
   return (
     <main className='main-content'>
-      <div className='page-container'>
       <div className='search-section'>
         <h1 className='search-title'>Filter all Commands</h1>
       </div>
 
-      <div className='cmd-list' aria-busy={loading}>
-        {loading ? (
-          <p role='status'>Loading commands...</p>
-        ) : displayCommands.length > 0 ? (
-          displayCommands.map((command) => {
-            const currentText = updatedInput[command._id] ?? command.text;
+      <div className='cmd-list' aria-busy={isLoadingCommands}>
+        {isLoadingCommands ? (
+          <p role='status'>Synchronizing commands...</p>
+        ) : activeCommandList.length > 0 ? (
+          activeCommandList.map((command) => {
+            const currentContent = pendingUpdateInput[command._id] ?? command.text;
             return (
               <article
                 key={command._id}
@@ -75,9 +77,9 @@ export const FilterCmd = () => {
                   <div className='card-actions'>
                     <Button
                       content='Update'
-                      disabled={currentText === command.text}
+                      disabled={currentContent === command.text}
                       handle={() =>
-                        handleUpdate({ id: command._id, text: currentText })
+                        handleCommandUpdate({ commandId: command._id, updatedText: currentContent })
                       }
                       className='btn-primary'
                     />
@@ -87,11 +89,11 @@ export const FilterCmd = () => {
                   <span className='command-trigger'>{command.command}</span>
                   <textarea
                     className='command-text'
-                    value={currentText}
-                    onChange={(e) =>
-                      setUpdatedInput((prev) => ({
-                        ...prev,
-                        [command._id]: e.target.value,
+                    value={currentContent}
+                    onChange={(event) =>
+                      setPendingUpdateInput((prevPending) => ({
+                        ...prevPending,
+                        [command._id]: event.target.value,
                       }))
                     }
                     aria-label={`Edit description for ${command.name}`}
@@ -112,32 +114,31 @@ export const FilterCmd = () => {
         )}
       </div>
 
-      {isAuthenticated && totalPages > 1 && (
+      {isAuthenticated && totalPageCount > 1 && (
         <nav className='pagination' aria-label='Pagination Navigation'>
           <button
             className='page-number'
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1 || loading}>
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1 || isLoadingCommands}>
             Prev
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+          {Array.from({ length: totalPageCount }, (_, index) => index + 1).map((pageNumber) => (
             <button
-              key={number}
-              onClick={() => setPage(number)}
-              className={`page-number ${page === number ? 'active' : ''}`}
-              disabled={loading}>
-              {number}
+              key={pageNumber}
+              onClick={() => setCurrentPage(pageNumber)}
+              className={`page-number ${currentPage === pageNumber ? 'active' : ''}`}
+              disabled={isLoadingCommands}>
+              {pageNumber}
             </button>
           ))}
           <button
             className='page-number'
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages || loading}>
+            onClick={() => setCurrentPage((prev) => Math.min(totalPageCount, prev + 1))}
+            disabled={currentPage === totalPageCount || isLoadingCommands}>
             Next
           </button>
         </nav>
       )}
-      </div>
     </main>
   );
 };

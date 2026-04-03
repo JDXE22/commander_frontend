@@ -11,7 +11,8 @@ export const loginUser = async (email, password) => {
   } catch (error) {
     return {
       error: true,
-      message: error?.response?.data?.message || error.message || 'Login failed',
+      message:
+        error?.response?.data?.message || error.message || 'Login failed',
     };
   }
 };
@@ -23,7 +24,10 @@ export const registerUser = async (email, password) => {
   } catch (error) {
     return {
       error: true,
-      message: error?.response?.data?.message || error.message || 'Registration failed',
+      message:
+        error?.response?.data?.message ||
+        error.message ||
+        'Registration failed',
     };
   }
 };
@@ -35,19 +39,28 @@ export const forgotPassword = async (email) => {
   } catch (error) {
     return {
       error: true,
-      message: error?.response?.data?.message || error.message || 'Reset request failed',
+      message:
+        error?.response?.data?.message ||
+        error.message ||
+        'Reset request failed',
     };
   }
 };
 
 export const resetPassword = async (token, newPassword) => {
   try {
-    const response = await axios.post(`${URL}/reset-password/${token}`, { password: newPassword });
+    const response = await axios.post(`${URL}/password-resets`, {
+      token,
+      password: newPassword,
+    });
     return response.data;
   } catch (error) {
     return {
       error: true,
-      message: error?.response?.data?.message || error.message || 'Password reset failed',
+      message:
+        error?.response?.data?.message ||
+        error.message ||
+        'Password reset failed',
     };
   }
 };

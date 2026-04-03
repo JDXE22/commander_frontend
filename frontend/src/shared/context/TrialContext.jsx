@@ -1,18 +1,16 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import {
-  getCommand,
-  saveCommand,
-  updateCommand,
-} from '../../features/commands/api/apiCommands';
+import { getCommand, saveCommand, updateCommand } from '../../features/commands/api/apiCommands';
 
-const TRIAL_MAX = 2;
-const STORAGE_KEY = 'commander_trial_commands';
+const TRIAL_MAX_COMMANDS = 2;
+const LOCAL_STORAGE_KEY = 'commander_trial_commands';
 
-const getStoredCommands = () => {
+const getInitialTrialCommands = () => {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch {
+    const storedCommands = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return storedCommands ? JSON.parse(storedCommands) : [];
+  } catch (initializationError) {
+    console.error('Failed to load trial commands from storage:', initializationError);
     return [];
   }
 };
@@ -21,95 +19,80 @@ const TrialContext = createContext(null);
 
 export const TrialProvider = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  const [trialCommands, setTrialCommands] = useState(getStoredCommands);
-  const [showModal, setShowModal] = useState(false);
+  const [trialCommandList, setTrialCommandList] = useState(getInitialTrialCommands);
+  const [isLimitModalVisible, setIsLimitModalVisible] = useState(false);
 
-  const trialCount = trialCommands.length;
-  const canCreate = isAuthenticated || trialCount < TRIAL_MAX;
+  const trialCommandCount = trialCommandList.length;
+  const isCreationAllowed = isAuthenticated || trialCommandCount < TRIAL_MAX_COMMANDS;
 
-  const addTrialCommand = useCallback(
-    async (command) => {
-      if (isAuthenticated) {
-        const res = await saveCommand({ command });
-        return res;
-      } else {
-        const newCommand = {
-          _id: `trial_${Date.now()}`,
-          command: command.command,
-          name: command.name,
-          text: command.text,
-        };
-        setTrialCommands((prev) => {
-          const updated = [...prev, newCommand];
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-          return updated;
-        });
-        return { error: false };
-      }
-    },
-    [isAuthenticated],
-  );
+  const addTrialCommand = useCallback(async (newCommandData) => {
+    if (isAuthenticated) {
+      const apiResponse = await saveCommand({ command: newCommandData });
+      return apiResponse;
+    } else {
+      const trialEntry = {
+        _id: `trial_${Date.now()}`,
+        command: newCommandData.command,
+        name: newCommandData.name,
+        text: newCommandData.text,
+      };
+      setTrialCommandList((prevList) => {
+        const updatedList = [...prevList, trialEntry];
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedList));
+        return updatedList;
+      });
+      return { error: false };
+    }
+  }, [isAuthenticated]);
 
-  const updateTrialCommand = useCallback(
-    async (id, text) => {
-      if (isAuthenticated) {
-        return await updateCommand({ updatedData: { text }, id });
-      } else {
-        setTrialCommands((prev) => {
-          const updated = prev.map((c) => (c._id === id ? { ...c, text } : c));
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-          return updated;
-        });
-        return { error: false };
-      }
-    },
-    [isAuthenticated],
-  );
+  const updateTrialCommand = useCallback(async (commandId, updatedContent) => {
+    if (isAuthenticated) {
+      return await updateCommand({ updatedData: { text: updatedContent }, id: commandId });
+    } else {
+      setTrialCommandList((prevList) => {
+        const updatedList = prevList.map((cmd) => (cmd._id === commandId ? { ...cmd, text: updatedContent } : cmd));
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedList));
+        return updatedList;
+      });
+      return { error: false };
+    }
+  }, [isAuthenticated]);
 
-  const getTrialCommand = useCallback(
-    async (trigger) => {
-      if (isAuthenticated) {
-        return await getCommand(trigger);
-      } else {
-        const match = trialCommands.find(
-          (c) => c.command.toLowerCase() === trigger.trim().toLowerCase(),
-        );
-        if (!match) return { error: true, message: 'Command not found' };
-        return {
-          command: match.command,
-          text: match.text,
-          name: match.name,
-          error: false,
-        };
-      }
-    },
-    [isAuthenticated, trialCommands],
-  );
+  const getTrialCommand = useCallback(async (commandTrigger) => {
+    if (isAuthenticated) {
+      return await getCommand(commandTrigger);
+    } else {
+      const matchedCommand = trialCommandList.find(
+        (cmd) => cmd.command.toLowerCase() === commandTrigger.trim().toLowerCase()
+      );
+      if (!matchedCommand) return { error: true, message: 'Command not found' };
+      return { command: matchedCommand.command, text: matchedCommand.text, name: matchedCommand.name, error: false };
+    }
+  }, [isAuthenticated, trialCommandList]);
 
-  const openModal = useCallback(() => setShowModal(true), []);
-  const closeModal = useCallback(() => setShowModal(false), []);
+  const showLimitModal = useCallback(() => setIsLimitModalVisible(true), []);
+  const hideLimitModal = useCallback(() => setIsLimitModalVisible(false), []);
 
   return (
-    <TrialContext.Provider
-      value={{
-        trialCommands,
-        trialCount,
-        canCreate,
-        addTrialCommand,
-        updateTrialCommand,
-        getTrialCommand,
-        showModal,
-        openModal,
-        closeModal,
-        TRIAL_MAX,
-      }}>
+    <TrialContext.Provider value={{
+      trialCommands: trialCommandList,
+      trialCount: trialCommandCount,
+      canCreate: isCreationAllowed,
+      addTrialCommand,
+      updateTrialCommand,
+      getTrialCommand,
+      showModal: isLimitModalVisible,
+      openModal: showLimitModal,
+      closeModal: hideLimitModal,
+      TRIAL_MAX: TRIAL_MAX_COMMANDS,
+    }}>
       {children}
     </TrialContext.Provider>
   );
 };
 
 export const useTrial = () => {
-  const ctx = useContext(TrialContext);
-  if (!ctx) throw new Error('useTrial must be used within TrialProvider');
-  return ctx;
+  const trialContextValue = useContext(TrialContext);
+  if (!trialContextValue) throw new Error('useTrial must be used within TrialProvider');
+  return trialContextValue;
 };

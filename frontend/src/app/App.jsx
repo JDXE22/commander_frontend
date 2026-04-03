@@ -11,64 +11,64 @@ import { AuthProvider } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 
 function AppContent() {
-  const [inputText, setInputText] = useState('');
-  const [commands, setCommands] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [recentCommands, setRecentCommands] = useState([]);
-  const location = useLocation();
+  const [terminalInput, setTerminalInput] = useState('');
+  const [activeCommands, setActiveCommands] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [commandHistory, setCommandHistory] = useState([]);
+  const currentLocation = useLocation();
   const { getTrialCommand } = useTrial();
 
-  const handleInput = (e) => {
-    setInputText(e.target.value);
+  const handleTerminalInputChange = (event) => {
+    setTerminalInput(event.target.value);
   };
 
-  const executeCommand = async (commandText) => {
-    if (!commandText.trim() || isLoading) return;
+  const processCommand = async (commandTrigger) => {
+    if (!commandTrigger.trim() || isProcessing) return;
 
-    setIsLoading(true);
+    setIsProcessing(true);
     try {
-      const result = await getTrialCommand(commandText);
+      const commandResult = await getTrialCommand(commandTrigger);
 
-      if (result?.error) {
-        console.error('Command not found:', result.message);
-        setCommands(null);
+      if (commandResult?.error) {
+        console.error('Command validation failed:', commandResult.message);
+        setActiveCommands(null);
         return;
       }
 
-      setCommands([result]);
+      setActiveCommands([commandResult]);
 
-      setRecentCommands((prev) => {
-        const cleaned = commandText.trim();
-        const filtered = prev.filter((c) => c !== cleaned);
-        return [cleaned, ...filtered].slice(0, 2);
+      setCommandHistory((prevHistory) => {
+        const cleanedTrigger = commandTrigger.trim();
+        const filteredHistory = prevHistory.filter((cmd) => cmd !== cleanedTrigger);
+        return [cleanedTrigger, ...filteredHistory].slice(0, 2);
       });
-    } catch (error) {
-      console.error('Error in request:', error);
+    } catch (processError) {
+      console.error('Terminal processing error:', processError);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    await executeCommand(inputText);
-    setInputText('');
+  const handleTerminalSubmit = async (event) => {
+    event.preventDefault();
+    await processCommand(terminalInput);
+    setTerminalInput('');
   };
 
-  const handleRecentClick = async (cmd) => {
-    await executeCommand(cmd);
+  const handleHistoryItemClick = async (historicalCommand) => {
+    await processCommand(historicalCommand);
   };
 
-  const handleClear = () => {
-    setCommands(null);
+  const handleClearTerminal = () => {
+    setActiveCommands(null);
   };
 
-  const noNavbarPaths = ['/', '/auth'];
-  const showNavbar = !noNavbarPaths.includes(location.pathname);
+  const routesWithoutNavbar = ['/', '/auth'];
+  const shouldDisplayNavbar = !routesWithoutNavbar.includes(currentLocation.pathname);
 
   return (
-    <div className={`App ${!showNavbar ? 'no-sidebar' : ''}`}>
-      {showNavbar && <Navbar />}
+    <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
+      {shouldDisplayNavbar && <Navbar />}
       <Routes>
         <Route path='/' element={<Hero />} />
         <Route path='/auth' element={<Auth />} />
@@ -76,14 +76,14 @@ function AppContent() {
           path='/terminal'
           element={
             <Home
-              handleInput={handleInput}
-              inputText={inputText}
-              handleFormSubmit={handleFormSubmit}
-              commands={commands}
-              isLoading={isLoading}
-              handleClear={handleClear}
-              handleRecentClick={handleRecentClick}
-              recentCommands={recentCommands}
+              handleInput={handleTerminalInputChange}
+              inputText={terminalInput}
+              handleFormSubmit={handleTerminalSubmit}
+              commands={activeCommands}
+              isLoading={isProcessing}
+              handleClear={handleClearTerminal}
+              handleRecentClick={handleHistoryItemClick}
+              recentCommands={commandHistory}
             />
           }
         />
