@@ -1,5 +1,8 @@
 import axios from 'axios';
-const URL = import.meta.env.VITE_API_URL;
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const VERSION = import.meta.env.VITE_API_VERSION;
+const URL = VERSION ? `${BASE_URL}/${VERSION}/commands` : `${BASE_URL}/commands`;
 
 export const getCommand = async (cmd) => {
   try {
@@ -41,7 +44,6 @@ export const saveCommand = async ({ command }) => {
   }
   try {
     const response = await axios.post(`${URL}`, command);
-
     return response.data;
   } catch (error) {
     return {

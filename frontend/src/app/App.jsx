@@ -1,91 +1,107 @@
 import { useState } from 'react';
-import { getCommand } from '../features/commands/api/apiCommands';
 import { Navbar } from './layout/Navbar';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Home } from '../features/commands/lookup/Home';
 import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
+import { Hero } from '../features/landing/Hero';
+import { Auth } from '../features/auth/Auth';
+import { TrialProvider, useTrial } from '../shared/context/TrialContext';
+import { AuthProvider } from '../shared/context/AuthContext';
+import { TrialModal } from '../shared/ui/Modal/TrialModal';
 
-function App() {
-  const [inputText, setInputText] = useState('');
-  const [commands, setCommands] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [recentCommands, setRecentCommands] = useState(['/log -v', '/status']);
+function AppContent() {
+  const [terminalInput, setTerminalInput] = useState('');
+  const [activeCommands, setActiveCommands] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [commandHistory, setCommandHistory] = useState([]);
+  const currentLocation = useLocation();
+  const { getTrialCommand } = useTrial();
 
-  const handleInput = (e) => {
-    setInputText(e.target.value);
+  const handleTerminalInputChange = (event) => {
+    setTerminalInput(event.target.value);
   };
 
-  const executeCommand = async (commandText) => {
-    if (!commandText.trim() || isLoading) return;
+  const processCommand = async (commandTrigger) => {
+    if (!commandTrigger.trim() || isProcessing) return;
 
-    setIsLoading(true);
+    setIsProcessing(true);
     try {
-      const filteredCommand = await getCommand(commandText);
-      
-      if (filteredCommand?.error) {
-        console.error('Error fetching command:', filteredCommand.message);
+      const commandResult = await getTrialCommand(commandTrigger);
+
+      if (commandResult?.error) {
+        console.error('Command validation failed:', commandResult.message);
+        setActiveCommands(null);
         return;
       }
 
-      setCommands([filteredCommand]);
+      setActiveCommands([commandResult]);
 
-      // Update recent commands dynamically
-      setRecentCommands(prev => {
-        const cleaned = commandText.trim();
-        // Remove if exists to move to top
-        const filtered = prev.filter(c => c !== cleaned);
-        // Add to top and keep max 2
-        return [cleaned, ...filtered].slice(0, 2);
+      setCommandHistory((prevHistory) => {
+        const cleanedTrigger = commandTrigger.trim();
+        const filteredHistory = prevHistory.filter((cmd) => cmd !== cleanedTrigger);
+        return [cleanedTrigger, ...filteredHistory].slice(0, 2);
       });
-
-    } catch (error) {
-      console.error('Error in request:', error);
+    } catch (processError) {
+      console.error('Terminal processing error:', processError);
     } finally {
-      setIsLoading(false);
+      setIsProcessing(false);
     }
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    await executeCommand(inputText);
-    setInputText('');
+  const handleTerminalSubmit = async (event) => {
+    event.preventDefault();
+    await processCommand(terminalInput);
+    setTerminalInput('');
   };
 
-  const handleRecentClick = async (cmd) => {
-    await executeCommand(cmd);
+  const handleHistoryItemClick = async (historicalCommand) => {
+    await processCommand(historicalCommand);
   };
 
-  const handleClear = () => {
-    setCommands(null);
+  const handleClearTerminal = () => {
+    setActiveCommands(null);
   };
+
+  const routesWithoutNavbar = ['/', '/auth'];
+  const shouldDisplayNavbar = !routesWithoutNavbar.includes(currentLocation.pathname);
 
   return (
-    <div className='App'>
-      <Navbar />
+    <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
+      {shouldDisplayNavbar && <Navbar />}
       <Routes>
+        <Route path='/' element={<Hero />} />
+        <Route path='/auth' element={<Auth />} />
         <Route
-          path='/'
+          path='/terminal'
           element={
             <Home
-              handleInput={handleInput}
-              inputText={inputText}
-              handleFormSubmit={handleFormSubmit}
-              commands={commands}
-              isLoading={isLoading}
-              handleClear={handleClear}
-              handleRecentClick={handleRecentClick}
-              recentCommands={recentCommands}
+              handleInput={handleTerminalInputChange}
+              inputText={terminalInput}
+              handleFormSubmit={handleTerminalSubmit}
+              commands={activeCommands}
+              isLoading={isProcessing}
+              handleClear={handleClearTerminal}
+              handleRecentClick={handleHistoryItemClick}
+              recentCommands={commandHistory}
             />
           }
         />
         <Route path='/filter' element={<FilterCmd />} />
-        <Route
-          path='/create'
-          element={<CreateCmd />}
-        />
+        <Route path='/create' element={<CreateCmd />} />
       </Routes>
+      <TrialModal />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <TrialProvider>
+        <AppContent />
+      </TrialProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,137 +1,144 @@
-import { useEffect, useState } from 'react';
-import { getCommands, updateCommand } from '../api/apiCommands';
+import { useState, useEffect } from 'react';
 import { Button, CopyButton } from '../../../shared/ui/Button/Button';
+import { useTrial } from '../../../shared/context/TrialContext';
+import { useAuth } from '../../../shared/context/AuthContext';
+import { getCommands } from '../api/apiCommands';
 
 export const FilterCmd = () => {
-  const [filteredCommands, setFilteredCommands] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [updatedInput, setUpdatedInput] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { trialCommands, updateTrialCommand } = useTrial();
+  const { isAuthenticated } = useAuth();
+  
+  const [persistentCommands, setPersistentCommands] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPageCount, setTotalPageCount] = useState(1);
+  const [isLoadingCommands, setIsLoadingCommands] = useState(false);
+  const [pendingUpdateInput, setPendingUpdateInput] = useState({});
 
-  const fetchCommands = async () => {
-    setLoading(true);
-    try {
-      const commands = await getCommands({ page });
-      if (commands) {
-        setFilteredCommands(commands.commands);
-        setTotalPages(commands.totalPages);
-      } else {
-        setFilteredCommands([]);
-        setTotalPages(1);
+  useEffect(() => {
+    if (isAuthenticated) {
+      const loadPersistentCommands = async () => {
+        setIsLoadingCommands(true);
+        try {
+          const fetchResponse = await getCommands({ page: currentPage });
+          if (fetchResponse && !fetchResponse.error) {
+            setPersistentCommands(fetchResponse.commands);
+            setTotalPageCount(fetchResponse.totalPages);
+          }
+        } catch (fetchError) {
+          console.error('Error loading account commands:', fetchError);
+        } finally {
+          setIsLoadingCommands(false);
+        }
+      };
+      loadPersistentCommands();
+    }
+  }, [isAuthenticated, currentPage]);
+
+  const activeCommandList = isAuthenticated ? persistentCommands : trialCommands;
+
+  const handleCommandUpdate = async ({ commandId, updatedText }) => {
+    await updateTrialCommand(commandId, updatedText);
+    
+    setPendingUpdateInput((prevPending) => {
+      const nextPending = { ...prevPending };
+      delete nextPending[commandId];
+      return nextPending;
+    });
+
+    if (isAuthenticated) {
+      const refreshResponse = await getCommands({ page: currentPage });
+      if (refreshResponse && !refreshResponse.error) {
+        setPersistentCommands(refreshResponse.commands);
       }
-    } catch (error) {
-      console.error('Error fetching commands:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCommands();
-  }, [page]);
-
-  const handlePageChange = (delta) => {
-    setPage((p) => {
-      const next = p + delta;
-      return next < 1 || next > totalPages ? p : next;
-    });
-  };
-
-  const handleUpdate = async ({ id, updatedData }) => {
-    await updateCommand({ updatedData, id });
-    setUpdatedInput((prev) => {
-      const newInput = { ...prev };
-      delete newInput[id];
-      return newInput;
-    });
-    fetchCommands();
-  };
-
   return (
-    <main className='main-content cmd-list-view'>
+    <main className='main-content'>
       <div className='search-section'>
         <h1 className='search-title'>Filter all Commands</h1>
       </div>
 
-      <div className='cmd-list' aria-busy={loading}>
-        {loading ? (
-          <p role="status">Loading commands...</p>
-        ) : filteredCommands.length > 0 ? (
-          filteredCommands.map((command) => {
-            const currentText = updatedInput[command._id] ?? command.text;
+      <div className='cmd-list' aria-busy={isLoadingCommands}>
+        {isLoadingCommands ? (
+          <p role='status'>Synchronizing commands...</p>
+        ) : activeCommandList.length > 0 ? (
+          activeCommandList.map((command) => {
+            const currentContent = pendingUpdateInput[command._id] ?? command.text;
             return (
-              <article key={command._id} className='card' aria-labelledby={`title-${command._id}`}>
-                <div className='entry-header'>
-                  <span id={`title-${command._id}`} className='entry-title'>{command.command}</span>
-                  <div className='entry-buttons'>
-                    <CopyButton textToCopy={command.text} />
+              <article
+                key={command._id}
+                className='card'
+                aria-labelledby={`title-${command._id}`}>
+                <div className='card-header'>
+                  <h2 id={`title-${command._id}`} className='card-title'>
+                    {command.name}
+                  </h2>
+                  <div className='card-actions'>
                     <Button
                       content='Update'
-                      disabled={currentText === command.text}
+                      disabled={currentContent === command.text}
                       handle={() =>
-                        handleUpdate({
-                          id: command._id,
-                          updatedData: { text: currentText },
-                        })
+                        handleCommandUpdate({ commandId: command._id, updatedText: currentContent })
                       }
                       className='btn-primary'
                     />
                   </div>
                 </div>
-                <div className='entry-edit'>
+                <div className='card-body'>
+                  <span className='command-trigger'>{command.command}</span>
                   <textarea
-                    rows={4}
-                    value={currentText}
-                    onChange={(e) =>
-                      setUpdatedInput((prev) => ({
-                        ...prev,
-                        [command._id]: e.target.value,
+                    className='command-text'
+                    value={currentContent}
+                    onChange={(event) =>
+                      setPendingUpdateInput((prevPending) => ({
+                        ...prevPending,
+                        [command._id]: event.target.value,
                       }))
                     }
-                    className='entry-textarea'
-                    placeholder="Enter the command response..."
-                    aria-label={`Edit response for command ${command.command}`}
+                    aria-label={`Edit description for ${command.name}`}
                   />
+                  <div className='card-footer'>
+                    <CopyButton textToCopy={command.text} />
+                  </div>
                 </div>
               </article>
             );
           })
         ) : (
-          <p role="status">No commands found</p>
+          <p role='status'>
+            {isAuthenticated
+              ? 'No commands found in your account.'
+              : 'No commands yet — go to Create to add your first one!'}
+          </p>
         )}
       </div>
 
-      <nav className='pagination' aria-label="Pagination Navigation">
-        <button 
-          className='page-number' 
-          onClick={() => handlePageChange(-1)}
-          disabled={page === 1 || loading}
-          aria-label="Go to previous page"
-        >
-          Prev
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+      {isAuthenticated && totalPageCount > 1 && (
+        <nav className='pagination' aria-label='Pagination Navigation'>
           <button
-            key={number}
-            onClick={() => setPage(number)}
-            className={`page-number ${page === number ? 'active' : ''}`}
-            disabled={loading}
-            aria-label={`Go to page ${number}`}
-            aria-current={page === number ? 'page' : undefined}
-          >
-            {number}
+            className='page-number'
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1 || isLoadingCommands}>
+            Prev
           </button>
-        ))}
-        <button 
-          className='page-number' 
-          onClick={() => handlePageChange(1)}
-          disabled={page === totalPages || loading}
-          aria-label="Go to next page"
-        >
-          Next
-        </button>
-      </nav>
+          {Array.from({ length: totalPageCount }, (_, index) => index + 1).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => setCurrentPage(pageNumber)}
+              className={`page-number ${currentPage === pageNumber ? 'active' : ''}`}
+              disabled={isLoadingCommands}>
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            className='page-number'
+            onClick={() => setCurrentPage((prev) => Math.min(totalPageCount, prev + 1))}
+            disabled={currentPage === totalPageCount || isLoadingCommands}>
+            Next
+          </button>
+        </nav>
+      )}
     </main>
   );
 };
