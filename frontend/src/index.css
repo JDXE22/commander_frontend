@@ -189,6 +189,7 @@ body {
 /* --- HOME VIEW SPECIFIC --- */
 .search-section {
   width: 100%;
+  max-width: var(--dashboard-width);
   margin-bottom: 32px;
   display: flex;
   flex-direction: column;
@@ -409,6 +410,7 @@ body {
 
 .cmd-list {
   width: 100%;
+  max-width: var(--dashboard-width);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -460,6 +462,10 @@ body {
 }
 
 /* --- CREATE VIEW SPECIFIC --- */
+.create-view {
+  justify-content: flex-start;
+}
+
 .create-form {
   width: 100%;
   background-color: var(--bg-secondary);

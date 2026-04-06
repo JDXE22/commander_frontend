@@ -48,7 +48,8 @@ export const CreateCmd = ({ onRefresh }) => {
   };
 
   return (
-    <main className='main-content'>
+    <main className='main-content create-view'>
+      <div className='page-container'>
       <div className='search-section'>
         <h1 className='search-title'>Register a Command</h1>
       </div>
@@ -106,6 +107,7 @@ export const CreateCmd = ({ onRefresh }) => {
           {isSubmitting ? 'Registering...' : !canCreate ? 'Trial limit reached' : 'Register Command'}
         </button>
       </form>
+      </div>
     </main>
   );
 };
