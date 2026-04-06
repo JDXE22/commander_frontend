@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../../shared/api/apiClient';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const VERSION = import.meta.env.VITE_API_VERSION;
