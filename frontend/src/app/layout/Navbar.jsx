@@ -28,7 +28,7 @@ export const Navbar = () => {
         </nav>
 
         <div className="nav-links secondary">
-          <CustomLink to="/">Landing Page</CustomLink>
+          {!isAuthenticated && <CustomLink to="/">Landing Page</CustomLink>}
           {isAuthenticated ? (
             <button className="nav-item logout-btn" onClick={handleLogout}>
               Logout ({user?.email?.split('@')[0]})
@@ -69,7 +69,7 @@ export const Navbar = () => {
             <CustomLink to="/filter" onClick={() => setIsOpen(false)}>Filter</CustomLink>
             <CustomLink to="/create" onClick={() => setIsOpen(false)}>Create</CustomLink>
             <div className="mobile-nav-divider"></div>
-            <CustomLink to="/" onClick={() => setIsOpen(false)}>Landing Page</CustomLink>
+            {!isAuthenticated && <CustomLink to="/" onClick={() => setIsOpen(false)}>Landing Page</CustomLink>}
             {isAuthenticated ? (
               <button className="nav-item logout-btn" onClick={handleLogout}>
                 Logout
