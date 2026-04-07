@@ -121,30 +121,20 @@ function AppContent() {
         <Route
           path='/terminal'
           element={
-            isAuthenticated ? (
-              <Home
-                handleInput={handleTerminalInputChange}
-                inputText={terminalInput}
-                handleFormSubmit={handleTerminalSubmit}
-                commands={activeCommands}
-                isLoading={isProcessing}
-                handleClear={handleClearTerminal}
-                handleRecentClick={handleHistoryItemClick}
-                recentCommands={commandHistory}
-              />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
+            <Home
+              handleInput={handleTerminalInputChange}
+              inputText={terminalInput}
+              handleFormSubmit={handleTerminalSubmit}
+              commands={activeCommands}
+              isLoading={isProcessing}
+              handleClear={handleClearTerminal}
+              handleRecentClick={handleHistoryItemClick}
+              recentCommands={commandHistory}
+            />
           }
         />
-        <Route 
-          path='/filter' 
-          element={isAuthenticated ? <FilterCmd /> : <Navigate to="/auth" replace />} 
-        />
-        <Route 
-          path='/create' 
-          element={isAuthenticated ? <CreateCmd /> : <Navigate to="/auth" replace />} 
-        />
+        <Route path='/filter' element={<FilterCmd />} />
+        <Route path='/create' element={<CreateCmd />} />
       </Routes>
       <TrialModal />
     </div>
