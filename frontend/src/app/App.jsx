@@ -170,7 +170,7 @@ function App() {
     <AuthProvider>
       <TrialProvider>
         <AppContent />
-        <Toaster position="top-right" theme="dark" />
+        <Toaster position='top-right' />
       </TrialProvider>
     </AuthProvider>
   );

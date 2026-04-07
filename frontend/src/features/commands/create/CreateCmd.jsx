@@ -40,7 +40,8 @@ export const CreateCmd = ({ onRefresh }) => {
         sileo.success({
           title: 'Success!',
           description: 'Command registered successfully',
-          fill: '#22c55e',
+          fill: '#171717',
+          styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
         });
         onRefresh && onRefresh();
         setTriggerInput('');

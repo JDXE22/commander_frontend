@@ -68,13 +68,15 @@ export const Auth = () => {
           sileo.success({ 
             title: 'Reset Link Sent!', 
             description: 'Check your email to recover your password.',
-            fill: '#22c55e'
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
           });
         } else if (authMode === 'reset') {
           sileo.success({ 
             title: 'Recovery Successful!', 
             description: 'Your password has been updated. Redirecting to login...',
-            fill: '#22c55e'
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
           });
           setTimeout(() => {
             navigate('/auth?mode=login');
@@ -82,7 +84,12 @@ export const Auth = () => {
           }, 3000);
         } else {
           login(authResponse);
-          sileo.success({ title: 'Welcome Back!', description: 'Redirecting to terminal...', fill: '#22c55e' });
+          sileo.success({ 
+            title: 'Welcome Back!', 
+            description: 'Redirecting to terminal...', 
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
+          });
           navigate('/terminal');
         }
       }

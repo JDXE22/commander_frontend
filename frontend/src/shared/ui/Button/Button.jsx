@@ -30,7 +30,16 @@ export const CopyButton = ({
     try {
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
-      sileo.success({ title: 'Copied!', description: 'Text copied to clipboard.', fill: '#22c55e' });
+      sileo.success({ 
+        title: 'Copied!', 
+        description: 'Text copied to clipboard.', 
+        fill: '#171717',
+        styles: { 
+          title: 'sileo-text-white', 
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fix'
+        }
+      });
       onCopy && onCopy();
     } catch (error) {
       console.error('Copy failed:', error);

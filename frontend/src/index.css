@@ -17,16 +17,11 @@
   --terminal-green-bright: #bef264;
   --dashboard-width: 720px;
   --bg-inset: #010409;
+  --sileo-state-success: #171717;
+}
 
-  /* Sileo Overrides */
-  --sileo-state-success: var(--terminal-green);
-  --sileo-state-error: #ef4444;
-  --sileo-state-info: var(--terminal-green-bright);
-
-  /* Force Dark Surface */
-  --sileo-base-bg: var(--bg-secondary);
-  --sileo-base-text: var(--text-primary);
-  --sileo-border: var(--border-subtle);
+.sileo-text-white {
+  color: #ffffff !important;
 }
 
 body {
@@ -166,7 +161,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 1024px) {
