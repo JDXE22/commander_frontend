@@ -1,4 +1,5 @@
 import { CommandList } from '../list/Command';
+import "./Home.css";
 
 export const Home = ({
   handleInput,

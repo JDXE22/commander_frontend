@@ -3,6 +3,7 @@ import { Button, CopyButton } from '../../../shared/ui/Button/Button';
 import { useTrial } from '../../../shared/context/TrialContext';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { getCommands } from '../api/apiCommands';
+import "./FilterCmd.css";
 
 export const FilterCmd = () => {
   const { trialCommands, updateTrialCommand } = useTrial();

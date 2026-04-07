@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useMatch, useResolvedPath, useNavigate } from "react-router-dom";
 import buddyLogo from "../../assets/buddy.svg";
 import { useAuth } from "../../shared/context/AuthContext";
+import "./Navbar.css";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

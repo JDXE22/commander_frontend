@@ -1,4 +1,5 @@
 import { CopyButton } from '../../../shared/ui/Button/Button';
+import "./Command.css";
 
 export const CommandList = ({ command, className = '' }) => {
   return (

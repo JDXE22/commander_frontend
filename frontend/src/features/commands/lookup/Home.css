@@ -1,0 +1,132 @@
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.search-section {
+  width: 100%;
+  max-width: var(--dashboard-width);
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-title {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: left;
+}
+
+.input-wrapper {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.prompt-char {
+  color: var(--terminal-green);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  flex: 1;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.results-area {
+  width: 100%;
+  max-width: var(--dashboard-width);
+  margin: 0 auto 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recent-activity {
+  width: 100%;
+  max-width: var(--dashboard-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-header {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.history-grid {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.history-item {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.history-item:hover {
+  border-color: var(--terminal-green);
+  background-color: var(--bg-primary);
+}
+
+.history-text {
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.history-icon {
+  opacity: 0.5;
+  color: var(--terminal-green);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .history-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
