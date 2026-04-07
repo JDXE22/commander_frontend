@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTrial } from '../../../shared/context/TrialContext';
+import "./CreateCmd.css";
 
 export const CreateCmd = ({ onRefresh }) => {
   const [triggerInput, setTriggerInput] = useState('');

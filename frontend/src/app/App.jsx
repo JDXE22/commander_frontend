@@ -1,22 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from './layout/Navbar';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import { Home } from '../features/commands/lookup/Home';
 import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
 import { Hero } from '../features/landing/Hero';
 import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
-import { AuthProvider } from '../shared/context/AuthContext';
+import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 
 function AppContent() {
   const [terminalInput, setTerminalInput] = useState('');
-  const [activeCommands, setActiveCommands] = useState(null);
+  const [activeCommands, setActiveCommands] = useState(() => {
+    try {
+      const savedActive = localStorage.getItem('commander_active_commands');
+      return savedActive ? JSON.parse(savedActive) : null;
+    } catch (error) {
+      console.error('Failed to load active commands:', error);
+      return null;
+    }
+  });
   const [isProcessing, setIsProcessing] = useState(false);
-  const [commandHistory, setCommandHistory] = useState([]);
+  const { isAuthenticated, loading } = useAuth();
+  const [commandHistory, setCommandHistory] = useState(() => {
+    try {
+      const savedHistory = localStorage.getItem('commander_command_history');
+      return savedHistory ? JSON.parse(savedHistory) : [];
+    } catch (error) {
+      console.error('Failed to load command history:', error);
+      return [];
+    }
+  });
+  
   const currentLocation = useLocation();
   const { getTrialCommand } = useTrial();
+
+  useEffect(() => {
+    localStorage.setItem('commander_command_history', JSON.stringify(commandHistory));
+  }, [commandHistory]);
+
+  useEffect(() => {
+    if (activeCommands) {
+      localStorage.setItem('commander_active_commands', JSON.stringify(activeCommands));
+    } else {
+      localStorage.removeItem('commander_active_commands');
+    }
+  }, [activeCommands]);
 
   const handleTerminalInputChange = (event) => {
     setTerminalInput(event.target.value);
@@ -63,6 +93,16 @@ function AppContent() {
     setActiveCommands(null);
   };
 
+
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <div className="loader"></div>
+        <p>Initializing Commander...</p>
+      </div>
+    );
+  }
+
   const routesWithoutNavbar = ['/', '/auth'];
   const shouldDisplayNavbar = !routesWithoutNavbar.includes(currentLocation.pathname);
 
@@ -70,8 +110,14 @@ function AppContent() {
     <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
       {shouldDisplayNavbar && <Navbar />}
       <Routes>
-        <Route path='/' element={<Hero />} />
-        <Route path='/auth' element={<Auth />} />
+        <Route 
+          path='/' 
+          element={isAuthenticated ? <Navigate to="/terminal" replace /> : <Hero />} 
+        />
+        <Route 
+          path='/auth' 
+          element={isAuthenticated ? <Navigate to="/terminal" replace /> : <Auth />} 
+        />
         <Route
           path='/terminal'
           element={
