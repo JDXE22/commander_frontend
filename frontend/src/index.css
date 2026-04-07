@@ -24,6 +24,22 @@
   color: #ffffff !important;
 }
 
+.sileo-badge-fix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-sileo-header] {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+[data-sileo-title] {
+  line-height: var(--sileo-height);
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
