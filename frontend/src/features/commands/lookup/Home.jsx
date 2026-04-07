@@ -19,7 +19,7 @@ export const Home = ({
             <h1 id='terminal-title' className='search-title'>
               Terminal
             </h1>
-            {commands && (
+            {commands && commands.length > 0 && (
               <button
                 type='button'
                 onClick={handleClear}
