@@ -3,6 +3,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
 import { useAuth } from '../../shared/context/AuthContext';
 import { loginUser, registerUser, forgotPassword, resetPassword } from './api/apiAuth';
+import { sileo } from 'sileo';
 import './Auth.css';
 
 export const Auth = () => {
@@ -15,8 +16,6 @@ export const Auth = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
   const [recoveryToken, setRecoveryToken] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -38,8 +37,6 @@ export const Auth = () => {
 
   const handleAuthSubmit = async (event) => {
     event.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
     setIsSubmitting(true);
 
     try {
@@ -52,12 +49,12 @@ export const Auth = () => {
         authResponse = await forgotPassword(emailInput);
       } else if (authMode === 'reset') {
         if (passwordInput !== confirmPasswordInput) {
-          setErrorMessage('Passwords do not match');
+          sileo.error({ title: 'Validation Error', description: 'Passwords do not match', fill: '#ef4444' });
           setIsSubmitting(false);
           return;
         }
         if (!recoveryToken) {
-          setErrorMessage('Invalid or missing recovery token');
+          sileo.error({ title: 'Invalid Token', description: 'Invalid or missing recovery token', fill: '#ef4444' });
           setIsSubmitting(false);
           return;
         }
@@ -65,24 +62,39 @@ export const Auth = () => {
       }
 
       if (authResponse.error) {
-        setErrorMessage(authResponse.message);
+        sileo.error({ title: 'Authentication Error', description: authResponse.message, fill: '#ef4444' });
       } else {
         if (authMode === 'forgot') {
-          setSuccessMessage('Reset link sent! Check your email to recover your password.');
+          sileo.success({ 
+            title: 'Reset Link Sent!', 
+            description: 'Check your email to recover your password.',
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
+          });
         } else if (authMode === 'reset') {
-          setSuccessMessage('Recovery successful! Your password has been updated.');
+          sileo.success({ 
+            title: 'Recovery Successful!', 
+            description: 'Your password has been updated. Redirecting to login...',
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
+          });
           setTimeout(() => {
             navigate('/auth?mode=login');
             setAuthMode('login');
-            setSuccessMessage('');
           }, 3000);
         } else {
           login(authResponse);
+          sileo.success({ 
+            title: 'Welcome Back!', 
+            description: 'Redirecting to terminal...', 
+            fill: '#171717',
+            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
+          });
           navigate('/terminal');
         }
       }
     } catch (error) {
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      sileo.error({ title: 'System Error', description: 'An unexpected error occurred. Please try again.', fill: '#ef4444' });
     } finally {
       setIsSubmitting(false);
     }
@@ -151,9 +163,6 @@ export const Auth = () => {
           )}
 
           <form className="auth-form" onSubmit={handleAuthSubmit}>
-            {errorMessage && <div className="auth-error-msg">{errorMessage}</div>}
-            {successMessage && <div className="auth-success-msg">{successMessage}</div>}
-            
             {!isResetPasswordMode && (
               <div className="auth-field">
                 <label className="auth-label">Email Address</label>

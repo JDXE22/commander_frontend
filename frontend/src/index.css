@@ -17,6 +17,11 @@
   --terminal-green-bright: #bef264;
   --dashboard-width: 720px;
   --bg-inset: #010409;
+  --sileo-state-success: #171717;
+}
+
+.sileo-text-white {
+  color: #ffffff !important;
 }
 
 body {
@@ -105,25 +110,6 @@ body {
   color: #f87171;
 }
 
-.btn-clear-input {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.btn-clear-input:hover {
-  color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.1);
-}
 
 /* --- SHARED PAGE CONTAINER --- */
 .page-container {
@@ -156,7 +142,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 1024px) {

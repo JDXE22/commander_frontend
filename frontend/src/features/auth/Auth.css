@@ -99,28 +99,6 @@
   gap: 20px;
 }
 
-.auth-error-msg {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.auth-success-msg {
-  background-color: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-  color: var(--terminal-green);
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 500;
-}
-
 .auth-header-special {
   text-align: center;
   width: 100%;
