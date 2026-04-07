@@ -6,10 +6,11 @@ export const CommandList = ({ command, className = '' }) => {
     <div className={`command-list-wrapper ${className}`}>
       {command.map((cmd) => (
         <article key={cmd._id} className='card'>
-          <div className='cmd-desc'>
-            {cmd.description ||
-              'Executes the primary greeting macro for automated terminal responses.'}
-          </div>
+          {cmd.description && (
+            <div className='cmd-desc'>
+              {cmd.description}
+            </div>
+          )}
           <div className='code-block'>
             <span className='code-text'>
               {cmd.text}
