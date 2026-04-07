@@ -1,6 +1,7 @@
 import copyIcon from '../../../shared/utils/copyIcon.svg';
 import copiedIcon from '../../../shared/utils/copiedIcon.png';
 import { useEffect, useRef, useState } from 'react';
+import { sileo } from 'sileo';
 
 export const Button = ({
   handle,
@@ -29,9 +30,11 @@ export const CopyButton = ({
     try {
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
+      sileo.success({ title: 'Copied!', description: 'Text copied to clipboard.', fill: '#22c55e' });
       onCopy && onCopy();
     } catch (error) {
       console.error('Copy failed:', error);
+      sileo.error({ title: 'Copy Failed', description: 'Could not copy text to clipboard.', fill: '#ef4444' });
       onError && onError(error);
     }
   };

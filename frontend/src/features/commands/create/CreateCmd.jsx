@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTrial } from '../../../shared/context/TrialContext';
+import { sileo } from 'sileo';
 import "./CreateCmd.css";
 
 export const CreateCmd = ({ onRefresh }) => {
@@ -18,7 +19,11 @@ export const CreateCmd = ({ onRefresh }) => {
     }
 
     if (!triggerInput.trim() || !contentInput.trim() || !nameInput.trim()) {
-      alert('Please fill all required fields');
+      sileo.error({
+        title: 'Validation Error',
+        description: 'Please fill all required fields',
+        fill: '#ef4444',
+      });
       return;
     }
 
@@ -32,17 +37,29 @@ export const CreateCmd = ({ onRefresh }) => {
     try {
       const creationResponse = await addTrialCommand(commandPayload);
       if (creationResponse && !creationResponse.error) {
-        alert('Command registered successfully');
+        sileo.success({
+          title: 'Success!',
+          description: 'Command registered successfully',
+          fill: '#22c55e',
+        });
         onRefresh && onRefresh();
         setTriggerInput('');
         setContentInput('');
         setNameInput('');
       } else {
-        alert(creationResponse?.message || 'Failed to register command');
+        sileo.error({
+          title: 'Registration Failed',
+          description: creationResponse?.message || 'Failed to register command',
+          fill: '#ef4444',
+        });
       }
     } catch (creationError) {
       console.error('Command registration failed:', creationError);
-      alert('A technical error occurred while registering the command');
+      sileo.error({
+        title: 'System Error',
+        description: 'A technical error occurred while registering the command',
+        fill: '#ef4444',
+      });
     } finally {
       setIsSubmitting(false);
     }

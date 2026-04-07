@@ -9,6 +9,7 @@ import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
 import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
+import { Toaster, sileo } from 'sileo';
 
 function AppContent() {
   const [terminalInput, setTerminalInput] = useState('');
@@ -32,17 +33,23 @@ function AppContent() {
       return [];
     }
   });
-  
+
   const currentLocation = useLocation();
   const { getTrialCommand } = useTrial();
 
   useEffect(() => {
-    localStorage.setItem('commander_command_history', JSON.stringify(commandHistory));
+    localStorage.setItem(
+      'commander_command_history',
+      JSON.stringify(commandHistory),
+    );
   }, [commandHistory]);
 
   useEffect(() => {
     if (activeCommands) {
-      localStorage.setItem('commander_active_commands', JSON.stringify(activeCommands));
+      localStorage.setItem(
+        'commander_active_commands',
+        JSON.stringify(activeCommands),
+      );
     } else {
       localStorage.removeItem('commander_active_commands');
     }
@@ -61,6 +68,11 @@ function AppContent() {
 
       if (commandResult?.error) {
         console.error('Command validation failed:', commandResult.message);
+        sileo.error({
+          title: 'Command Error',
+          description: commandResult.message,
+          fill: '#ef4444',
+        });
         setActiveCommands(null);
         return;
       }
@@ -69,11 +81,18 @@ function AppContent() {
 
       setCommandHistory((prevHistory) => {
         const cleanedTrigger = commandTrigger.trim();
-        const filteredHistory = prevHistory.filter((cmd) => cmd !== cleanedTrigger);
+        const filteredHistory = prevHistory.filter(
+          (cmd) => cmd !== cleanedTrigger,
+        );
         return [cleanedTrigger, ...filteredHistory].slice(0, 2);
       });
     } catch (processError) {
       console.error('Terminal processing error:', processError);
+      sileo.error({
+        title: 'Processing Error',
+        description: 'Failed to process the command.',
+        fill: '#ef4444',
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -93,30 +112,35 @@ function AppContent() {
     setActiveCommands(null);
   };
 
-
   if (loading) {
     return (
-      <div className="app-loading">
-        <div className="loader"></div>
+      <div className='app-loading'>
+        <div className='loader'></div>
         <p>Initializing Commander...</p>
       </div>
     );
   }
 
   const routesWithoutNavbar = ['/', '/auth'];
-  const shouldDisplayNavbar = !routesWithoutNavbar.includes(currentLocation.pathname);
+  const shouldDisplayNavbar = !routesWithoutNavbar.includes(
+    currentLocation.pathname,
+  );
 
   return (
     <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
       {shouldDisplayNavbar && <Navbar />}
       <Routes>
-        <Route 
-          path='/' 
-          element={isAuthenticated ? <Navigate to="/terminal" replace /> : <Hero />} 
+        <Route
+          path='/'
+          element={
+            isAuthenticated ? <Navigate to='/terminal' replace /> : <Hero />
+          }
         />
-        <Route 
-          path='/auth' 
-          element={isAuthenticated ? <Navigate to="/terminal" replace /> : <Auth />} 
+        <Route
+          path='/auth'
+          element={
+            isAuthenticated ? <Navigate to='/terminal' replace /> : <Auth />
+          }
         />
         <Route
           path='/terminal'
@@ -146,6 +170,7 @@ function App() {
     <AuthProvider>
       <TrialProvider>
         <AppContent />
+        <Toaster position="top-right" theme="dark" />
       </TrialProvider>
     </AuthProvider>
   );

@@ -3,6 +3,7 @@ import { Button, CopyButton } from '../../../shared/ui/Button/Button';
 import { useTrial } from '../../../shared/context/TrialContext';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { getCommands } from '../api/apiCommands';
+import { sileo } from 'sileo';
 import "./FilterCmd.css";
 
 export const FilterCmd = () => {
@@ -27,6 +28,7 @@ export const FilterCmd = () => {
           }
         } catch (fetchError) {
           console.error('Error loading account commands:', fetchError);
+          sileo.error({ title: 'Fetch Error', description: 'Failed to load your commands.', fill: '#ef4444' });
         } finally {
           setIsLoadingCommands(false);
         }
@@ -38,19 +40,25 @@ export const FilterCmd = () => {
   const activeCommandList = isAuthenticated ? persistentCommands : trialCommands;
 
   const handleCommandUpdate = async ({ commandId, updatedText }) => {
-    await updateTrialCommand(commandId, updatedText);
-    
-    setPendingUpdateInput((prevPending) => {
-      const nextPending = { ...prevPending };
-      delete nextPending[commandId];
-      return nextPending;
-    });
+    try {
+      await updateTrialCommand(commandId, updatedText);
+      sileo.success({ title: 'Updated!', description: 'Command updated successfully.', fill: '#22c55e' });
+      
+      setPendingUpdateInput((prevPending) => {
+        const nextPending = { ...prevPending };
+        delete nextPending[commandId];
+        return nextPending;
+      });
 
-    if (isAuthenticated) {
-      const refreshResponse = await getCommands({ page: currentPage });
-      if (refreshResponse && !refreshResponse.error) {
-        setPersistentCommands(refreshResponse.commands);
+      if (isAuthenticated) {
+        const refreshResponse = await getCommands({ page: currentPage });
+        if (refreshResponse && !refreshResponse.error) {
+          setPersistentCommands(refreshResponse.commands);
+        }
       }
+    } catch (error) {
+      console.error('Update failed:', error);
+      sileo.error({ title: 'Update Failed', description: 'Failed to update command.', fill: '#ef4444' });
     }
   };
 
