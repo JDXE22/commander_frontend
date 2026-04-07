@@ -93,6 +93,7 @@ function AppContent() {
     setActiveCommands(null);
   };
 
+
   if (loading) {
     return (
       <div className="app-loading">
