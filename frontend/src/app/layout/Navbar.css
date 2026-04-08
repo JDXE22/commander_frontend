@@ -20,7 +20,7 @@
 
 .logo-text {
   color: var(--text-sidebar-primary);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -40,7 +40,7 @@
   padding: 10px 12px;
   color: var(--text-sidebar-secondary);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 0.875rem;
   border-radius: 8px;
   border-left: 3px solid transparent;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
@@ -65,7 +65,7 @@
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .logout-btn:hover {

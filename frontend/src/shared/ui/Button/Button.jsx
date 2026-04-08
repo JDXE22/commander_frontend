@@ -1,5 +1,4 @@
 import copyIcon from '../../../shared/utils/copyIcon.svg';
-import copiedIcon from '../../../shared/utils/copiedIcon.png';
 import { useEffect, useRef, useState } from 'react';
 import { sileo } from 'sileo';
 
@@ -62,21 +61,7 @@ export const CopyButton = ({
   return (
     <button
       onClick={handleCopyClick}
-      className={className}
-      style={{
-        background: 'transparent',
-        border: '1px solid var(--border-subtle)',
-        borderRadius: '6px',
-        padding: '6px 12px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        cursor: 'pointer',
-        color: 'var(--text-secondary)',
-        fontSize: '12px',
-        fontFamily: 'var(--font-sans)',
-        fontWeight: '600',
-      }}>
+      className={className}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="14"
@@ -91,7 +76,7 @@ export const CopyButton = ({
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
       </svg>
-      {copied ? 'Copied!' : 'Copy'}
+      {copied ? 'Copied' : 'Copy'}
     </button>
   );
 };

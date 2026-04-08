@@ -47,7 +47,7 @@
 }
 
 .back-btn span {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -59,7 +59,7 @@
 
 .logo-text-small {
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .forgot-pass {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--terminal-green);
   cursor: pointer;
   font-weight: 500;
