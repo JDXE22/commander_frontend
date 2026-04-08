@@ -3,7 +3,7 @@
   max-width: var(--dashboard-width);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .pagination {
@@ -27,11 +27,13 @@
   color: var(--text-secondary);
   background: var(--bg-primary);
   cursor: pointer;
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   padding: 0 16px;
   box-sizing: border-box;
-  transition: all 0.2s;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
 }
 
 .page-number:hover:not(:disabled) {
@@ -48,7 +50,7 @@
   background-color: var(--terminal-green);
   color: #0a0a0a;
   border-color: var(--terminal-green);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {

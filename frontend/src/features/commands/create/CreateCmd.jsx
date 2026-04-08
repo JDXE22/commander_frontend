@@ -70,26 +70,27 @@ export const CreateCmd = ({ onRefresh }) => {
     <main className='main-content create-view'>
       <div className='page-container'>
       <div className='search-section'>
-        <h1 className='search-title'>Register a Command</h1>
+        <h1 className='search-title'>New template</h1>
       </div>
 
       <form onSubmit={handleCreateSubmit} className='create-form'>
         <div className='form-grid'>
           <div className='form-group'>
-            <label htmlFor="command-name">Command Name</label>
+            <label htmlFor="command-name">Name</label>
             <input
               id="command-name"
               type='text'
               value={nameInput}
               onChange={(event) => setNameInput(event.target.value)}
-              placeholder='e.g. Greeting Macro'
+              placeholder='e.g. Meeting Follow-up'
               className='form-input'
               required
             />
+            <span className='form-hint'>A label to help you find this template later.</span>
           </div>
 
           <div className='form-group'>
-            <label htmlFor="trigger-trigger">Trigger Command</label>
+            <label htmlFor="trigger-trigger">Trigger</label>
             <div className='input-container'>
               <span className='input-prefix' aria-hidden="true">/</span>
               <input
@@ -97,23 +98,25 @@ export const CreateCmd = ({ onRefresh }) => {
                 type='text'
                 value={triggerInput}
                 onChange={(event) => setTriggerInput(event.target.value)}
-                placeholder='h1'
+                placeholder='followup'
                 className='form-input-prefixed'
                 required
               />
             </div>
+            <span className='form-hint'>The shortcut you'll type in the Terminal to retrieve this template.</span>
           </div>
 
           <div className='form-group full-width'>
-            <label htmlFor="content-textarea">Command Content</label>
+            <label htmlFor="content-textarea">Content</label>
             <textarea
               id="content-textarea"
               value={contentInput}
               onChange={(event) => setContentInput(event.target.value)}
-              placeholder='This command will return...'
+              placeholder='Hi [Name], thanks for taking the time to meet today...'
               className='form-textarea'
               required
             />
+            <span className='form-hint'>The text that gets returned when you run the trigger.</span>
           </div>
         </div>
 

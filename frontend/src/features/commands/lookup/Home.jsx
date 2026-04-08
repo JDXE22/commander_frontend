@@ -1,4 +1,5 @@
 import { CommandList } from '../list/Command';
+import { Link } from 'react-router-dom';
 import "./Home.css";
 
 export const Home = ({
@@ -11,6 +12,10 @@ export const Home = ({
   handleRecentClick,
   recentCommands,
 }) => {
+  const hasCommands = commands && commands.length > 0;
+  const hasHistory = recentCommands && recentCommands.length > 0;
+  const isFirstTime = !hasCommands && !hasHistory;
+
   return (
     <main className='main-content'>
       <div className='page-container'>
@@ -19,7 +24,7 @@ export const Home = ({
             <h1 id='terminal-title' className='search-title'>
               Terminal
             </h1>
-            {commands && commands.length > 0 && (
+            {hasCommands && (
               <button
                 type='button'
                 onClick={handleClear}
@@ -52,7 +57,7 @@ export const Home = ({
               type='text'
               value={inputText}
               onChange={handleInput}
-              placeholder='Type a command (e.g. /h1)'
+              placeholder='Type a trigger to retrieve a template (e.g. /h1)'
               className='search-input'
               aria-label='Terminal command input'
               autoComplete='off'
@@ -68,34 +73,70 @@ export const Home = ({
           </form>
         </section>
 
-        {commands && commands.length > 0 && (
+        {hasCommands && (
           <section className='results-area' aria-label='Command results'>
             <CommandList command={commands} />
           </section>
         )}
 
-        <section className='recent-activity' aria-labelledby='recent-header'>
-          <span id='recent-header' className='history-header'>
-            RECENT COMMANDS
-          </span>
-          <div
-            className='history-grid'
-            role='group'
-            aria-label='Recent command history'>
-            {recentCommands.map((cmd, index) => (
-              <button
-                key={`${cmd}-${index}`}
-                className='history-item'
-                onClick={() => handleRecentClick(cmd)}
-                aria-label={`Run recent command: ${cmd}`}>
-                <span className='history-icon' aria-hidden='true'>
-                  $
-                </span>
-                <span className='history-text'>{cmd}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        {isFirstTime && (
+          <section className='welcome-state' aria-label='Getting started'>
+            <div className='welcome-content'>
+              <h2 className='welcome-title'>Get your templates in seconds</h2>
+              <p className='welcome-text'>
+                Commander lets you save text templates and retrieve them instantly with a short trigger word.
+              </p>
+              <ol className='welcome-steps'>
+                <li>
+                  <span className='step-number'>1</span>
+                  <span className='step-text'>Create a template and assign it a trigger like <code>/h1</code></span>
+                </li>
+                <li>
+                  <span className='step-number'>2</span>
+                  <span className='step-text'>Type the trigger here and hit Run</span>
+                </li>
+                <li>
+                  <span className='step-number'>3</span>
+                  <span className='step-text'>Copy the result — done</span>
+                </li>
+              </ol>
+              <Link to='/create' className='welcome-cta'>
+                Create your first template
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {!isFirstTime && (
+          <section className='recent-activity' aria-labelledby='recent-header'>
+            <span id='recent-header' className='history-header'>
+              Recent
+            </span>
+            {hasHistory ? (
+              <div
+                className='history-grid'
+                role='group'
+                aria-label='Recent command history'>
+                {recentCommands.map((cmd, index) => (
+                  <button
+                    key={`${cmd}-${index}`}
+                    className='history-item'
+                    onClick={() => handleRecentClick(cmd)}
+                    aria-label={`Run recent command: ${cmd}`}>
+                    <span className='history-icon' aria-hidden='true'>
+                      $
+                    </span>
+                    <span className='history-text'>{cmd}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className='history-empty'>
+                Triggers you run will appear here for quick access.
+              </p>
+            )}
+          </section>
+        )}
       </div>
     </main>
   );
