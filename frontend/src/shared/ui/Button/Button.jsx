@@ -30,12 +30,12 @@ export const CopyButton = ({
     try {
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
-      sileo.success({ 
-        title: 'Copied!', 
-        description: 'Text copied to clipboard.', 
+      sileo.success({
+        title: 'Copied',
+        description: 'Template copied to clipboard.',
         fill: '#171717',
-        styles: { 
-          title: 'sileo-text-white', 
+        styles: {
+          title: 'sileo-text-white',
           description: 'sileo-text-white',
           badge: 'sileo-badge-fix'
         }
@@ -43,7 +43,7 @@ export const CopyButton = ({
       onCopy && onCopy();
     } catch (error) {
       console.error('Copy failed:', error);
-      sileo.error({ title: 'Copy Failed', description: 'Could not copy text to clipboard.', fill: '#ef4444' });
+      sileo.error({ title: 'Couldn\'t copy', description: 'Your browser blocked clipboard access. Try selecting and copying manually.', fill: '#ef4444' });
       onError && onError(error);
     }
   };

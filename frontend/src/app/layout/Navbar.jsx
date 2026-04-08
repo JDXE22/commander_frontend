@@ -24,12 +24,12 @@ export const Navbar = () => {
         </div>
         <nav className="nav-links">
           <CustomLink to="/terminal">Terminal</CustomLink>
-          <CustomLink to="/filter">Filter</CustomLink>
-          <CustomLink to="/create">Create</CustomLink>
+          <CustomLink to="/filter">Templates</CustomLink>
+          <CustomLink to="/create">New</CustomLink>
         </nav>
 
         <div className="nav-links secondary">
-          {!isAuthenticated && <CustomLink to="/">Landing Page</CustomLink>}
+          {!isAuthenticated && <CustomLink to="/">Home</CustomLink>}
           {isAuthenticated ? (
             <button className="nav-item logout-btn" onClick={handleLogout}>
               Logout ({user?.email?.split('@')[0]})
@@ -67,10 +67,10 @@ export const Navbar = () => {
         <nav className="mobile-nav" aria-label="Mobile Navigation">
           <div className="nav-links">
             <CustomLink to="/terminal" onClick={() => setIsOpen(false)}>Terminal</CustomLink>
-            <CustomLink to="/filter" onClick={() => setIsOpen(false)}>Filter</CustomLink>
-            <CustomLink to="/create" onClick={() => setIsOpen(false)}>Create</CustomLink>
+            <CustomLink to="/filter" onClick={() => setIsOpen(false)}>Templates</CustomLink>
+            <CustomLink to="/create" onClick={() => setIsOpen(false)}>New</CustomLink>
             <div className="mobile-nav-divider"></div>
-            {!isAuthenticated && <CustomLink to="/" onClick={() => setIsOpen(false)}>Landing Page</CustomLink>}
+            {!isAuthenticated && <CustomLink to="/" onClick={() => setIsOpen(false)}>Home</CustomLink>}
             {isAuthenticated ? (
               <button className="nav-item logout-btn" onClick={handleLogout}>
                 Logout

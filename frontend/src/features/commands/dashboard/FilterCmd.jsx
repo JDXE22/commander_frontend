@@ -29,8 +29,8 @@ export const FilterCmd = () => {
         } catch (fetchError) {
           console.error('Error loading account commands:', fetchError);
           sileo.error({
-            title: 'Fetch Error',
-            description: 'Failed to load your commands.',
+            title: 'Couldn\'t load templates',
+            description: 'Check your connection and try refreshing the page.',
             fill: '#ef4444',
           });
         } finally {
@@ -49,8 +49,8 @@ export const FilterCmd = () => {
     try {
       await updateTrialCommand(commandId, updatedText);
       sileo.success({
-        title: 'Updated!',
-        description: 'Command updated successfully.',
+        title: 'Changes saved',
+        description: 'Your template has been updated.',
         fill: '#171717',
         styles: {
           title: 'sileo-text-white',
@@ -74,8 +74,8 @@ export const FilterCmd = () => {
     } catch (error) {
       console.error('Update failed:', error);
       sileo.error({
-        title: 'Update Failed',
-        description: 'Failed to update command.',
+        title: 'Couldn\'t save changes',
+        description: 'Try again in a moment.',
         fill: '#ef4444',
       });
     }
@@ -84,7 +84,7 @@ export const FilterCmd = () => {
   return (
     <main className='main-content'>
       <div className='search-section'>
-        <h1 className='search-title'>Filter all Commands</h1>
+        <h1 className='search-title'>Templates</h1>
       </div>
 
       <div className='cmd-list' aria-busy={isLoadingCommands}>

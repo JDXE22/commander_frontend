@@ -49,12 +49,12 @@ export const Auth = () => {
         authResponse = await forgotPassword(emailInput);
       } else if (authMode === 'reset') {
         if (passwordInput !== confirmPasswordInput) {
-          sileo.error({ title: 'Validation Error', description: 'Passwords do not match', fill: '#ef4444' });
+          sileo.error({ title: 'Passwords don\'t match', description: 'Re-enter your new password in both fields.', fill: '#ef4444' });
           setIsSubmitting(false);
           return;
         }
         if (!recoveryToken) {
-          sileo.error({ title: 'Invalid Token', description: 'Invalid or missing recovery token', fill: '#ef4444' });
+          sileo.error({ title: 'Link expired', description: 'This reset link is no longer valid. Request a new one.', fill: '#ef4444' });
           setIsSubmitting(false);
           return;
         }
@@ -62,7 +62,7 @@ export const Auth = () => {
       }
 
       if (authResponse.error) {
-        sileo.error({ title: 'Authentication Error', description: authResponse.message, fill: '#ef4444' });
+        sileo.error({ title: 'Couldn\'t sign you in', description: authResponse.message, fill: '#ef4444' });
       } else {
         if (authMode === 'forgot') {
           sileo.success({ 
@@ -73,8 +73,8 @@ export const Auth = () => {
           });
         } else if (authMode === 'reset') {
           sileo.success({ 
-            title: 'Recovery Successful!', 
-            description: 'Your password has been updated. Redirecting to login...',
+            title: 'Password updated',
+            description: 'Taking you to sign in...',
             fill: '#171717',
             styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
           });
@@ -94,7 +94,7 @@ export const Auth = () => {
         }
       }
     } catch (error) {
-      sileo.error({ title: 'System Error', description: 'An unexpected error occurred. Please try again.', fill: '#ef4444' });
+      sileo.error({ title: 'Something went wrong', description: 'Try again in a moment. If this keeps happening, refresh the page.', fill: '#ef4444' });
     } finally {
       setIsSubmitting(false);
     }
@@ -136,14 +136,14 @@ export const Auth = () => {
                 onClick={() => setAuthMode('login')}
                 type="button"
               >
-                Login
+                Sign in
               </button>
-              <button 
+              <button
                 className={`auth-tab ${authMode === 'register' ? 'active' : ''}`}
                 onClick={() => setAuthMode('register')}
                 type="button"
               >
-                Register
+                Sign up
               </button>
             </div>
           )}
@@ -157,8 +157,8 @@ export const Auth = () => {
 
           {isResetPasswordMode && (
             <div className="auth-header-special">
-              <h2 className="auth-title-special">Recovery Section</h2>
-              <p className="auth-subtitle-special">Create a new secure password for your account</p>
+              <h2 className="auth-title-special">Set new password</h2>
+              <p className="auth-subtitle-special">Choose a new password for your account</p>
             </div>
           )}
 
@@ -222,9 +222,9 @@ export const Auth = () => {
               {isSubmitting 
                 ? 'Processing...' 
                 : isForgotPasswordMode 
-                  ? 'Request Recovery Link' 
+                  ? 'Send reset link'
                   : isResetPasswordMode
-                    ? 'Confirm Recovery'
+                    ? 'Set new password'
                     : authMode === 'login' 
                       ? 'Continue' 
                       : 'Create Account'}

@@ -20,8 +20,8 @@ export const CreateCmd = ({ onRefresh }) => {
 
     if (!triggerInput.trim() || !contentInput.trim() || !nameInput.trim()) {
       sileo.error({
-        title: 'Validation Error',
-        description: 'Please fill all required fields',
+        title: 'Missing fields',
+        description: 'Fill in the name, trigger, and content to save your template.',
         fill: '#ef4444',
       });
       return;
@@ -38,8 +38,8 @@ export const CreateCmd = ({ onRefresh }) => {
       const creationResponse = await addTrialCommand(commandPayload);
       if (creationResponse && !creationResponse.error) {
         sileo.success({
-          title: 'Success!',
-          description: 'Command registered successfully',
+          title: 'Template saved',
+          description: 'You can now use this trigger in the Terminal.',
           fill: '#171717',
           styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
         });
@@ -49,16 +49,16 @@ export const CreateCmd = ({ onRefresh }) => {
         setNameInput('');
       } else {
         sileo.error({
-          title: 'Registration Failed',
-          description: creationResponse?.message || 'Failed to register command',
+          title: 'Couldn\'t save',
+          description: creationResponse?.message || 'Something went wrong. Try again in a moment.',
           fill: '#ef4444',
         });
       }
     } catch (creationError) {
       console.error('Command registration failed:', creationError);
       sileo.error({
-        title: 'System Error',
-        description: 'A technical error occurred while registering the command',
+        title: 'Something went wrong',
+        description: 'We couldn\'t save your template. Try again in a moment.',
         fill: '#ef4444',
       });
     } finally {
@@ -126,7 +126,7 @@ export const CreateCmd = ({ onRefresh }) => {
           disabled={isSubmitting}
           aria-live="polite"
         >
-          {isSubmitting ? 'Registering...' : !canCreate ? 'Trial limit reached' : 'Register Command'}
+          {isSubmitting ? 'Saving...' : !canCreate ? 'Trial limit reached' : 'Save template'}
         </button>
       </form>
       </div>

@@ -69,7 +69,7 @@ function AppContent() {
       if (commandResult?.error) {
         console.error('Command validation failed:', commandResult.message);
         sileo.error({
-          title: 'Command Error',
+          title: 'No match found',
           description: commandResult.message,
           fill: '#ef4444',
         });
@@ -89,8 +89,8 @@ function AppContent() {
     } catch (processError) {
       console.error('Terminal processing error:', processError);
       sileo.error({
-        title: 'Processing Error',
-        description: 'Failed to process the command.',
+        title: 'Something went wrong',
+        description: 'Couldn\'t retrieve that template. Try again in a moment.',
         fill: '#ef4444',
       });
     } finally {
