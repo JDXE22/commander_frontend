@@ -42,7 +42,8 @@
   text-decoration: none;
   font-size: 14px;
   border-radius: 8px;
-  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .nav-item:hover {
@@ -54,8 +55,7 @@
   background-color: var(--bg-sidebar-active);
   color: var(--terminal-green-bright);
   font-weight: 600;
-  border-left: 3px solid var(--terminal-green);
-  padding-left: 9px;
+  border-left-color: var(--terminal-green);
 }
 
 .logout-btn {
