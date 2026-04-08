@@ -61,6 +61,7 @@ export const Home = ({
               className='search-input'
               aria-label='Terminal command input'
               autoComplete='off'
+              maxLength={80}
               autoFocus
             />
             <button

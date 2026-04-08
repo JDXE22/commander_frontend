@@ -84,6 +84,7 @@ export const CreateCmd = ({ onRefresh }) => {
               onChange={(event) => setNameInput(event.target.value)}
               placeholder='e.g. Meeting Follow-up'
               className='form-input'
+              maxLength={80}
               required
             />
             <span className='form-hint'>A label to help you find this template later.</span>
@@ -100,6 +101,7 @@ export const CreateCmd = ({ onRefresh }) => {
                 onChange={(event) => setTriggerInput(event.target.value)}
                 placeholder='followup'
                 className='form-input-prefixed'
+                maxLength={40}
                 required
               />
             </div>
@@ -114,6 +116,7 @@ export const CreateCmd = ({ onRefresh }) => {
               onChange={(event) => setContentInput(event.target.value)}
               placeholder='Hi [Name], thanks for taking the time to meet today...'
               className='form-textarea'
+              maxLength={5000}
               required
             />
             <span className='form-hint'>The text that gets returned when you run the trigger.</span>

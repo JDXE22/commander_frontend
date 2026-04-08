@@ -105,6 +105,8 @@
   cursor: pointer;
   text-align: left;
   transition: border-color 0.2s, background-color 0.2s;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .history-item:hover {
@@ -116,6 +118,9 @@
   color: var(--text-primary);
   font-size: 0.8125rem;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .history-icon {

@@ -21,6 +21,9 @@
 .code-text {
   font-family: var(--font-mono);
   font-size: 0.875rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .cmd-desc {
@@ -46,6 +49,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: 0;
+  gap: var(--space-sm);
 }
 
 .card-title {
@@ -54,11 +59,16 @@
   color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.015em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-actions {
   display: flex;
   gap: var(--space-sm);
+  flex-shrink: 0;
 }
 
 .card-body {
@@ -75,6 +85,10 @@
   padding: 4px 8px;
   border-radius: 4px;
   align-self: flex-start;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .command-text {
@@ -90,6 +104,8 @@
   resize: vertical;
   outline: none;
   transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .command-text:focus {
