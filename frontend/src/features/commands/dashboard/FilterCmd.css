@@ -36,9 +36,10 @@
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
 }
 
-.page-number:hover:not(:disabled) {
-  border-color: var(--terminal-green);
+.page-number:hover:not(:disabled):not(.active) {
+  border-color: var(--color-amber);
   color: var(--text-primary);
+  background-color: var(--color-amber-soft);
 }
 
 .page-number:disabled {
