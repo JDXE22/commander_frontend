@@ -1,32 +1,22 @@
-.command-list-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-}
-
+/* Shared Card Primitives */
 .card {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-left: 4px solid var(--terminal-green);
   border-radius: 8px;
-  padding: 0;
   width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-md);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
-}
-
 .card-header {
-  padding: 16px 24px;
+  padding: 12px 20px;
   background-color: var(--bg-inset);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -34,11 +24,12 @@
   align-items: center;
   min-width: 0;
   gap: var(--space-md);
+  box-sizing: border-box;
 }
 
 .card-title {
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -52,58 +43,105 @@
 .command-trigger {
   font-family: var(--font-mono);
   color: var(--terminal-green-bright);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
   background: var(--color-green-soft);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 4px;
   border: 1px solid rgba(34, 197, 94, 0.2);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: inline-block;
 }
 
-.card-body {
-  padding: 24px;
+/* Terminal View Results */
+.command-result-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
-.cmd-desc {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  opacity: 0.8;
-}
-
-.code-block {
+.terminal-result-item {
   background-color: var(--bg-inset);
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.terminal-result-item:hover {
+  border-color: var(--terminal-green);
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-text {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--terminal-green);
+  margin: 0;
+  padding: 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.result-actions {
+  padding: 10px 16px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Template Manager / Editor Card Refinement */
+.edit-card .card-body {
   padding: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
-.code-text {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.7;
-  color: var(--text-primary);
-  margin: 0;
-  padding: 20px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  opacity: 0.95;
+.edit-card .command-trigger {
+  margin: 12px 20px 10px;
+  align-self: flex-start;
 }
 
-.card-footer {
-  padding: 12px 20px;
-  background-color: var(--bg-secondary);
+.edit-card .command-text {
+  width: 100%;
+  display: block;
+  border: none;
   border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  background-color: var(--bg-inset);
+  min-height: 120px;
+  padding: 16px 20px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.edit-card .command-text:focus {
+  background-color: var(--bg-secondary);
+}
+
+.edit-card .card-footer {
+  background-color: var(--bg-secondary);
+  border-top: none;
+  padding: 12px 20px;
   display: flex;
   justify-content: flex-end;
+  box-sizing: border-box;
 }

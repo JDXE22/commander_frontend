@@ -275,7 +275,7 @@
 
 .user-logout:hover {
   background-color: var(--bg-sidebar-item);
-  color: #ff4d4d; /* Red color for logout */
+  color: #ff4d4d;
 }
 
 .logout-icon {

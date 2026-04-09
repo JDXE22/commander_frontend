@@ -1,5 +1,6 @@
 import { CommandList } from '../list/Command';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import "./Home.css";
 
 export const Home = ({
@@ -89,18 +90,42 @@ export const Home = ({
                 <span className='login-date'>{new Date().toLocaleDateString()}</span>
               </div>
               <div className='welcome-body'>
-                <p className='welcome-intro'>Welcome to Commander. Instant template retrieval system.</p>
-                <div className='usage-box'>
-                  <span className='usage-label'>USAGE:</span>
+                <motion.p 
+                  className='welcome-intro'
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {">"} Welcome to Commander. Initialization complete. 
+                  <motion.span
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                  >
+                    _
+                  </motion.span>
+                </motion.p>
+                <motion.div 
+                  className='usage-box'
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                >
+                  <span className='usage-label'>SYSTEM_USAGE:</span>
                   <div className='usage-steps'>
-                    <div className='usage-step'>1. CREATE → Assign a trigger (e.g. <code>/h1</code>)</div>
-                    <div className='usage-step'>2. RUN    → Type trigger and hit Enter</div>
-                    <div className='usage-step'>3. COPY   → Clipboard updated instantly</div>
+                    <div className='usage-step'>1. CREATE → Define raw payload string</div>
+                    <div className='usage-step'>2. RUN    → Execute trigger retrieval</div>
+                    <div className='usage-step'>3. COPY   → Update local clipboard</div>
                   </div>
-                </div>
-                <Link to='/create' className='welcome-cta'>
-                  Initialize first template _
-                </Link>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                >
+                  <Link to='/create' className='welcome-cta'>
+                    INITIALIZE_FIRST_TEMPLATE
+                  </Link>
+                </motion.div>
               </div>
             </div>
           </section>

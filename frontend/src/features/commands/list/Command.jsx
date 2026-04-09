@@ -8,17 +8,16 @@ export const CommandList = ({ command, className = '' }) => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.05
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.98 },
+    hidden: { opacity: 0, x: -10 },
     show: { 
       opacity: 1, 
-      y: 0, 
-      scale: 1,
+      x: 0,
       transition: {
         type: 'spring',
         damping: 25,
@@ -29,39 +28,26 @@ export const CommandList = ({ command, className = '' }) => {
 
   return (
     <motion.div 
-      className={`command-list-wrapper ${className}`}
+      className={`command-result-container ${className}`}
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
       {command.map((cmd) => (
-        <motion.article 
+        <motion.div 
           key={cmd._id} 
-          className='card'
+          className='terminal-result-item'
           variants={itemVariants}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
         >
-          <div className='card-header'>
-            <h2 className='card-title'>{cmd.name || 'Output Result'}</h2>
-            {cmd.command && <span className='command-trigger'>{cmd.command}</span>}
-          </div>
-          
-          <div className='card-body'>
-            {cmd.description && (
-              <div className='cmd-desc'>
-                {cmd.description}
-              </div>
-            )}
-            <div className='code-block'>
-              <pre className='code-text'>
-                {cmd.text}
-              </pre>
-              <div className='card-footer'>
-                <CopyButton textToCopy={cmd.text} />
-              </div>
+          <div className='result-content'>
+            <pre className='result-text'>
+              {cmd.text}
+            </pre>
+            <div className='result-actions'>
+              <CopyButton textToCopy={cmd.text} />
             </div>
           </div>
-        </motion.article>
+        </motion.div>
       ))}
     </motion.div>
   );
