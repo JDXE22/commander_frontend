@@ -34,12 +34,17 @@
   height: 48px;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input-wrapper:focus-within {
-  border-color: var(--terminal-green);
-  box-shadow: 0 0 0 3px var(--color-green-soft);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .prompt-char {
@@ -52,12 +57,24 @@
 .search-input {
   background: transparent;
   border: none;
-  color: var(--text-primary);
   font-family: var(--font-sans);
+  color: var(--text-primary);
+
   font-size: 0.875rem;
   line-height: 1.5;
   flex: 1;
   outline: none;
+  box-shadow: none;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 0 3px var(--color-green-soft);
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .search-input::placeholder {
@@ -110,7 +127,9 @@
   font-family: var(--font-sans);
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
   max-width: 100%;
   min-width: 0;
 }
