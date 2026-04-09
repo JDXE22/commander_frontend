@@ -100,7 +100,73 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.05) 50%
+  ), linear-gradient(
+    90deg, 
+    rgba(255, 0, 0, 0.01), 
+    rgba(0, 255, 0, 0.005), 
+    rgba(0, 0, 255, 0.01)
+  );
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.1;
+}
+
+[data-theme='light'] body::after {
+  background: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+  opacity: 0.05;
+}
+
+/* Glow effects for dark mode */
+[data-theme='dark'] .status-indicator {
+  box-shadow: 0 0 15px var(--terminal-green);
+}
+
+[data-theme='dark'] .command-trigger {
+  text-shadow: 0 0 10px var(--color-green-soft);
+}
+
+/* Global Scrollbar Refinement */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-inset);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border: 2px solid var(--bg-inset);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Light mode specific text contrast hardening */
+[data-theme='light'] .status-path,
+[data-theme='light'] .history-header,
+[data-theme='light'] .terminal-login-header {
+  opacity: 0.7; /* Increased for readability */
+}
+
+[data-theme='light'] .form-hint {
+  opacity: 0.8;
 }
 
 /* App Layout Structure */

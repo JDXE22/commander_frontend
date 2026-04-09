@@ -69,11 +69,12 @@ export const Navbar = () => {
               )}
             </nav>
 
-            <div className='user-section'>
+            <div className='user-section' role='group' aria-label='User and system controls'>
               <button
                 className='theme-toggle'
                 onClick={toggleTheme}
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                aria-label={`Current theme: ${theme}. Click to switch to ${theme === 'dark' ? 'light' : 'dark'} mode.`}>
                 <span className='theme-icon' aria-hidden='true'>
                   {theme === 'dark' ? (
                     <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -86,7 +87,7 @@ export const Navbar = () => {
                     </svg>
                   )}
                 </span>
-                <span className='theme-text'>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                <span className='theme-text'>{theme === 'dark' ? 'LIGHT_MODE' : 'DARK_MODE'}</span>
               </button>
 
               {isAuthenticated ? (
@@ -94,7 +95,7 @@ export const Navbar = () => {
                   <button
                     className='user-profile'
                     onClick={handleUserClick}
-                    aria-label='User settings'>
+                    aria-label={`User profile: ${displayName}. Open settings.`}>
                     <span className='user-avatar' aria-hidden='true'>
                       <svg
                         viewBox='0 0 24 24'
@@ -120,7 +121,7 @@ export const Navbar = () => {
                   <button
                     className='user-logout'
                     onClick={handleLogout}
-                    aria-label='Logout'>
+                    aria-label='Log out of system'>
                     <span className='logout-icon' aria-hidden='true'>
                       <svg
                         viewBox='0 0 24 24'
@@ -141,12 +142,12 @@ export const Navbar = () => {
                         />
                       </svg>
                     </span>
-                    <span className='logout-text'>Logout</span>
+                    <span className='logout-text'>TERMINATE</span>
                   </button>
                 </>
               ) : (
-                <Link to='/auth' className='user-signin' onClick={closeSidebar}>
-                  Sign In
+                <Link to='/auth' className='user-signin' onClick={closeSidebar} aria-label='Sign in to account'>
+                  SIGN_IN
                 </Link>
               )}
             </div>
