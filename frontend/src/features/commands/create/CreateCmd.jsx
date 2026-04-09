@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTrial } from '../../../shared/context/TrialContext';
 import { sileo } from 'sileo';
-import "./CreateCmd.css";
+import './CreateCmd.css';
 
 export const CreateCmd = ({ onRefresh }) => {
   const [triggerInput, setTriggerInput] = useState('');
@@ -21,7 +21,8 @@ export const CreateCmd = ({ onRefresh }) => {
     if (!triggerInput.trim() || !contentInput.trim() || !nameInput.trim()) {
       sileo.error({
         title: 'Missing fields',
-        description: 'Fill in the name, trigger, and content to save your template.',
+        description:
+          'Fill in the name, trigger, and content to save your template.',
         fill: '#ef4444',
       });
       return;
@@ -41,7 +42,11 @@ export const CreateCmd = ({ onRefresh }) => {
           title: 'Template saved',
           description: 'You can now use this trigger in the Terminal.',
           fill: '#171717',
-          styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
+          styles: {
+            title: 'sileo-text-white',
+            description: 'sileo-text-white',
+            badge: 'sileo-badge-fix',
+          },
         });
         onRefresh && onRefresh();
         setTriggerInput('');
@@ -49,8 +54,10 @@ export const CreateCmd = ({ onRefresh }) => {
         setNameInput('');
       } else {
         sileo.error({
-          title: 'Couldn\'t save',
-          description: creationResponse?.message || 'Something went wrong. Try again in a moment.',
+          title: "Couldn't save",
+          description:
+            creationResponse?.message ||
+            'Something went wrong. Try again in a moment.',
           fill: '#ef4444',
         });
       }
@@ -58,7 +65,7 @@ export const CreateCmd = ({ onRefresh }) => {
       console.error('Command registration failed:', creationError);
       sileo.error({
         title: 'Something went wrong',
-        description: 'We couldn\'t save your template. Try again in a moment.',
+        description: "We couldn't save your template. Try again in a moment.",
         fill: '#ef4444',
       });
     } finally {
@@ -81,9 +88,9 @@ export const CreateCmd = ({ onRefresh }) => {
         <form onSubmit={handleCreateSubmit} className='create-form'>
           <div className='form-grid'>
             <div className='form-group'>
-              <label htmlFor="command-name">NAME_LABEL</label>
+              <label htmlFor='command-name'>NAME_LABEL</label>
               <input
-                id="command-name"
+                id='command-name'
                 type='text'
                 value={nameInput}
                 onChange={(event) => setNameInput(event.target.value)}
@@ -92,15 +99,19 @@ export const CreateCmd = ({ onRefresh }) => {
                 maxLength={80}
                 required
               />
-              <span className='form-hint'>Internal identifier for retrieval.</span>
+              <span className='form-hint'>
+                Internal identifier for retrieval.
+              </span>
             </div>
 
             <div className='form-group'>
-              <label htmlFor="trigger-trigger">TRIGGER_PATH</label>
+              <label htmlFor='trigger-trigger'>TRIGGER_PATH</label>
               <div className='input-container'>
-                <span className='input-prefix' aria-hidden="true">/</span>
+                <span className='input-prefix' aria-hidden='true'>
+                  /
+                </span>
                 <input
-                  id="trigger-trigger"
+                  id='trigger-trigger'
                   type='text'
                   value={triggerInput}
                   onChange={(event) => setTriggerInput(event.target.value)}
@@ -110,13 +121,15 @@ export const CreateCmd = ({ onRefresh }) => {
                   required
                 />
               </div>
-              <span className='form-hint'>Technical shortcut used in terminal.</span>
+              <span className='form-hint'>
+                Technical shortcut used in terminal.
+              </span>
             </div>
 
             <div className='form-group full-width'>
-              <label htmlFor="content-textarea">DATA_CONTENT</label>
+              <label htmlFor='content-textarea'>DATA_CONTENT</label>
               <textarea
-                id="content-textarea"
+                id='content-textarea'
                 value={contentInput}
                 onChange={(event) => setContentInput(event.target.value)}
                 placeholder='Enter technical template data here...'
@@ -124,7 +137,9 @@ export const CreateCmd = ({ onRefresh }) => {
                 maxLength={5000}
                 required
               />
-              <span className='form-hint'>Raw string payload for clipboard update.</span>
+              <span className='form-hint'>
+                Data string payload for clipboard update.
+              </span>
             </div>
           </div>
 
@@ -132,9 +147,12 @@ export const CreateCmd = ({ onRefresh }) => {
             type='submit'
             className='submit-btn'
             disabled={isSubmitting}
-            aria-live="polite"
-          >
-            {isSubmitting ? 'EXECUTING_SAVE...' : !canCreate ? 'LIMIT_REACHED' : 'INITIALIZE_TEMPLATE'}
+            aria-live='polite'>
+            {isSubmitting
+              ? 'EXECUTING_SAVE...'
+              : !canCreate
+                ? 'LIMIT_REACHED'
+                : 'INITIALIZE_TEMPLATE'}
           </button>
         </form>
       </div>
