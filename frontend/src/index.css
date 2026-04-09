@@ -168,66 +168,87 @@ body {
   background-color: var(--terminal-green);
   color: #0a0a0a;
   border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 700;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px var(--color-green-soft);
 }
 
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
+  background-color: var(--terminal-green-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px var(--color-green-soft);
+}
+
+.btn-primary.sm {
+  padding: 6px 12px;
+  font-size: 0.7rem;
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .btn-clear {
   background: transparent;
-  border: none;
-  color: var(--color-error);
-  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 4px;
   padding: 6px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: 8px;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  font-family: var(--font-sans);
-  font-size: 0.8125rem;
-  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .btn-clear:hover {
   background-color: var(--color-error-soft);
-  color: var(--color-error-hover);
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .copy-btn {
-  background: transparent;
+  background: var(--bg-inset);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  border-radius: 6px;
-  padding: 5px 10px;
+  border-radius: 4px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 8px;
   cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .copy-btn:hover {
-  background-color: var(--bg-secondary);
+  background-color: var(--color-green-soft);
   border-color: var(--terminal-green);
+  color: var(--terminal-green);
+}
+
+.copy-btn svg {
   color: var(--terminal-green);
 }
 
