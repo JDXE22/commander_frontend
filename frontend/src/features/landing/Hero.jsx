@@ -61,8 +61,7 @@ export const Hero = () => {
           variants={containerVariants}
           initial='hidden'
           animate='visible'
-          className='hero-text-group'
-        >
+          className='hero-text-group'>
           <motion.div variants={itemVariants} className='hero-brand-supertitle'>
             <span className='prompt-sign'>$</span>
             <span className='brand-text'>COMMANDER</span>
@@ -72,8 +71,8 @@ export const Hero = () => {
             COMMAND YOUR WORKFLOW
           </motion.h1>
           <motion.p variants={itemVariants} className='hero-subtitle'>
-            The ultimate command center for modern professionals. Organize, filter,
-            and execute with terminal-grade precision.
+            The ultimate command center for modern professionals. Organize,
+            filter, and execute with terminal-grade precision.
           </motion.p>
           <motion.div variants={itemVariants}>
             <Link to='/terminal' className='btn-cta'>
@@ -87,8 +86,7 @@ export const Hero = () => {
           initial='hidden'
           whileInView='visible'
           viewport={{ once: true }}
-          className='hero-mockup'
-        >
+          className='hero-mockup'>
           <div className='mockup-header'>
             <div className='mockup-dots'>
               <span></span>
@@ -105,7 +103,7 @@ export const Hero = () => {
             </div>
             <div className='mockup-main'>
               <div className='mockup-search'>
-                <div className='mockup-prompt'>$ /status</div>
+                <div className='mockup-prompt'>$ /h1 </div>
               </div>
               <div className='mockup-card'>
                 <div className='mockup-line-sm'></div>
@@ -127,8 +125,7 @@ export const Hero = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='section-info'
-          >
+            className='section-info'>
             <h2 className='section-title'>Filter with Precision</h2>
             <p className='section-text'>
               Easily manage and locate your command macros. Use our advanced
@@ -141,8 +138,7 @@ export const Hero = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='hero-mockup high-def'
-          >
+            className='hero-mockup high-def'>
             <div className='mockup-header'>
               <div className='mockup-dots'>
                 <span></span>
@@ -198,8 +194,7 @@ export const Hero = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='section-info'
-          >
+            className='section-info'>
             <h2 className='section-title'>Create Seamlessly</h2>
             <p className='section-text'>
               Building new commands has never been easier. Our intuitive
@@ -212,8 +207,7 @@ export const Hero = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='hero-mockup high-def'
-          >
+            className='hero-mockup high-def'>
             <div className='mockup-header'>
               <div className='mockup-dots'>
                 <span></span>
@@ -267,4 +261,3 @@ export const Hero = () => {
     </div>
   );
 };
-
