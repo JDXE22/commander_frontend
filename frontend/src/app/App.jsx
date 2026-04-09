@@ -90,7 +90,7 @@ function AppContent() {
       console.error('Terminal processing error:', processError);
       sileo.error({
         title: 'Something went wrong',
-        description: 'Couldn\'t retrieve that template. Try again in a moment.',
+        description: "Couldn't retrieve that template. Try again in a moment.",
         fill: '#ef4444',
       });
     } finally {
@@ -127,7 +127,7 @@ function AppContent() {
   );
 
   return (
-    <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
+    <div className='App'>
       {shouldDisplayNavbar && <Navbar />}
       <Routes>
         <Route
