@@ -200,6 +200,51 @@
   text-overflow: ellipsis;
 }
 
+.user-logout {
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--text-sidebar-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  outline: none;
+  margin-top: 4px;
+}
+
+.user-logout:hover {
+  background-color: var(--bg-sidebar-item);
+  color: #ff4d4d; /* Red color for logout */
+}
+
+.logout-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.logout-text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .user-signin {
   display: block;
   padding: 8px 10px;
