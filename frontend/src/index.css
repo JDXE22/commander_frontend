@@ -1,22 +1,42 @@
 :root {
-  /* Colors */
+  /* Spacing System (Constant) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Typography (Constant) */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Layout (Constant) */
+  --dashboard-width: 720px;
+  --navbar-height: 64px;
+  --sidebar-width: 260px;
+}
+
+/* Dark Theme: Cyber-Terminal (Default) */
+:root, [data-theme='dark'] {
   --bg-primary: #0a0a0a;
-  --bg-secondary: #161b22;
+  --bg-secondary: #121212;
   --bg-sidebar: #1b260d;
-  --bg-inset: #010409;
+  --bg-inset: #050505;
   
-  --border-subtle: #30363d;
-  --border-sidebar: #364720;
+  --border-subtle: #1f1f1f;
+  --border-sidebar: #2d3b1a;
   
   --terminal-green: #22c55e;
   --terminal-green-bright: #bef264;
-  --color-green-soft: rgba(34, 197, 94, 0.1);
+  --color-green-soft: rgba(34, 197, 94, 0.08);
   
   --color-amber: #f59e0b;
-  --color-amber-soft: rgba(245, 158, 11, 0.05);
+  --color-amber-soft: rgba(245, 158, 11, 0.04);
   
   --color-error: #ef4444;
-  --color-error-soft: rgba(239, 68, 68, 0.08);
+  --color-error-soft: rgba(239, 68, 68, 0.06);
   --color-error-hover: #f87171;
   
   --text-primary: #f0f6fc;
@@ -29,23 +49,43 @@
   --bg-sidebar-item: #243311;
   --bg-sidebar-active: #3e5225;
 
-  /* Typography */
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Inter', sans-serif;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
-  /* Spacing System */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
+/* Light Theme: Paper-Terminal */
+[data-theme='light'] {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-sidebar: #e9edde;
+  --bg-inset: #f1f3f5;
+  
+  --border-subtle: #dee2e6;
+  --border-sidebar: #d1d9c4;
+  
+  --terminal-green: #166534;
+  --terminal-green-bright: #14532d;
+  --color-green-soft: rgba(22, 101, 52, 0.05);
+  
+  --color-amber: #b45309;
+  --color-amber-soft: rgba(180, 83, 9, 0.03);
+  
+  --color-error: #dc2626;
+  --color-error-soft: rgba(220, 38, 38, 0.04);
+  --color-error-hover: #991b1b;
+  
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  
+  --text-sidebar-primary: #1a2e05;
+  --text-sidebar-secondary: #3f6212;
+  
+  --bg-sidebar-main: #e9edde;
+  --bg-sidebar-item: #dfe5d2;
+  --bg-sidebar-active: #d1d9c4;
 
-  /* Layout */
-  --dashboard-width: 720px;
-  --navbar-height: 64px;
-  --sidebar-width: 260px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Base Reset */
@@ -60,6 +100,7 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* App Layout Structure */

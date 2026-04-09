@@ -143,12 +143,60 @@
   border-left-color: var(--terminal-green);
 }
 
+.theme-toggle {
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--text-sidebar-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  outline: none;
+  margin-bottom: 4px;
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-sidebar-item);
+  color: var(--text-sidebar-primary);
+}
+
+.theme-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 /* ============================================ */
 /* User Section (Bottom of Sidebar)             */
 /* ============================================ */
 .user-section {
   padding-top: 12px;
   border-top: 1px solid var(--border-sidebar);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .user-profile {

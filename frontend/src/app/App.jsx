@@ -9,6 +9,7 @@ import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
 import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
+import { ThemeProvider } from '../shared/context/ThemeContext';
 import { Toaster, sileo } from 'sileo';
 
 function AppContent() {
@@ -167,12 +168,14 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <TrialProvider>
-        <AppContent />
-        <Toaster position='top-right' />
-      </TrialProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <TrialProvider>
+          <AppContent />
+          <Toaster position='top-right' />
+        </TrialProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
