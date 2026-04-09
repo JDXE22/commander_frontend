@@ -108,9 +108,12 @@ export const Home = ({
 
         {!isFirstTime && (
           <section className='recent-activity' aria-labelledby='recent-header'>
-            <span id='recent-header' className='history-header'>
-              Recent
-            </span>
+            <div className='history-section-header'>
+              <span id='recent-header' className='history-header'>
+                RECENT_COMMANDS
+              </span>
+              <div className='header-line' />
+            </div>
             {hasHistory ? (
               <div
                 className='history-grid'
@@ -123,7 +126,7 @@ export const Home = ({
                     onClick={() => handleRecentClick(cmd)}
                     aria-label={`Run recent command: ${cmd}`}>
                     <span className='history-icon' aria-hidden='true'>
-                      $
+                      λ
                     </span>
                     <span className='history-text'>{cmd}</span>
                   </button>
@@ -131,7 +134,7 @@ export const Home = ({
               </div>
             ) : (
               <p className='history-empty'>
-                Triggers you run will appear here for quick access.
+                _ No previous execution data found.
               </p>
             )}
           </section>
