@@ -19,11 +19,12 @@ export const Home = ({
   return (
     <main className='main-content'>
       <div className='page-container'>
-        <section className='search-section' aria-labelledby='terminal-title'>
-          <div className='terminal-header'>
-            <h1 id='terminal-title' className='search-title'>
-              Terminal
-            </h1>
+        <section className='search-section' aria-label='Command Input'>
+          <div className='terminal-status-line'>
+            <div className='status-left'>
+              <span className='status-indicator' />
+              <span className='status-path'>~/commander/terminal</span>
+            </div>
             {hasCommands && (
               <button
                 type='button'
@@ -31,8 +32,8 @@ export const Home = ({
                 className='btn-clear'
                 aria-label='Clear terminal results'>
                 <svg
-                  width='16'
-                  height='16'
+                  width='14'
+                  height='14'
                   viewBox='0 0 24 24'
                   fill='none'
                   stroke='currentColor'
@@ -42,7 +43,7 @@ export const Home = ({
                   <polyline points='3 6 5 6 21 6' />
                   <path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2' />
                 </svg>
-                Clear
+                <span>Clear</span>
               </button>
             )}
           </div>
@@ -57,7 +58,7 @@ export const Home = ({
               type='text'
               value={inputText}
               onChange={handleInput}
-              placeholder='Type a trigger to retrieve a template (e.g. /h1)'
+              placeholder='Type a trigger (e.g. /h1)'
               className='search-input'
               aria-label='Terminal command input'
               autoComplete='off'
@@ -83,27 +84,24 @@ export const Home = ({
         {isFirstTime && (
           <section className='welcome-state' aria-label='Getting started'>
             <div className='welcome-content'>
-              <h2 className='welcome-title'>Get your templates in seconds</h2>
-              <p className='welcome-text'>
-                Commander lets you save text templates and retrieve them instantly with a short trigger word.
-              </p>
-              <ol className='welcome-steps'>
-                <li>
-                  <span className='step-number'>1</span>
-                  <span className='step-text'>Create a template and assign it a trigger like <code>/h1</code></span>
-                </li>
-                <li>
-                  <span className='step-number'>2</span>
-                  <span className='step-text'>Type the trigger here and hit Run</span>
-                </li>
-                <li>
-                  <span className='step-number'>3</span>
-                  <span className='step-text'>Copy the result — done</span>
-                </li>
-              </ol>
-              <Link to='/create' className='welcome-cta'>
-                Create your first template
-              </Link>
+              <div className='terminal-login-header'>
+                <span className='login-text'>COMMANDER(8) System Manager COMMANDER(8)</span>
+                <span className='login-date'>{new Date().toLocaleDateString()}</span>
+              </div>
+              <div className='welcome-body'>
+                <p className='welcome-intro'>Welcome to Commander. Instant template retrieval system.</p>
+                <div className='usage-box'>
+                  <span className='usage-label'>USAGE:</span>
+                  <div className='usage-steps'>
+                    <div className='usage-step'>1. CREATE → Assign a trigger (e.g. <code>/h1</code>)</div>
+                    <div className='usage-step'>2. RUN    → Type trigger and hit Enter</div>
+                    <div className='usage-step'>3. COPY   → Clipboard updated instantly</div>
+                  </div>
+                </div>
+                <Link to='/create' className='welcome-cta'>
+                  Initialize first template _
+                </Link>
+              </div>
             </div>
           </section>
         )}
