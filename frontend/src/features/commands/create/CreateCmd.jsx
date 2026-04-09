@@ -69,69 +69,74 @@ export const CreateCmd = ({ onRefresh }) => {
   return (
     <main className='main-content create-view'>
       <div className='page-container'>
-      <div className='search-section'>
-        <h1 className='search-title'>New template</h1>
-      </div>
-
-      <form onSubmit={handleCreateSubmit} className='create-form'>
-        <div className='form-grid'>
-          <div className='form-group'>
-            <label htmlFor="command-name">Name</label>
-            <input
-              id="command-name"
-              type='text'
-              value={nameInput}
-              onChange={(event) => setNameInput(event.target.value)}
-              placeholder='e.g. Meeting Follow-up'
-              className='form-input'
-              maxLength={80}
-              required
-            />
-            <span className='form-hint'>A label to help you find this template later.</span>
+        <section className='search-section'>
+          <div className='terminal-status-line'>
+            <div className='status-left'>
+              <span className='status-indicator' />
+              <span className='status-path'>~/commander/create_template</span>
+            </div>
           </div>
+        </section>
 
-          <div className='form-group'>
-            <label htmlFor="trigger-trigger">Trigger</label>
-            <div className='input-container'>
-              <span className='input-prefix' aria-hidden="true">/</span>
+        <form onSubmit={handleCreateSubmit} className='create-form'>
+          <div className='form-grid'>
+            <div className='form-group'>
+              <label htmlFor="command-name">NAME_LABEL</label>
               <input
-                id="trigger-trigger"
+                id="command-name"
                 type='text'
-                value={triggerInput}
-                onChange={(event) => setTriggerInput(event.target.value)}
-                placeholder='followup'
-                className='form-input-prefixed'
-                maxLength={40}
+                value={nameInput}
+                onChange={(event) => setNameInput(event.target.value)}
+                placeholder='e.g. Meeting Follow-up'
+                className='form-input'
+                maxLength={80}
                 required
               />
+              <span className='form-hint'>Internal identifier for retrieval.</span>
             </div>
-            <span className='form-hint'>The shortcut you'll type in the Terminal to retrieve this template.</span>
+
+            <div className='form-group'>
+              <label htmlFor="trigger-trigger">TRIGGER_PATH</label>
+              <div className='input-container'>
+                <span className='input-prefix' aria-hidden="true">/</span>
+                <input
+                  id="trigger-trigger"
+                  type='text'
+                  value={triggerInput}
+                  onChange={(event) => setTriggerInput(event.target.value)}
+                  placeholder='followup'
+                  className='form-input-prefixed'
+                  maxLength={40}
+                  required
+                />
+              </div>
+              <span className='form-hint'>Technical shortcut used in terminal.</span>
+            </div>
+
+            <div className='form-group full-width'>
+              <label htmlFor="content-textarea">DATA_CONTENT</label>
+              <textarea
+                id="content-textarea"
+                value={contentInput}
+                onChange={(event) => setContentInput(event.target.value)}
+                placeholder='Enter technical template data here...'
+                className='form-textarea'
+                maxLength={5000}
+                required
+              />
+              <span className='form-hint'>Raw string payload for clipboard update.</span>
+            </div>
           </div>
 
-          <div className='form-group full-width'>
-            <label htmlFor="content-textarea">Content</label>
-            <textarea
-              id="content-textarea"
-              value={contentInput}
-              onChange={(event) => setContentInput(event.target.value)}
-              placeholder='Hi [Name], thanks for taking the time to meet today...'
-              className='form-textarea'
-              maxLength={5000}
-              required
-            />
-            <span className='form-hint'>The text that gets returned when you run the trigger.</span>
-          </div>
-        </div>
-
-        <button
-          type='submit'
-          className='submit-btn'
-          disabled={isSubmitting}
-          aria-live="polite"
-        >
-          {isSubmitting ? 'Saving...' : !canCreate ? 'Trial limit reached' : 'Save template'}
-        </button>
-      </form>
+          <button
+            type='submit'
+            className='submit-btn'
+            disabled={isSubmitting}
+            aria-live="polite"
+          >
+            {isSubmitting ? 'EXECUTING_SAVE...' : !canCreate ? 'LIMIT_REACHED' : 'INITIALIZE_TEMPLATE'}
+          </button>
+        </form>
       </div>
     </main>
   );
