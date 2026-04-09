@@ -17,6 +17,29 @@
   --terminal-green-bright: #bef264;
   --dashboard-width: 720px;
   --bg-inset: #010409;
+  --color-error: #ef4444;
+  --color-error-soft: rgba(239, 68, 68, 0.08);
+  --color-error-hover: #f87171;
+}
+
+.sileo-text-white {
+  color: #ffffff !important;
+}
+
+.sileo-badge-fix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-sileo-header] {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+[data-sileo-title] {
+  line-height: var(--sileo-height);
 }
 
 body {
@@ -85,19 +108,46 @@ body {
 
 .btn-clear {
   background: transparent;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
+  border: none;
+  color: var(--color-error);
   border-radius: 6px;
-  width: 32px;
-  height: 32px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .btn-clear:hover {
+  background-color: var(--color-error-soft);
+  color: var(--color-error-hover);
+}
+
+.copy-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
   background-color: var(--bg-secondary);
   border-color: var(--terminal-green);
   color: var(--terminal-green);

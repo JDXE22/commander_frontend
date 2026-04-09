@@ -9,7 +9,6 @@ export const Hero = () => {
       <nav className="hero-navbar">
         <div className="logo-group">
           <img src={buddyLogo} alt="Commander Logo" className="logo-icon-img" />
-          <span className="logo-text">Commander</span>
         </div>
         <div className="hero-nav-links">
           <Link to="/auth" className="btn-signin-outline">Sign In</Link>

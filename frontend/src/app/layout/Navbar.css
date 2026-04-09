@@ -1,12 +1,10 @@
 /* ============================================ */
-/* Floating Buddy Icon Button (Always Visible) */
+/* Sidebar Toggle Button (inside pill header)  */
 /* ============================================ */
-.buddy-icon-button {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  width: 44px;
-  height: 44px;
+.sidebar-toggle {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   padding: 0;
@@ -14,28 +12,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1001;
   transition: transform 0.2s ease;
   outline: none;
 }
 
-.buddy-icon-button:hover {
+.sidebar-toggle:hover {
   transform: scale(1.08);
 }
 
-.buddy-icon-button:active {
+.sidebar-toggle:active {
   transform: scale(0.95);
 }
 
 .buddy-icon {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
 }
 
-/* ============================================ */
-/* Overlay Backdrop (Darkens screen when open) */
-/* ============================================ */
 .sidebar-overlay {
   position: fixed;
   inset: 0;
@@ -52,36 +46,33 @@
 }
 
 /* ============================================ */
-/* Sidebar Overlay Panel (Slide-in from left)  */
+/* Floating Pill Sidebar                       */
 /* ============================================ */
 .sidebar {
-  width: 240px;
+  position: fixed;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 64px;
+  height: fit-content;
+  border-radius: 20px;
   background-color: var(--bg-sidebar-main);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--border-sidebar);
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  gap: 16px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  border-right: 1px solid var(--border-sidebar);
+  padding: 14px;
+  gap: 12px;
   overflow: hidden;
-  /* Off-screen when closed; invisible after animation completes */
-  transform: translateX(-100%);
-  visibility: hidden;
   transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    visibility 0s linear 0.3s;
+    width 0.3s ease-in-out,
+    border-radius 0.3s ease-in-out;
 }
 
 .sidebar.open {
-  transform: translateX(0);
-  visibility: visible;
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    visibility 0s linear 0s;
+  width: 220px;
 }
 
 /* ============================================ */
@@ -90,19 +81,23 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-  /* indent title so it clears the fixed buddy icon button */
-  padding-left: 44px;
-  min-height: 48px;
-  padding-bottom: 8px;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--border-sidebar);
   flex-shrink: 0;
 }
 
+.sidebar.open .sidebar-header {
+  justify-content: flex-start;
+}
+
 .sidebar-title {
   color: var(--text-sidebar-primary);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   white-space: nowrap;
+  margin-left: 2px;
 }
 
 /* ============================================ */
@@ -152,7 +147,6 @@
 /* User Section (Bottom of Sidebar)             */
 /* ============================================ */
 .user-section {
-  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--border-sidebar);
 }
@@ -230,9 +224,12 @@
 /* Responsive Design                           */
 /* ============================================ */
 
-/* Mobile: wider when open */
 @media (max-width: 767px) {
+  .sidebar {
+    left: 10px;
+  }
+
   .sidebar.open {
-    width: min(80vw, 280px);
+    width: min(80vw, 260px);
   }
 }
