@@ -47,7 +47,7 @@
 }
 
 .back-btn span {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -59,7 +59,7 @@
 
 .logo-text-small {
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -79,17 +79,18 @@
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .auth-tab.active {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 -2px 0 var(--terminal-green);
 }
 
 .auth-form {
@@ -105,16 +106,17 @@
 }
 
 .auth-title-special {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.025em;
 }
 
 .auth-subtitle-special {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-secondary);
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -137,7 +139,7 @@
 }
 
 .forgot-pass {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--terminal-green);
   cursor: pointer;
   font-weight: 500;
@@ -149,8 +151,8 @@
 
 .auth-label {
   color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .auth-input-box {
@@ -163,6 +165,12 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input-box:focus-within {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 0 3px var(--color-green-soft);
 }
 
 .auth-input {
@@ -170,7 +178,8 @@
   border: none;
   width: 100%;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
   outline: none;
 }
 
@@ -183,8 +192,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
-  font-weight: 700;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
   text-decoration: none;
   margin-top: 12px;
   transition: opacity 0.2s;
@@ -196,7 +206,8 @@
 
 .auth-footer {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
   text-align: center;
   margin: 0;
 }

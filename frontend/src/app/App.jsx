@@ -9,6 +9,7 @@ import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
 import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
+import { ThemeProvider } from '../shared/context/ThemeContext';
 import { Toaster, sileo } from 'sileo';
 
 function AppContent() {
@@ -69,7 +70,7 @@ function AppContent() {
       if (commandResult?.error) {
         console.error('Command validation failed:', commandResult.message);
         sileo.error({
-          title: 'Command Error',
+          title: 'No match found',
           description: commandResult.message,
           fill: '#ef4444',
         });
@@ -89,8 +90,8 @@ function AppContent() {
     } catch (processError) {
       console.error('Terminal processing error:', processError);
       sileo.error({
-        title: 'Processing Error',
-        description: 'Failed to process the command.',
+        title: 'Something went wrong',
+        description: "Couldn't retrieve that template. Try again in a moment.",
         fill: '#ef4444',
       });
     } finally {
@@ -127,7 +128,7 @@ function AppContent() {
   );
 
   return (
-    <div className={`App ${!shouldDisplayNavbar ? 'no-sidebar' : ''}`}>
+    <div className='App'>
       {shouldDisplayNavbar && <Navbar />}
       <Routes>
         <Route
@@ -167,12 +168,14 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <TrialProvider>
-        <AppContent />
-        <Toaster position='top-right' />
-      </TrialProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <TrialProvider>
+          <AppContent />
+          <Toaster position='top-right' />
+        </TrialProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
