@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useMatch, useResolvedPath, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
 import { useAuth } from '../../shared/context/AuthContext';
@@ -7,12 +7,29 @@ import './Navbar.css';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
-  const closeSidebar = () => setIsOpen(false);
+  const closeSidebar = () => {
+    setIsOpen(false);
+    setIsMobileOpen(false);
+  };
+
+  const toggleMobileSidebar = () => setIsMobileOpen((prev) => !prev);
+
+  // Auto-close mobile sidebar when viewport grows beyond the breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMobileOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleUserClick = () => {
     closeSidebar();
@@ -27,16 +44,34 @@ export const Navbar = () => {
 
   const displayName = user?.email?.split('@')[0] ?? 'Account';
 
+  const sidebarClasses = [
+    'sidebar',
+    isOpen ? 'open' : '',
+    isMobileOpen ? 'mobile-active open' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <>
+      {/* Mobile hamburger / close toggle — hidden on desktop via CSS */}
+      <button
+        className='mobile-sidebar-toggle'
+        onClick={toggleMobileSidebar}
+        aria-label={isMobileOpen ? 'Close sidebar' : 'Open sidebar'}
+        aria-expanded={isMobileOpen}
+      >
+        <img src={buddyLogo} alt='Commander Logo' className='mobile-buddy-icon' />
+      </button>
+
       <div
-        className={`sidebar-overlay ${isOpen ? 'visible' : ''}`}
+        className={`sidebar-overlay ${isOpen || isMobileOpen ? 'visible' : ''}`}
         onClick={closeSidebar}
         aria-hidden='true'
       />
 
       <aside
-        className={`sidebar ${isOpen ? 'open' : ''}`}
+        className={sidebarClasses}
         role='navigation'
         aria-label='Main Sidebar'>
         <div className='sidebar-header'>
@@ -47,10 +82,10 @@ export const Navbar = () => {
             aria-expanded={isOpen}>
             <img src={buddyLogo} alt='Commander Logo' className='buddy-icon' />
           </button>
-          {isOpen && <span className='sidebar-title'>Commander</span>}
+          {(isOpen || isMobileOpen) && <span className='sidebar-title'>Commander</span>}
         </div>
 
-        {isOpen && (
+        {(isOpen || isMobileOpen) && (
           <>
             <nav className='nav-links'>
               <CustomLink to='/terminal' onClick={closeSidebar}>

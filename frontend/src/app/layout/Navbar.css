@@ -322,22 +322,14 @@
 /* Responsive Design                           */
 /* ============================================ */
 
-@media (max-width: 767px) {
-  .sidebar {
-    left: 12px;
-    bottom: 20px;
-    top: auto;
-    transform: none;
-    width: 56px;
-    border-radius: 20px;
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: none;
   }
 
-  .sidebar.open {
-    width: calc(100vw - 24px);
-    height: auto;
-    max-height: 80vh;
-    border-radius: 24px;
-    bottom: 12px;
+  .sidebar.mobile-active .sidebar-header {
+    justify-content: center;
+    padding-bottom: 14px;
   }
 
   .sidebar-overlay.visible {
