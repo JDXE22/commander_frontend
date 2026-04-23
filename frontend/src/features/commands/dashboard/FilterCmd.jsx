@@ -17,7 +17,6 @@ export const FilterCmd = () => {
   const [isLoadingCommands, setIsLoadingCommands] = useState(false);
   const [pendingUpdateInput, setPendingUpdateInput] = useState({});
 
-  // Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -47,10 +46,29 @@ export const FilterCmd = () => {
     }
   }, [isAuthenticated, currentPage, searchQuery]);
 
-  // Debounced Search Effect
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    const trimmedSearchQuery = searchQuery.trim();
+    if (!trimmedSearchQuery) {
       setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    if (!isAuthenticated) {
+      const normalizedQuery = trimmedSearchQuery.toLowerCase();
+      const localMatches = trialCommands.filter((commandItem) => {
+        const nameValue = commandItem?.name?.toLowerCase() || '';
+        const triggerValue = commandItem?.command?.toLowerCase() || '';
+        const textValue = commandItem?.text?.toLowerCase() || '';
+
+        return (
+          nameValue.includes(normalizedQuery) ||
+          triggerValue.includes(normalizedQuery) ||
+          textValue.includes(normalizedQuery)
+        );
+      });
+
+      setSearchResults(localMatches);
       setIsSearching(false);
       return;
     }
@@ -72,11 +90,13 @@ export const FilterCmd = () => {
     }, 350);
 
     return () => clearTimeout(handler);
-  }, [searchQuery]);
+  }, [searchQuery, isAuthenticated, trialCommands]);
 
   const activeCommandList = searchQuery.trim()
     ? searchResults
-    : (isAuthenticated ? persistentCommands : trialCommands);
+    : isAuthenticated
+      ? persistentCommands
+      : trialCommands;
 
   const handleCommandUpdate = async ({ commandId, updatedText }) => {
     try {
@@ -126,15 +146,20 @@ export const FilterCmd = () => {
             {searchQuery && (
               <div className='status-right'>
                 <span className='loader-text' style={{ fontSize: '0.7rem' }}>
-                  {isSearching ? 'SEARCHING...' : `MATCHES: ${searchResults.length}`}
+                  {isSearching
+                    ? 'SEARCHING...'
+                    : `MATCHES: ${searchResults.length}`}
                 </span>
               </div>
             )}
           </div>
 
           <div className='search-bar-wrapper'>
-            <span className='search-prompt'>SEARCH &gt;</span>
+            <label htmlFor='search-templates' className='search-prompt'>
+              SEARCH &gt;
+            </label>
             <input
+              id='search-templates'
               type='text'
               className='search-input-field'
               placeholder='Filter by name, trigger or content...'
@@ -148,15 +173,16 @@ export const FilterCmd = () => {
         <div className='cmd-list' aria-busy={isLoadingCommands || isSearching}>
           <AnimatePresence mode='popLayout'>
             {isLoadingCommands || (isSearching && searchQuery) ? (
-              <motion.div 
+              <motion.div
                 key='loader'
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className='terminal-loader'
-              >
+                className='terminal-loader'>
                 <span className='loader-text'>
-                  {isSearching ? 'FILTERING_RECORDS...' : 'SYNCHRONIZING_DATABASE...'}
+                  {isSearching
+                    ? 'FILTERING_RECORDS...'
+                    : 'SYNCHRONIZING_DATABASE...'}
                 </span>
               </motion.div>
             ) : activeCommandList.length > 0 ? (
@@ -178,7 +204,9 @@ export const FilterCmd = () => {
                           {command.name}
                         </h2>
                         {command.match && (
-                          <span className='match-badge'>{command.match.toUpperCase()}</span>
+                          <span className='match-badge'>
+                            {command.match.toUpperCase()}
+                          </span>
                         )}
                       </div>
                       <div className='card-actions'>
@@ -216,14 +244,13 @@ export const FilterCmd = () => {
                 );
               })
             ) : (
-              <motion.div 
+              <motion.div
                 key='empty'
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className='terminal-empty-state'
-              >
+                className='terminal-empty-state'>
                 <p role='status'>
-                  {searchQuery 
+                  {searchQuery
                     ? `_ NO_MATCHES_FOUND: "${searchQuery}" yielded no results.`
                     : '_ NO_DATA_FOUND: Create a template to begin initialization.'}
                 </p>
