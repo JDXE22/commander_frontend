@@ -2,7 +2,34 @@ import axios from '../../../shared/api/apiClient';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const VERSION = import.meta.env.VITE_API_VERSION;
-const URL = VERSION ? `${BASE_URL}/${VERSION}/commands` : `${BASE_URL}/commands`;
+const URL = VERSION
+  ? `${BASE_URL}/${VERSION}/commands`
+  : `${BASE_URL}/commands`;
+
+const searchResponseCache = new Map();
+
+const normalizeSearchResponse = ({ data, query, limit }) => {
+  if (Array.isArray(data?.commands)) {
+    return data;
+  }
+
+  const templates = Array.isArray(data?.templates) ? data.templates : [];
+  const commands = templates.map((template) => ({
+    _id: template.id,
+    name: template.name,
+    text: template.content,
+    command: template.command,
+    match: template.match,
+  }));
+
+  return {
+    ...data,
+    query: data?.query ?? query,
+    limit: data?.limit ?? limit,
+    total: data?.total ?? commands.length,
+    commands,
+  };
+};
 
 export const getCommand = async (cmd) => {
   try {
@@ -32,6 +59,49 @@ export const getCommands = async ({ page }) => {
       error: true,
       message:
         error?.response?.data?.message || error.message || 'Unknown error',
+    };
+  }
+};
+
+export const searchCommands = async ({ query, limit = 10 }) => {
+  try {
+    const cacheKey = `${query.trim().toLowerCase()}::${limit}`;
+    const response = await axios.get(`${URL}/search`, {
+      params: { query, limit },
+      validateStatus: (statusCode) =>
+        (statusCode >= 200 && statusCode < 300) || statusCode === 304,
+    });
+
+    if (response.status === 304) {
+      const cachedResponse = searchResponseCache.get(cacheKey);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      const freshResponse = await axios.get(`${URL}/search`, {
+        params: { query, limit, _t: Date.now() },
+      });
+      const normalizedFreshResponse = normalizeSearchResponse({
+        data: freshResponse.data,
+        query,
+        limit,
+      });
+      searchResponseCache.set(cacheKey, normalizedFreshResponse);
+      return normalizedFreshResponse;
+    }
+
+    const normalizedResponse = normalizeSearchResponse({
+      data: response.data,
+      query,
+      limit,
+    });
+    searchResponseCache.set(cacheKey, normalizedResponse);
+    return normalizedResponse;
+  } catch (error) {
+    return {
+      error: true,
+      message:
+        error?.response?.data?.message || error.message || 'Search failed',
     };
   }
 };

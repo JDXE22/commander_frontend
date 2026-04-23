@@ -12,7 +12,7 @@ import { TrialModal } from '../shared/ui/Modal/TrialModal';
 import { ThemeProvider } from '../shared/context/ThemeContext';
 import { Toaster, sileo } from 'sileo';
 
-function AppContent() {
+function AppContentInner() {
   const [terminalInput, setTerminalInput] = useState('');
   const [activeCommands, setActiveCommands] = useState(() => {
     try {
@@ -164,6 +164,10 @@ function AppContent() {
       <TrialModal />
     </div>
   );
+}
+
+function AppContent() {
+  return <AppContentInner />;
 }
 
 function App() {
