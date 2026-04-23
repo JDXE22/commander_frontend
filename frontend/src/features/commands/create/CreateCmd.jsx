@@ -76,6 +76,7 @@ export const CreateCmd = ({ onRefresh }) => {
 
   return (
     <main className='main-content create-view'>
+      <h1 className='visually-hidden'>Create New Template</h1>
       <div className='page-container'>
         <section className='search-section'>
           <div className='terminal-status-line'>

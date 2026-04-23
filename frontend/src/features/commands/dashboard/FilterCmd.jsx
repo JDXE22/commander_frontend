@@ -136,6 +136,7 @@ export const FilterCmd = () => {
 
   return (
     <main className='main-content'>
+      <h1 className='visually-hidden'>Manage Template Records</h1>
       <div className='page-container'>
         <section className='search-section'>
           <div className='terminal-status-line'>
