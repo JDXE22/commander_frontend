@@ -5,7 +5,7 @@ import {
   useEffect,
   useCallback,
 } from 'react';
-import {
+import apiClient, {
   clearAccessToken,
   refreshSession,
   setAccessToken,
@@ -24,9 +24,10 @@ export const AuthProvider = ({ children }) => {
     } catch {
       // If AT is expired and refresh fails, session is already dead
       return;
+    } finally {
+      clearAccessToken();
+      setActiveUser(null);
     }
-    clearAccessToken();
-    setActiveUser(null);
   }, []);
 
   useEffect(() => {
