@@ -6,12 +6,11 @@ import {
   useCallback,
 } from 'react';
 import {
-  setAccessToken,
   clearAccessToken,
-  setSessionExpiredHandler,
   refreshSession,
-} from '../../apiClient';
-import apiClient from '../../apiClient';
+  setAccessToken,
+  setSessionExpiredHandler,
+} from '../api/apiClient';
 
 const AuthContext = createContext(null);
 
