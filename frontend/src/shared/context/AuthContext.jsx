@@ -1,25 +1,53 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
+import {
+  setAccessToken,
+  clearAccessToken,
+  setSessionExpiredHandler,
+  refreshSession,
+} from '../../apiClient';
+import apiClient from '../../apiClient';
 
 const AuthContext = createContext(null);
-
-const STORAGE_KEYS = {
-  USER: 'commander_user',
-  TOKEN: 'commander_token',
-};
 
 export const AuthProvider = ({ children }) => {
   const [activeUser, setActiveUser] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  const logoutSession = useCallback(async () => {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch {
+      // If AT is expired and refresh fails, session is already dead
+      return;
+    }
+    clearAccessToken();
+    setActiveUser(null);
+  }, []);
+
   useEffect(() => {
-    const initializeAuth = () => {
+    setSessionExpiredHandler(() => {
+      clearAccessToken();
+      setActiveUser(null);
+    });
+  }, []);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
       try {
-        const cachedUser = localStorage.getItem(STORAGE_KEYS.USER);
-        if (cachedUser) {
-          setActiveUser(JSON.parse(cachedUser));
-        }
-      } catch (cacheError) {
-        console.error('Failed to parse cached user:', cacheError);
+        const data = await refreshSession();
+        setActiveUser({
+          userId: data.userId,
+          username: data.username,
+          email: data.email,
+        });
+      } catch {
+        setActiveUser(null);
       } finally {
         setIsInitialLoading(false);
       }
@@ -29,27 +57,23 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const loginSession = (userData) => {
-    setActiveUser(userData);
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
-    localStorage.setItem(STORAGE_KEYS.TOKEN, userData.token);
+    setAccessToken(userData.accessToken);
+    setActiveUser({
+      userId: userData.userId,
+      username: userData.username,
+      email: userData.email,
+    });
   };
-
-  const logoutSession = () => {
-    setActiveUser(null);
-    localStorage.removeItem(STORAGE_KEYS.USER);
-    localStorage.removeItem(STORAGE_KEYS.TOKEN);
-  };
-
-  const isUserAuthenticated = !!activeUser;
 
   return (
-    <AuthContext.Provider value={{ 
-      user: activeUser, 
-      login: loginSession, 
-      logout: logoutSession, 
-      isAuthenticated: isUserAuthenticated, 
-      loading: isInitialLoading 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user: activeUser,
+        login: loginSession,
+        logout: logoutSession,
+        isAuthenticated: !!activeUser,
+        loading: isInitialLoading,
+      }}>
       {children}
     </AuthContext.Provider>
   );
