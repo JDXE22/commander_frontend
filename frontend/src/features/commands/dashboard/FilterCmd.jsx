@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button, CopyButton } from '../../../shared/ui/Button/Button';
 import { useTrial } from '../../../shared/context/TrialContext';
 import { useAuth } from '../../../shared/context/AuthContext';
-import { getCommands } from '../api/apiCommands';
+import { getCommands, searchCommands } from '../api/apiCommands';
 import { sileo } from 'sileo';
+import { motion, AnimatePresence } from 'motion/react';
 import './FilterCmd.css';
 
 export const FilterCmd = () => {
@@ -16,8 +17,12 @@ export const FilterCmd = () => {
   const [isLoadingCommands, setIsLoadingCommands] = useState(false);
   const [pendingUpdateInput, setPendingUpdateInput] = useState({});
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !searchQuery) {
       const loadPersistentCommands = async () => {
         setIsLoadingCommands(true);
         try {
@@ -39,11 +44,59 @@ export const FilterCmd = () => {
       };
       loadPersistentCommands();
     }
-  }, [isAuthenticated, currentPage]);
+  }, [isAuthenticated, currentPage, searchQuery]);
 
-  const activeCommandList = isAuthenticated
-    ? persistentCommands
-    : trialCommands;
+  useEffect(() => {
+    const trimmedSearchQuery = searchQuery.trim();
+    if (!trimmedSearchQuery) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    if (!isAuthenticated) {
+      const normalizedQuery = trimmedSearchQuery.toLowerCase();
+      const localMatches = trialCommands.filter((commandItem) => {
+        const nameValue = commandItem?.name?.toLowerCase() || '';
+        const triggerValue = commandItem?.command?.toLowerCase() || '';
+        const textValue = commandItem?.text?.toLowerCase() || '';
+
+        return (
+          nameValue.includes(normalizedQuery) ||
+          triggerValue.includes(normalizedQuery) ||
+          textValue.includes(normalizedQuery)
+        );
+      });
+
+      setSearchResults(localMatches);
+      setIsSearching(false);
+      return;
+    }
+
+    const handler = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const response = await searchCommands({ query: searchQuery });
+        if (response && !response.error) {
+          setSearchResults(response.commands || []);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery, isAuthenticated, trialCommands]);
+
+  const activeCommandList = searchQuery.trim()
+    ? searchResults
+    : isAuthenticated
+      ? persistentCommands
+      : trialCommands;
 
   const handleCommandUpdate = async ({ commandId, updatedText }) => {
     try {
@@ -83,6 +136,7 @@ export const FilterCmd = () => {
 
   return (
     <main className='main-content'>
+      <h1 className='visually-hidden'>Manage Template Records</h1>
       <div className='page-container'>
         <section className='search-section'>
           <div className='terminal-status-line'>
@@ -90,71 +144,123 @@ export const FilterCmd = () => {
               <span className='status-indicator' />
               <span className='status-path'>~/commander/templates</span>
             </div>
+            {searchQuery && (
+              <div className='status-right'>
+                <span className='loader-text' style={{ fontSize: '0.7rem' }}>
+                  {isSearching
+                    ? 'SEARCHING...'
+                    : `MATCHES: ${searchResults.length}`}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className='search-bar-wrapper'>
+            <label htmlFor='search-templates' className='search-prompt'>
+              SEARCH &gt;
+            </label>
+            <input
+              id='search-templates'
+              type='text'
+              className='search-input-field'
+              placeholder='Filter by name, trigger or content...'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label='Search templates'
+            />
           </div>
         </section>
 
-        <div className='cmd-list' aria-busy={isLoadingCommands}>
-          {isLoadingCommands ? (
-            <div className='terminal-loader'>
-              <span className='loader-text'>SYNCHRONIZING_DATABASE...</span>
-            </div>
-          ) : activeCommandList.length > 0 ? (
-            activeCommandList.map((command) => {
-              const currentContent =
-                pendingUpdateInput[command._id] ?? command.text;
-              return (
-                <article
-                  key={command._id}
-                  className='card edit-card'
-                  aria-labelledby={`title-${command._id}`}>
-                  <div className='card-header'>
-                    <h2 id={`title-${command._id}`} className='card-title'>
-                      {command.name}
-                    </h2>
-                    <div className='card-actions'>
-                      <Button
-                        content='UPDATE'
-                        disabled={currentContent === command.text}
-                        handle={() =>
-                          handleCommandUpdate({
-                            commandId: command._id,
-                            updatedText: currentContent,
-                          })
+        <div className='cmd-list' aria-busy={isLoadingCommands || isSearching}>
+          <AnimatePresence mode='popLayout'>
+            {isLoadingCommands || (isSearching && searchQuery) ? (
+              <motion.div
+                key='loader'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className='terminal-loader'>
+                <span className='loader-text'>
+                  {isSearching
+                    ? 'FILTERING_RECORDS...'
+                    : 'SYNCHRONIZING_DATABASE...'}
+                </span>
+              </motion.div>
+            ) : activeCommandList.length > 0 ? (
+              activeCommandList.map((command) => {
+                const currentContent =
+                  pendingUpdateInput[command._id] ?? command.text;
+                return (
+                  <motion.article
+                    key={command._id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className='card edit-card'
+                    aria-labelledby={`title-${command._id}`}>
+                    <div className='card-header'>
+                      <div className='title-group'>
+                        <h2 id={`title-${command._id}`} className='card-title'>
+                          {command.name}
+                        </h2>
+                        {command.match && (
+                          <span className='match-badge'>
+                            {command.match.toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <div className='card-actions'>
+                        <Button
+                          content='UPDATE'
+                          disabled={currentContent === command.text}
+                          handle={() =>
+                            handleCommandUpdate({
+                              commandId: command._id,
+                              updatedText: currentContent,
+                            })
+                          }
+                          className='btn-primary sm'
+                        />
+                      </div>
+                    </div>
+                    <div className='card-body'>
+                      <span className='command-trigger'>{command.command}</span>
+                      <textarea
+                        className='command-text'
+                        value={currentContent}
+                        onChange={(event) =>
+                          setPendingUpdateInput((prevPending) => ({
+                            ...prevPending,
+                            [command._id]: event.target.value,
+                          }))
                         }
-                        className='btn-primary sm'
+                        aria-label={`Edit description for ${command.name}`}
                       />
+                      <div className='card-footer'>
+                        <CopyButton textToCopy={command.text} />
+                      </div>
                     </div>
-                  </div>
-                  <div className='card-body'>
-                    <span className='command-trigger'>{command.command}</span>
-                    <textarea
-                      className='command-text'
-                      value={currentContent}
-                      onChange={(event) =>
-                        setPendingUpdateInput((prevPending) => ({
-                          ...prevPending,
-                          [command._id]: event.target.value,
-                        }))
-                      }
-                      aria-label={`Edit description for ${command.name}`}
-                    />
-                    <div className='card-footer'>
-                      <CopyButton textToCopy={command.text} />
-                    </div>
-                  </div>
-                </article>
-              );
-            })
-          ) : (
-            <div className='terminal-empty-state'>
-              <p role='status'>
-                _ NO_DATA_FOUND: Create a template to begin initialization.
-              </p>
-            </div>
-          )}
+                  </motion.article>
+                );
+              })
+            ) : (
+              <motion.div
+                key='empty'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className='terminal-empty-state'>
+                <p role='status'>
+                  {searchQuery
+                    ? `_ NO_MATCHES_FOUND: "${searchQuery}" yielded no results.`
+                    : '_ NO_DATA_FOUND: Create a template to begin initialization.'}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {isAuthenticated && totalPageCount > 1 && (
+        {isAuthenticated && totalPageCount > 1 && !searchQuery && (
           <nav className='pagination' aria-label='Pagination Navigation'>
             <button
               className='page-number'

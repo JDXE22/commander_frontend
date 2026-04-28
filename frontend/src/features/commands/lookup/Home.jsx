@@ -19,6 +19,7 @@ export const Home = ({
 
   return (
     <main className='main-content'>
+      <h1 className='visually-hidden'>Terminal Command Center</h1>
       <div className='page-container'>
         <section className='search-section' aria-label='Command Input'>
           <div className='terminal-status-line'>
@@ -71,7 +72,7 @@ export const Home = ({
               className='btn-primary'
               disabled={isLoading || !inputText.trim()}
               aria-label='Execute command'>
-              {isLoading ? '...' : 'Run'}
+              {isLoading ? '...' : 'EXECUTE'}
             </button>
           </form>
         </section>

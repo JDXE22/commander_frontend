@@ -9,10 +9,9 @@ import { Auth } from '../features/auth/Auth';
 import { TrialProvider, useTrial } from '../shared/context/TrialContext';
 import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
-import { ThemeProvider } from '../shared/context/ThemeContext';
 import { Toaster, sileo } from 'sileo';
 
-function AppContent() {
+function AppContentInner() {
   const [terminalInput, setTerminalInput] = useState('');
   const [activeCommands, setActiveCommands] = useState(() => {
     try {
@@ -166,16 +165,18 @@ function AppContent() {
   );
 }
 
+function AppContent() {
+  return <AppContentInner />;
+}
+
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <TrialProvider>
-          <AppContent />
-          <Toaster position='top-right' />
-        </TrialProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <TrialProvider>
+        <AppContent />
+        <Toaster position='top-right' />
+      </TrialProvider>
+    </AuthProvider>
   );
 }
 

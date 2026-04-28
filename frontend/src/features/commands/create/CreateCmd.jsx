@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTrial } from '../../../shared/context/TrialContext';
 import { sileo } from 'sileo';
+import { normalizeCommandTrigger } from '../../../shared/utils/commandUtils';
 import './CreateCmd.css';
 
 export const CreateCmd = ({ onRefresh }) => {
@@ -30,7 +31,7 @@ export const CreateCmd = ({ onRefresh }) => {
 
     setIsSubmitting(true);
     const commandPayload = {
-      command: triggerInput.trim(),
+      command: normalizeCommandTrigger(triggerInput),
       text: contentInput.trim(),
       name: nameInput.trim(),
     };
@@ -75,6 +76,7 @@ export const CreateCmd = ({ onRefresh }) => {
 
   return (
     <main className='main-content create-view'>
+      <h1 className='visually-hidden'>Create New Template</h1>
       <div className='page-container'>
         <section className='search-section'>
           <div className='terminal-status-line'>
