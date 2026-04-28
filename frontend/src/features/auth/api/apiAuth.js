@@ -1,4 +1,4 @@
-import { setAccessToken } from '../../../shared/api/apiClient';
+import apiClient, { setAccessToken } from '../../../shared/api/apiClient';
 
 const AUTH_URL = '/auth';
 
