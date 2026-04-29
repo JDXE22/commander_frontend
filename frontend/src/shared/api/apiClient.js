@@ -5,7 +5,8 @@ const VERSION = import.meta.env.VITE_API_VERSION;
 const API_URL = VERSION ? `${BASE_URL}/${VERSION}` : BASE_URL;
 const AUTH_URL = `${API_URL}/auth`;
 
-const REFRESH_SAFETY_MARGIN_MS = 60_000; // refresh 1 min before AT expiry
+const REFRESH_SAFETY_MARGIN_MS = 60_000;
+
 let refreshTimerId = null;
 
 function decodeJwtPayload(token) {
@@ -47,10 +48,11 @@ async function silentRefresh() {
   try {
     await refreshSession();
   } catch {
-    accessToken = null;
+    clearAccessToken();
     onSessionExpired();
   }
 }
+
 let accessToken = null;
 
 export const getAccessToken = () => accessToken;
@@ -71,7 +73,8 @@ export const setSessionExpiredHandler = (handler) => {
 };
 
 function getCookie(name) {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : null;
 }
 
@@ -87,14 +90,27 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-let isRefreshing = false;
-let failedQueue = [];
+let refreshPromise = null;
 
-function processQueue(error, token = null) {
-  failedQueue.forEach(({ resolve, reject }) => {
-    error ? reject(error) : resolve(token);
-  });
-  failedQueue = [];
+async function performRefresh() {
+  try {
+    const { data } = await axios.post(`${AUTH_URL}/refresh`, null, {
+      withCredentials: true,
+      headers: { 'x-csrf-token': getCookie('__csrf') || '' },
+    });
+    accessToken = data.accessToken;
+    scheduleProactiveRefresh(accessToken);
+    return data;
+  } finally {
+    refreshPromise = null;
+  }
+}
+
+function executeRefresh() {
+  if (!refreshPromise) {
+    refreshPromise = performRefresh();
+  }
+  return refreshPromise;
 }
 
 apiClient.interceptors.response.use(
@@ -110,51 +126,22 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject });
-      }).then((token) => {
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return apiClient(originalRequest);
-      });
-    }
-
     originalRequest._retry = true;
-    isRefreshing = true;
 
     try {
-      const csrfToken = getCookie('__csrf');
-      const { data } = await axios.post(`${AUTH_URL}/refresh`, null, {
-        withCredentials: true,
-        headers: { 'x-csrf-token': csrfToken || '' },
-      });
-
-      accessToken = data.accessToken;
-      scheduleProactiveRefresh(accessToken);
-      processQueue(null, accessToken);
-
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+      const data = await executeRefresh();
+      originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
-      processQueue(refreshError);
-      accessToken = null;
+      clearAccessToken();
       onSessionExpired();
       return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
     }
   },
 );
 
 export async function refreshSession() {
-  const csrfToken = getCookie('__csrf');
-  const { data } = await axios.post(`${AUTH_URL}/refresh`, null, {
-    withCredentials: true,
-    headers: { 'x-csrf-token': csrfToken || '' },
-  });
-  accessToken = data.accessToken;
-  scheduleProactiveRefresh(accessToken);
-  return data;
+  return executeRefresh();
 }
 
 export default apiClient;
