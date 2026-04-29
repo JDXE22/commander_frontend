@@ -54,6 +54,7 @@ async function silentRefresh() {
 }
 
 let accessToken = null;
+let csrfToken = null;
 
 export const getAccessToken = () => accessToken;
 export const setAccessToken = (token) => {
@@ -62,8 +63,12 @@ export const setAccessToken = (token) => {
     scheduleProactiveRefresh(token);
   }
 };
+export const setCsrfToken = (token) => {
+  csrfToken = token;
+};
 export const clearAccessToken = () => {
   accessToken = null;
+  csrfToken = null;
   clearScheduledRefresh();
 };
 
@@ -71,12 +76,6 @@ let onSessionExpired = () => {};
 export const setSessionExpiredHandler = (handler) => {
   onSessionExpired = handler;
 };
-
-function getCookie(name) {
-  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -87,6 +86,9 @@ apiClient.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+  if (csrfToken) {
+    config.headers['x-csrf-token'] = csrfToken;
+  }
   return config;
 });
 
@@ -96,9 +98,12 @@ async function performRefresh() {
   try {
     const { data } = await axios.post(`${AUTH_URL}/refresh`, null, {
       withCredentials: true,
-      headers: { 'x-csrf-token': getCookie('__csrf') || '' },
+      headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
     });
     accessToken = data.accessToken;
+    if (data.csrfToken) {
+      csrfToken = data.csrfToken;
+    }
     scheduleProactiveRefresh(accessToken);
     return data;
   } finally {
@@ -131,6 +136,9 @@ apiClient.interceptors.response.use(
     try {
       const data = await executeRefresh();
       originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+      if (data.csrfToken) {
+        originalRequest.headers['x-csrf-token'] = data.csrfToken;
+      }
       return apiClient(originalRequest);
     } catch (refreshError) {
       clearAccessToken();

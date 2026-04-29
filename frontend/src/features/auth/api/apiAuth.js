@@ -1,4 +1,4 @@
-import apiClient, { setAccessToken } from '../../../shared/api/apiClient';
+import apiClient, { setAccessToken, setCsrfToken } from '../../../shared/api/apiClient';
 
 const AUTH_URL = '/auth';
 
@@ -9,6 +9,7 @@ export const loginUser = async (email, password) => {
       password,
     });
     setAccessToken(data.accessToken);
+    if (data.csrfToken) setCsrfToken(data.csrfToken);
     return data;
   } catch (error) {
     return {
@@ -27,6 +28,7 @@ export const registerUser = async (username, email, password) => {
       password,
     });
     setAccessToken(data.accessToken);
+    if (data.csrfToken) setCsrfToken(data.csrfToken);
     return data;
   } catch (error) {
     return {
