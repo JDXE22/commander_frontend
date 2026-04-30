@@ -6,6 +6,29 @@ const API_URL = VERSION ? `${BASE_URL}/${VERSION}` : BASE_URL;
 const AUTH_URL = `${API_URL}/auth`;
 
 const REFRESH_SAFETY_MARGIN_MS = 60_000;
+const CSRF_STORAGE_KEY = 'commander_csrf';
+
+function readStoredCsrfToken() {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(CSRF_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function persistCsrfToken(token) {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) {
+      localStorage.setItem(CSRF_STORAGE_KEY, token);
+    } else {
+      localStorage.removeItem(CSRF_STORAGE_KEY);
+    }
+  } catch {
+    return;
+  }
+}
 
 let refreshTimerId = null;
 
@@ -54,7 +77,7 @@ async function silentRefresh() {
 }
 
 let accessToken = null;
-let csrfToken = null;
+let csrfToken = readStoredCsrfToken();
 
 export const getAccessToken = () => accessToken;
 export const setAccessToken = (token) => {
@@ -65,10 +88,12 @@ export const setAccessToken = (token) => {
 };
 export const setCsrfToken = (token) => {
   csrfToken = token;
+  persistCsrfToken(token);
 };
 export const clearAccessToken = () => {
   accessToken = null;
   csrfToken = null;
+  persistCsrfToken(null);
   clearScheduledRefresh();
 };
 
@@ -100,11 +125,10 @@ async function performRefresh() {
       withCredentials: true,
       headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
     });
-    accessToken = data.accessToken;
+    setAccessToken(data.accessToken);
     if (data.csrfToken) {
-      csrfToken = data.csrfToken;
+      setCsrfToken(data.csrfToken);
     }
-    scheduleProactiveRefresh(accessToken);
     return data;
   } finally {
     refreshPromise = null;
