@@ -102,16 +102,29 @@ export const Hero = () => {
               <div className='side-item'></div>
             </div>
             <div className='mockup-main'>
-              <div className='mockup-search'>
-                <div className='mockup-prompt'>$ /h1 </div>
+              <div className='mockup-card'>
+                <div className='mockup-card-header'>
+                  <span className='mockup-badge'>/h1</span>
+                  <div className='mockup-btns'>
+                    <div className='mockup-btn-sm green'></div>
+                  </div>
+                </div>
+                <div className='mockup-text-area'>
+                  Hi there! Reaching out about the Q3 project update. Everything
+                  is on track and the team is ready to deliver.
+                </div>
               </div>
               <div className='mockup-card'>
-                <div className='mockup-line-sm'></div>
-                <div className='mockup-line-lg'></div>
-              </div>
-              <div className='mockup-card'>
-                <div className='mockup-line-sm'></div>
-                <div className='mockup-line-lg'></div>
+                <div className='mockup-card-header'>
+                  <span className='mockup-badge'>/hello</span>
+                  <div className='mockup-btns'>
+                    <div className='mockup-btn-sm green'></div>
+                  </div>
+                </div>
+                <div className='mockup-text-area'>
+                  Hello! Thanks for your message. I'll get back to you within 24
+                  hours.
+                </div>
               </div>
             </div>
           </div>

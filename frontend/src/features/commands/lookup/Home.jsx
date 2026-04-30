@@ -105,7 +105,7 @@ export const Home = ({
                     _
                   </motion.span>
                 </motion.p>
-                <motion.div 
+                <motion.div
                   className='usage-box'
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
