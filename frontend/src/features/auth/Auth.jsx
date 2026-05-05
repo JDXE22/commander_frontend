@@ -185,7 +185,7 @@ export const Auth = () => {
       if (authResponse?.error) {
         showError("Couldn't sign you in", authResponse.message);
       } else if (authResponse) {
-        handleSuccessResponse();
+        handleSuccessResponse(authResponse);
       }
     } catch (error) {
       showError(
@@ -197,7 +197,7 @@ export const Auth = () => {
     }
   };
 
-  const handleSuccessResponse = () => {
+  const handleSuccessResponse = (authResponse) => {
     if (authMode === AUTH_MODES.FORGOT) {
       showSuccess(
         'Reset Link Sent!',
@@ -210,7 +210,7 @@ export const Auth = () => {
         setAuthMode(AUTH_MODES.LOGIN);
       }, 3000);
     } else {
-      login();
+      login(authResponse);
       showSuccess('Welcome Back!', 'Redirecting to terminal...');
       navigate('/terminal');
     }
@@ -306,12 +306,7 @@ export const Auth = () => {
                     <button
                       type='button'
                       className='forgot-pass'
-                      onClick={() => changeMode(AUTH_MODES.FORGOT)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                      }}>
+                      onClick={() => changeMode(AUTH_MODES.FORGOT)}>
                       Forgot password?
                     </button>
                   </div>
@@ -360,8 +355,7 @@ export const Auth = () => {
               <button
                 type='button'
                 className='auth-link'
-                onClick={() => changeMode(AUTH_MODES.LOGIN)}
-                style={{ background: 'none', border: 'none', padding: 0 }}>
+                onClick={() => changeMode(AUTH_MODES.LOGIN)}>
                 Back to Sign in
               </button>
             ) : (
@@ -378,8 +372,7 @@ export const Auth = () => {
                         ? AUTH_MODES.REGISTER
                         : AUTH_MODES.LOGIN,
                     )
-                  }
-                  style={{ background: 'none', border: 'none', padding: 0 }}>
+                  }>
                   {authMode === AUTH_MODES.LOGIN ? 'Sign up' : 'Sign in'}
                 </button>
               </p>
