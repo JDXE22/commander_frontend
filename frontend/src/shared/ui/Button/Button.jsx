@@ -46,6 +46,11 @@ export const CopyButton = ({
         title: 'ACCESS_DENIED',
         description: 'CLIPBOARD_WRITE_FAILED',
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
       onError && onError(error);
     }

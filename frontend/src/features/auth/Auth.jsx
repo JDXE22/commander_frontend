@@ -1,17 +1,97 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
 import { useAuth } from '../../shared/context/AuthContext';
-import { loginUser, registerUser, forgotPassword, resetPassword } from './api/apiAuth';
+import {
+  loginUser,
+  registerUser,
+  forgotPassword,
+  resetPassword,
+} from './api/apiAuth';
 import { sileo } from 'sileo';
+import { GoogleIcon } from '../../shared/ui/Icons/GoogleIcon';
 import './Auth.css';
+
+const AUTH_MODES = {
+  LOGIN: 'login',
+  REGISTER: 'register',
+  FORGOT: 'forgot',
+  RESET: 'reset',
+};
+
+const GOOGLE_OAUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/${import.meta.env.VITE_API_VERSION}/auth/google`;
+
+const AuthHeader = () => (
+  <>
+    <Link to='/' className='back-btn' aria-label='Go back to home page'>
+      <svg
+        width='18'
+        height='18'
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeWidth='2.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        aria-hidden='true'>
+        <line x1='19' y1='12' x2='5' y2='12'></line>
+        <polyline points='12 19 5 12 12 5'></polyline>
+      </svg>
+      <span>Back</span>
+    </Link>
+
+    <div className='auth-logo'>
+      <img src={buddyLogo} alt='Commander Logo' className='logo-icon-img' />
+      <span className='logo-text-small'>Commander</span>
+    </div>
+  </>
+);
+
+const AuthTabs = ({ mode, setMode }) => (
+  <div className='auth-tabs' role='tablist'>
+    <button
+      className={`auth-tab ${mode === AUTH_MODES.LOGIN ? 'active' : ''}`}
+      onClick={() => setMode(AUTH_MODES.LOGIN)}
+      type='button'
+      role='tab'
+      aria-selected={mode === AUTH_MODES.LOGIN}>
+      Sign in
+    </button>
+    <button
+      className={`auth-tab ${mode === AUTH_MODES.REGISTER ? 'active' : ''}`}
+      onClick={() => setMode(AUTH_MODES.REGISTER)}
+      type='button'
+      role='tab'
+      aria-selected={mode === AUTH_MODES.REGISTER}>
+      Sign up
+    </button>
+  </div>
+);
+
+const SocialAuth = ({ onGoogleSignIn }) => (
+  <>
+    <button
+      type='button'
+      className='btn-google'
+      onClick={onGoogleSignIn}
+      aria-label='Continue with Google'>
+      <GoogleIcon />
+      Continue with Google
+    </button>
+    <div className='auth-divider'>
+      <span className='auth-divider-line' aria-hidden='true' />
+      <span className='auth-divider-text'>or</span>
+      <span className='auth-divider-line' aria-hidden='true' />
+    </div>
+  </>
+);
 
 export const Auth = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
-  
-  const [authMode, setAuthMode] = useState('login'); 
+
+  const [authMode, setAuthMode] = useState(AUTH_MODES.LOGIN);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
@@ -22,18 +102,54 @@ export const Auth = () => {
     const queryParams = new URLSearchParams(location.search);
     const modeParam = queryParams.get('mode');
     const tokenParam = queryParams.get('token');
+    const errorParam = queryParams.get('error');
+
+    if (errorParam === 'oauth_failed') {
+      sileo.error({
+        title: 'Google sign-in failed',
+        description:
+          'Something went wrong with Google authentication. Please try again.',
+        fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
+      });
+    }
 
     if (modeParam === 'register') {
-      setAuthMode('register');
+      setAuthMode(AUTH_MODES.REGISTER);
     } else if (modeParam === 'reset' || tokenParam) {
-      setAuthMode('reset');
+      setAuthMode(AUTH_MODES.RESET);
       if (tokenParam) setRecoveryToken(tokenParam);
     } else if (modeParam === 'forgot') {
-      setAuthMode('forgot');
+      setAuthMode(AUTH_MODES.FORGOT);
     } else {
-      setAuthMode('login');
+      setAuthMode(AUTH_MODES.LOGIN);
     }
-  }, [location]);
+  }, [location.search]);
+
+  const showError = useCallback((title, description) => {
+    sileo.error({
+      title,
+      description,
+      fill: '#ef4444',
+      styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fill sileo-badge-fix' },
+    });
+  }, []);
+
+  const showSuccess = useCallback((title, description) => {
+    sileo.success({
+      title,
+      description,
+      fill: '#171717',
+      styles: {
+        description: 'sileo-text-white',
+        badge: 'sileo-badge-fix',
+      },
+    });
+  }, []);
 
   const handleAuthSubmit = async (event) => {
     event.preventDefault();
@@ -41,219 +157,236 @@ export const Auth = () => {
 
     try {
       let authResponse;
-      if (authMode === 'login') {
-        authResponse = await loginUser(emailInput, passwordInput);
-      } else if (authMode === 'register') {
-        authResponse = await registerUser(emailInput, passwordInput);
-      } else if (authMode === 'forgot') {
-        authResponse = await forgotPassword(emailInput);
-      } else if (authMode === 'reset') {
-        if (passwordInput !== confirmPasswordInput) {
-          sileo.error({ title: 'Passwords don\'t match', description: 'Re-enter your new password in both fields.', fill: '#ef4444' });
-          setIsSubmitting(false);
-          return;
-        }
-        if (!recoveryToken) {
-          sileo.error({ title: 'Link expired', description: 'This reset link is no longer valid. Request a new one.', fill: '#ef4444' });
-          setIsSubmitting(false);
-          return;
-        }
-        authResponse = await resetPassword(recoveryToken, passwordInput);
+
+      switch (authMode) {
+        case AUTH_MODES.LOGIN:
+          authResponse = await loginUser(emailInput, passwordInput);
+          break;
+        case AUTH_MODES.REGISTER:
+          authResponse = await registerUser(emailInput, passwordInput);
+          break;
+        case AUTH_MODES.FORGOT:
+          authResponse = await forgotPassword(emailInput);
+          break;
+        case AUTH_MODES.RESET:
+          if (passwordInput !== confirmPasswordInput) {
+            showError(
+              "Passwords don't match",
+              'Re-enter your new password in both fields.',
+            );
+            setIsSubmitting(false);
+            return;
+          }
+          if (!recoveryToken) {
+            showError(
+              'Link expired',
+              'This reset link is no longer valid. Request a new one.',
+            );
+            setIsSubmitting(false);
+            return;
+          }
+          authResponse = await resetPassword(recoveryToken, passwordInput);
+          break;
+        default:
+          break;
       }
 
-      if (authResponse.error) {
-        sileo.error({ title: 'Couldn\'t sign you in', description: authResponse.message, fill: '#ef4444' });
-      } else {
-        if (authMode === 'forgot') {
-          sileo.success({ 
-            title: 'Reset Link Sent!', 
-            description: 'Check your email to recover your password.',
-            fill: '#171717',
-            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
-          });
-        } else if (authMode === 'reset') {
-          sileo.success({ 
-            title: 'Password updated',
-            description: 'Taking you to sign in...',
-            fill: '#171717',
-            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
-          });
-          setTimeout(() => {
-            navigate('/auth?mode=login');
-            setAuthMode('login');
-          }, 3000);
-        } else {
-          login(authResponse);
-          sileo.success({ 
-            title: 'Welcome Back!', 
-            description: 'Redirecting to terminal...', 
-            fill: '#171717',
-            styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fix' }
-          });
-          navigate('/terminal');
-        }
+      if (authResponse?.error) {
+        showError("Couldn't sign you in", authResponse.message);
+      } else if (authResponse) {
+        handleSuccessResponse(authResponse);
       }
     } catch (error) {
-      sileo.error({ title: 'Something went wrong', description: 'Try again in a moment. If this keeps happening, refresh the page.', fill: '#ef4444' });
+      showError(
+        'Something went wrong',
+        'Try again in a moment. If this keeps happening, refresh the page.',
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isForgotPasswordMode = authMode === 'forgot';
-  const isResetPasswordMode = authMode === 'reset';
+  const handleSuccessResponse = (authResponse) => {
+    if (authMode === AUTH_MODES.FORGOT) {
+      showSuccess(
+        'Reset Link Sent!',
+        'Check your email to recover your password.',
+      );
+    } else if (authMode === AUTH_MODES.RESET) {
+      showSuccess('Password updated', 'Taking you to sign in...');
+      setTimeout(() => {
+        navigate('/auth?mode=login');
+        setAuthMode(AUTH_MODES.LOGIN);
+      }, 3000);
+    } else {
+      login(authResponse);
+      showSuccess('Welcome Back!', 'Redirecting to terminal...');
+      navigate('/terminal');
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    window.location.href = GOOGLE_OAUTH_URL;
+  };
+
+  const changeMode = (newMode) => {
+    setAuthMode(newMode);
+    navigate(`/auth?mode=${newMode}`);
+  };
+
+  const isSpecialMode =
+    authMode === AUTH_MODES.FORGOT || authMode === AUTH_MODES.RESET;
 
   return (
-    <div className="auth-page">
-      <div className="auth-wrapper">
-        <Link to="/" className="back-btn">
-          <svg 
-            width="18" 
-            height="18" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span>Back</span>
-        </Link>
+    <div className='auth-page'>
+      <div className='auth-wrapper'>
+        <AuthHeader />
 
-        <div className="auth-card">
-          <div className="auth-logo">
-            <img src={buddyLogo} alt="Commander Logo" className="logo-icon-img" />
-            <span className="logo-text-small">Commander</span>
-          </div>
+        <div className='auth-card'>
+          {!isSpecialMode && (
+            <>
+              <AuthTabs mode={authMode} setMode={changeMode} />
+              <SocialAuth onGoogleSignIn={handleGoogleSignIn} />
+            </>
+          )}
 
-          {!isForgotPasswordMode && !isResetPasswordMode && (
-            <div className="auth-tabs">
-              <button 
-                className={`auth-tab ${authMode === 'login' ? 'active' : ''}`}
-                onClick={() => setAuthMode('login')}
-                type="button"
-              >
-                Sign in
-              </button>
-              <button
-                className={`auth-tab ${authMode === 'register' ? 'active' : ''}`}
-                onClick={() => setAuthMode('register')}
-                type="button"
-              >
-                Sign up
-              </button>
+          {authMode === AUTH_MODES.FORGOT && (
+            <div className='auth-header-special'>
+              <h2 className='auth-title-special'>Recover Password</h2>
+              <p className='auth-subtitle-special'>
+                We'll send you a link to get back into your account
+              </p>
             </div>
           )}
 
-          {isForgotPasswordMode && (
-            <div className="auth-header-special">
-              <h2 className="auth-title-special">Recover Password</h2>
-              <p className="auth-subtitle-special">We'll send you a link to get back into your account</p>
+          {authMode === AUTH_MODES.RESET && (
+            <div className='auth-header-special'>
+              <h2 className='auth-title-special'>Set new password</h2>
+              <p className='auth-subtitle-special'>
+                Choose a new password for your account
+              </p>
             </div>
           )}
 
-          {isResetPasswordMode && (
-            <div className="auth-header-special">
-              <h2 className="auth-title-special">Set new password</h2>
-              <p className="auth-subtitle-special">Choose a new password for your account</p>
-            </div>
-          )}
-
-          <form className="auth-form" onSubmit={handleAuthSubmit}>
-            {!isResetPasswordMode && (
-              <div className="auth-field">
-                <label className="auth-label">Email Address</label>
-                <div className="auth-input-box">
-                  <input 
-                    type="email" 
-                    placeholder="name@example.com" 
-                    className="auth-input" 
+          <form className='auth-form' onSubmit={handleAuthSubmit}>
+            {authMode !== AUTH_MODES.RESET && (
+              <div className='auth-field'>
+                <label className='auth-label' htmlFor='email'>
+                  Email Address
+                </label>
+                <div className='auth-input-box'>
+                  <input
+                    id='email'
+                    type='email'
+                    placeholder='name@example.com'
+                    className='auth-input'
                     value={emailInput}
-                    onChange={(event) => setEmailInput(event.target.value)}
+                    onChange={(e) => setEmailInput(e.target.value)}
                     required
+                    autoComplete='email'
                   />
                 </div>
               </div>
             )}
 
-            {!isForgotPasswordMode && (
-              <div className="auth-field">
-                <label className="auth-label">{isResetPasswordMode ? 'New Password' : 'Password'}</label>
-                <div className="auth-input-box">
-                  <input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="auth-input" 
+            {authMode !== AUTH_MODES.FORGOT && (
+              <div className='auth-field'>
+                <label className='auth-label' htmlFor='password'>
+                  {authMode === AUTH_MODES.RESET ? 'New Password' : 'Password'}
+                </label>
+                <div className='auth-input-box'>
+                  <input
+                    id='password'
+                    type='password'
+                    placeholder='••••••••'
+                    className='auth-input'
                     value={passwordInput}
-                    onChange={(event) => setPasswordInput(event.target.value)}
+                    onChange={(e) => setPasswordInput(e.target.value)}
                     required
+                    autoComplete={
+                      authMode === AUTH_MODES.LOGIN
+                        ? 'current-password'
+                        : 'new-password'
+                    }
                   />
                 </div>
-                {authMode === 'login' && (
-                  <div className="forgot-pass-container">
-                    <span className="forgot-pass" onClick={() => setAuthMode('forgot')}>
+                {authMode === AUTH_MODES.LOGIN && (
+                  <div className='forgot-pass-container'>
+                    <button
+                      type='button'
+                      className='forgot-pass'
+                      onClick={() => changeMode(AUTH_MODES.FORGOT)}>
                       Forgot password?
-                    </span>
+                    </button>
                   </div>
                 )}
               </div>
             )}
 
-            {isResetPasswordMode && (
-              <div className="auth-field">
-                <label className="auth-label">Confirm New Password</label>
-                <div className="auth-input-box">
-                  <input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="auth-input" 
+            {authMode === AUTH_MODES.RESET && (
+              <div className='auth-field'>
+                <label className='auth-label' htmlFor='confirm-password'>
+                  Confirm New Password
+                </label>
+                <div className='auth-input-box'>
+                  <input
+                    id='confirm-password'
+                    type='password'
+                    placeholder='••••••••'
+                    className='auth-input'
                     value={confirmPasswordInput}
-                    onChange={(event) => setConfirmPasswordInput(event.target.value)}
+                    onChange={(e) => setConfirmPasswordInput(e.target.value)}
                     required
+                    autoComplete='new-password'
                   />
                 </div>
               </div>
             )}
 
-            <button type="submit" className="btn-auth-submit" disabled={isSubmitting}>
-              {isSubmitting 
-                ? 'Processing...' 
-                : isForgotPasswordMode 
+            <button
+              type='submit'
+              className='btn-auth-submit'
+              disabled={isSubmitting}>
+              {isSubmitting
+                ? 'Processing...'
+                : authMode === AUTH_MODES.FORGOT
                   ? 'Send reset link'
-                  : isResetPasswordMode
+                  : authMode === AUTH_MODES.RESET
                     ? 'Set new password'
-                    : authMode === 'login' 
-                      ? 'Continue' 
+                    : authMode === AUTH_MODES.LOGIN
+                      ? 'Continue'
                       : 'Create Account'}
             </button>
           </form>
 
-          <p className="auth-footer">
-            {isForgotPasswordMode || isResetPasswordMode ? (
-              <span className="auth-link" onClick={() => {
-                setAuthMode('login');
-                navigate('/auth?mode=login');
-              }}>
+          <div className='auth-footer'>
+            {isSpecialMode ? (
+              <button
+                type='button'
+                className='auth-link'
+                onClick={() => changeMode(AUTH_MODES.LOGIN)}>
                 Back to Sign in
-              </span>
+              </button>
             ) : (
-              <>
-                {authMode === 'login' 
-                  ? "Don't have an account? " 
-                  : "Already have an account? "}
-                <span className="auth-link" onClick={() => {
-                  const nextMode = authMode === 'login' ? 'register' : 'login';
-                  setAuthMode(nextMode);
-                  navigate(`/auth?mode=${nextMode}`);
-                }}>
-                  {authMode === 'login' ? 'Sign up' : 'Sign in'}
-                </span>
-              </>
+              <p>
+                {authMode === AUTH_MODES.LOGIN
+                  ? "Don't have an account? "
+                  : 'Already have an account? '}
+                <button
+                  type='button'
+                  className='auth-link'
+                  onClick={() =>
+                    changeMode(
+                      authMode === AUTH_MODES.LOGIN
+                        ? AUTH_MODES.REGISTER
+                        : AUTH_MODES.LOGIN,
+                    )
+                  }>
+                  {authMode === AUTH_MODES.LOGIN ? 'Sign up' : 'Sign in'}
+                </button>
+              </p>
             )}
-          </p>
+          </div>
         </div>
       </div>
     </div>

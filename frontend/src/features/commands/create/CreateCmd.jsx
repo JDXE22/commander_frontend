@@ -25,6 +25,11 @@ export const CreateCmd = ({ onRefresh }) => {
         description:
           'Fill in the name, trigger, and content to save your template.',
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
       return;
     }
@@ -43,11 +48,7 @@ export const CreateCmd = ({ onRefresh }) => {
           title: 'Template saved',
           description: 'You can now use this trigger in the Terminal.',
           fill: '#171717',
-          styles: {
-            title: 'sileo-text-white',
-            description: 'sileo-text-white',
-            badge: 'sileo-badge-fix',
-          },
+          styles: { description: 'sileo-text-white', badge: 'sileo-badge-fix' },
         });
         onRefresh && onRefresh();
         setTriggerInput('');
@@ -60,6 +61,11 @@ export const CreateCmd = ({ onRefresh }) => {
             creationResponse?.message ||
             'Something went wrong. Try again in a moment.',
           fill: '#ef4444',
+          styles: {
+            title: 'sileo-text-white',
+            description: 'sileo-text-white',
+            badge: 'sileo-badge-fill sileo-badge-fix',
+          },
         });
       }
     } catch (creationError) {
@@ -68,6 +74,11 @@ export const CreateCmd = ({ onRefresh }) => {
         title: 'Something went wrong',
         description: "We couldn't save your template. Try again in a moment.",
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
     } finally {
       setIsSubmitting(false);

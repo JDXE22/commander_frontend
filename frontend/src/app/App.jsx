@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './layout/Navbar';
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
+
+function NavigateWithQuery({ to }) {
+  const location = useLocation();
+  return <Navigate to={`${to}${location.search}`} replace />;
+}
 import { Home } from '../features/commands/lookup/Home';
 import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
@@ -72,6 +77,11 @@ function AppContentInner() {
           title: 'No match found',
           description: commandResult.message,
           fill: '#ef4444',
+          styles: {
+            title: 'sileo-text-white',
+            description: 'sileo-text-white',
+            badge: 'sileo-badge-fill sileo-badge-fix',
+          },
         });
         setActiveCommands(null);
         return;
@@ -92,6 +102,11 @@ function AppContentInner() {
         title: 'Something went wrong',
         description: "Couldn't retrieve that template. Try again in a moment.",
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
     } finally {
       setIsProcessing(false);
@@ -159,6 +174,7 @@ function AppContentInner() {
         />
         <Route path='/filter' element={<FilterCmd />} />
         <Route path='/create' element={<CreateCmd />} />
+        <Route path='/login' element={<NavigateWithQuery to='/auth' />} />
       </Routes>
       <TrialModal />
     </div>
