@@ -222,6 +222,50 @@
   text-decoration: underline;
 }
 
+.btn-google {
+  width: 100%;
+  height: 48px;
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.btn-google:hover {
+  border-color: var(--terminal-green);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 1px var(--terminal-green);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+.auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+.auth-divider-text {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
 /* Breakpoints for larger cards */
 @media (min-width: 768px) {
   .auth-wrapper {
