@@ -283,20 +283,16 @@ body::after {
 
 /* Sileo UI Fixes */
 .sileo-text-white {
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
 }
 .sileo-badge-fix {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-[data-sileo-header] {
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-}
-[data-sileo-title] {
-  line-height: var(--sileo-height);
+
+.sileo-badge-fill {
+  background-color: #d10303 !important;
 }
 
 .mobile-sidebar-toggle {

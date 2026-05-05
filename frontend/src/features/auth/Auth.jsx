@@ -110,6 +110,11 @@ export const Auth = () => {
         description:
           'Something went wrong with Google authentication. Please try again.',
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
     }
 
@@ -126,7 +131,12 @@ export const Auth = () => {
   }, [location.search]);
 
   const showError = useCallback((title, description) => {
-    sileo.error({ title, description, fill: '#ef4444' });
+    sileo.error({
+      title,
+      description,
+      fill: '#ef4444',
+      styles: { title: 'sileo-text-white', description: 'sileo-text-white', badge: 'sileo-badge-fill sileo-badge-fix' },
+    });
   }, []);
 
   const showSuccess = useCallback((title, description) => {
@@ -135,7 +145,6 @@ export const Auth = () => {
       description,
       fill: '#171717',
       styles: {
-        title: 'sileo-text-white',
         description: 'sileo-text-white',
         badge: 'sileo-badge-fix',
       },

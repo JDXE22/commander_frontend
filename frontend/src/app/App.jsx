@@ -77,6 +77,11 @@ function AppContentInner() {
           title: 'No match found',
           description: commandResult.message,
           fill: '#ef4444',
+          styles: {
+            title: 'sileo-text-white',
+            description: 'sileo-text-white',
+            badge: 'sileo-badge-fill sileo-badge-fix',
+          },
         });
         setActiveCommands(null);
         return;
@@ -97,6 +102,11 @@ function AppContentInner() {
         title: 'Something went wrong',
         description: "Couldn't retrieve that template. Try again in a moment.",
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
     } finally {
       setIsProcessing(false);

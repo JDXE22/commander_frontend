@@ -37,6 +37,11 @@ export const FilterCmd = () => {
             title: "Couldn't load templates",
             description: 'Check your connection and try refreshing the page.',
             fill: '#ef4444',
+            styles: {
+              title: 'sileo-text-white',
+              description: 'sileo-text-white',
+              badge: 'sileo-badge-fill sileo-badge-fix',
+            },
           });
         } finally {
           setIsLoadingCommands(false);
@@ -106,7 +111,6 @@ export const FilterCmd = () => {
         description: 'Your template has been updated.',
         fill: '#171717',
         styles: {
-          title: 'sileo-text-white',
           description: 'sileo-text-white',
           badge: 'sileo-badge-fix',
         },
@@ -130,6 +134,11 @@ export const FilterCmd = () => {
         title: "Couldn't save changes",
         description: 'Try again in a moment.',
         fill: '#ef4444',
+        styles: {
+          title: 'sileo-text-white',
+          description: 'sileo-text-white',
+          badge: 'sileo-badge-fill sileo-badge-fix',
+        },
       });
     }
   };
