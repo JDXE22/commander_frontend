@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await apiClient.post('/auth/logout');
     } catch {
-      // If AT is expired and refresh fails, session is already dead
       return;
     } finally {
       clearAccessToken();
