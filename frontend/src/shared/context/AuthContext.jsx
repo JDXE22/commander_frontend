@@ -55,14 +55,14 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
-  const loginSession = (userData) => {
+  const loginSession = useCallback((userData) => {
     setAccessToken(userData.accessToken);
     setActiveUser({
       userId: userData.userId,
       username: userData.username,
       email: userData.email,
     });
-  };
+  }, []);
 
   return (
     <AuthContext.Provider

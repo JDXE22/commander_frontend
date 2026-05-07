@@ -60,10 +60,9 @@ function AppContentInner() {
     if (accessToken && userId) {
       if (csrfToken) setCsrfToken(csrfToken);
       login({ accessToken, userId, username, email });
-      window.history.replaceState(null, '', window.location.pathname);
       navigate('/terminal', { replace: true });
     }
-  }, [loading, isAuthenticated]);
+  }, [loading, isAuthenticated, login, navigate, setCsrfToken]);
 
   useEffect(() => {
     localStorage.setItem(
