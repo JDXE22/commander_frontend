@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './layout/Navbar';
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
 
 function NavigateWithQuery({ to }) {
   const location = useLocation();
@@ -15,6 +15,7 @@ import { TrialProvider, useTrial } from '../shared/context/TrialContext';
 import { AuthProvider, useAuth } from '../shared/context/AuthContext';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 import { Toaster, sileo } from 'sileo';
+import { setCsrfToken } from '../shared/api/apiClient';
 
 function AppContentInner() {
   const [terminalInput, setTerminalInput] = useState('');
@@ -28,7 +29,6 @@ function AppContentInner() {
     }
   });
   const [isProcessing, setIsProcessing] = useState(false);
-  const { isAuthenticated, loading } = useAuth();
   const [commandHistory, setCommandHistory] = useState(() => {
     try {
       const savedHistory = localStorage.getItem('commander_command_history');
@@ -40,7 +40,24 @@ function AppContentInner() {
   });
 
   const currentLocation = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, login } = useAuth();
   const { getTrialCommand } = useTrial();
+
+  useEffect(() => {
+    const params = new URLSearchParams(currentLocation.search);
+    const accessToken = params.get('accessToken');
+    const csrfToken = params.get('csrfToken');
+    const userId = params.get('userId');
+    const username = params.get('username');
+    const email = params.get('email');
+
+    if (accessToken && userId) {
+      if (csrfToken) setCsrfToken(csrfToken);
+      login({ accessToken, userId, username, email });
+      navigate('/terminal', { replace: true });
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(
