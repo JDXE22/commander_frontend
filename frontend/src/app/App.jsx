@@ -45,7 +45,12 @@ function AppContentInner() {
   const { getTrialCommand } = useTrial();
 
   useEffect(() => {
-    const params = new URLSearchParams(currentLocation.search);
+    if (loading || isAuthenticated) return;
+
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+
+    const params = new URLSearchParams(hash);
     const accessToken = params.get('accessToken');
     const csrfToken = params.get('csrfToken');
     const userId = params.get('userId');
@@ -55,9 +60,10 @@ function AppContentInner() {
     if (accessToken && userId) {
       if (csrfToken) setCsrfToken(csrfToken);
       login({ accessToken, userId, username, email });
+      window.history.replaceState(null, '', window.location.pathname);
       navigate('/terminal', { replace: true });
     }
-  }, []);
+  }, [loading, isAuthenticated]);
 
   useEffect(() => {
     localStorage.setItem(
