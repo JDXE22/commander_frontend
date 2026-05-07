@@ -1,5 +1,5 @@
 import { CopyButton } from '../../../shared/ui/Button/Button';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'motion/react';
 import "./Command.css";
 
 export const CommandList = ({ command, className = '' }) => {
@@ -16,7 +16,7 @@ export const CommandList = ({ command, className = '' }) => {
   const itemVariants = {
     hidden: { opacity: 0, x: -10 },
     show: { 
-      opacity: 1, 
+      opacity: 1,
       x: 0,
       transition: {
         type: 'spring',
@@ -27,28 +27,30 @@ export const CommandList = ({ command, className = '' }) => {
   };
 
   return (
-    <motion.div 
-      className={`command-result-container ${className}`}
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
-      {command.map((cmd) => (
-        <motion.div 
-          key={cmd._id} 
-          className='terminal-result-item'
-          variants={itemVariants}
-        >
-          <div className='result-content'>
-            <pre className='result-text'>
-              {cmd.text}
-            </pre>
-            <div className='result-actions'>
-              <CopyButton textToCopy={cmd.text} />
+    <LazyMotion features={domAnimation}>
+      <m.div
+        className={`command-result-container ${className}`}
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {command.map((cmd) => (
+          <m.div
+            key={cmd._id}
+            className='terminal-result-item'
+            variants={itemVariants}
+          >
+            <div className='result-content'>
+              <pre className='result-text'>
+                {cmd.text}
+              </pre>
+              <div className='result-actions'>
+                <CopyButton textToCopy={cmd.text} />
+              </div>
             </div>
-          </div>
-        </motion.div>
-      ))}
-    </motion.div>
+          </m.div>
+        ))}
+      </m.div>
+    </LazyMotion>
   );
 };

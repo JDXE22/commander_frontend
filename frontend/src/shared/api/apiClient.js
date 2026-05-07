@@ -79,7 +79,6 @@ async function silentRefresh() {
 let accessToken = null;
 let csrfToken = readStoredCsrfToken();
 
-export const getAccessToken = () => accessToken;
 export const setAccessToken = (token) => {
   accessToken = token;
   if (token) {

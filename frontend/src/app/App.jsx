@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './layout/Navbar';
 import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
 
@@ -17,11 +17,16 @@ import { TrialModal } from '../shared/ui/Modal/TrialModal';
 import { Toaster, sileo } from 'sileo';
 import { setCsrfToken } from '../shared/api/apiClient';
 
+const STORAGE_KEYS = {
+  HISTORY: 'commander_command_history:v1',
+  ACTIVE: 'commander_active_commands:v1',
+};
+
 function AppContentInner() {
   const [terminalInput, setTerminalInput] = useState('');
   const [activeCommands, setActiveCommands] = useState(() => {
     try {
-      const savedActive = localStorage.getItem('commander_active_commands');
+      const savedActive = localStorage.getItem(STORAGE_KEYS.ACTIVE);
       return savedActive ? JSON.parse(savedActive) : null;
     } catch (error) {
       console.error('Failed to load active commands:', error);
@@ -31,7 +36,7 @@ function AppContentInner() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [commandHistory, setCommandHistory] = useState(() => {
     try {
-      const savedHistory = localStorage.getItem('commander_command_history');
+      const savedHistory = localStorage.getItem(STORAGE_KEYS.HISTORY);
       return savedHistory ? JSON.parse(savedHistory) : [];
     } catch (error) {
       console.error('Failed to load command history:', error);
@@ -62,25 +67,21 @@ function AppContentInner() {
       login({ accessToken, userId, username, email });
       navigate('/terminal', { replace: true });
     }
-  }, [loading, isAuthenticated, login, navigate, setCsrfToken]);
+  }, [loading, isAuthenticated, login, navigate]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      'commander_command_history',
-      JSON.stringify(commandHistory),
-    );
-  }, [commandHistory]);
-
-  useEffect(() => {
-    if (activeCommands) {
-      localStorage.setItem(
-        'commander_active_commands',
-        JSON.stringify(activeCommands),
-      );
+  const updateActiveCommands = useCallback((commands) => {
+    setActiveCommands(commands);
+    if (commands) {
+      localStorage.setItem(STORAGE_KEYS.ACTIVE, JSON.stringify(commands));
     } else {
-      localStorage.removeItem('commander_active_commands');
+      localStorage.removeItem(STORAGE_KEYS.ACTIVE);
     }
-  }, [activeCommands]);
+  }, []);
+
+  const updateHistory = useCallback((history) => {
+    setCommandHistory(history);
+    localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+  }, []);
 
   const handleTerminalInputChange = (event) => {
     setTerminalInput(event.target.value);
@@ -94,7 +95,6 @@ function AppContentInner() {
       const commandResult = await getTrialCommand(commandTrigger);
 
       if (commandResult?.error) {
-        console.error('Command validation failed:', commandResult.message);
         sileo.error({
           title: 'No match found',
           description: commandResult.message,
@@ -105,24 +105,21 @@ function AppContentInner() {
             badge: 'sileo-badge-fill sileo-badge-fix',
           },
         });
-        setActiveCommands(null);
+        updateActiveCommands(null);
         return;
       }
 
-      setActiveCommands([commandResult]);
+      updateActiveCommands([commandResult]);
 
-      setCommandHistory((prevHistory) => {
-        const cleanedTrigger = commandTrigger.trim();
-        const filteredHistory = prevHistory.filter(
-          (cmd) => cmd !== cleanedTrigger,
-        );
-        return [cleanedTrigger, ...filteredHistory].slice(0, 2);
-      });
+      const cleanedTrigger = commandTrigger.trim();
+      const filteredHistory = commandHistory.filter((cmd) => cmd !== cleanedTrigger);
+      const newHistory = [cleanedTrigger, ...filteredHistory].slice(0, 2);
+      updateHistory(newHistory);
+
     } catch (processError) {
-      console.error('Terminal processing error:', processError);
       sileo.error({
         title: 'Something went wrong',
-        description: "Couldn't retrieve that template. Try again in a moment.",
+        description: "Couldn't retrieve that template.",
         fill: '#ef4444',
         styles: {
           title: 'sileo-text-white',
@@ -146,7 +143,7 @@ function AppContentInner() {
   };
 
   const handleClearTerminal = () => {
-    setActiveCommands(null);
+    updateActiveCommands(null);
   };
 
   if (loading) {
@@ -159,26 +156,14 @@ function AppContentInner() {
   }
 
   const routesWithoutNavbar = ['/', '/auth'];
-  const shouldDisplayNavbar = !routesWithoutNavbar.includes(
-    currentLocation.pathname,
-  );
+  const shouldDisplayNavbar = !routesWithoutNavbar.includes(currentLocation.pathname);
 
   return (
     <div className='App'>
       {shouldDisplayNavbar && <Navbar />}
       <Routes>
-        <Route
-          path='/'
-          element={
-            isAuthenticated ? <Navigate to='/terminal' replace /> : <Hero />
-          }
-        />
-        <Route
-          path='/auth'
-          element={
-            isAuthenticated ? <Navigate to='/terminal' replace /> : <Auth />
-          }
-        />
+        <Route path='/' element={isAuthenticated ? <Navigate to='/terminal' replace /> : <Hero />} />
+        <Route path='/auth' element={isAuthenticated ? <Navigate to='/terminal' replace /> : <Auth />} />
         <Route
           path='/terminal'
           element={

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
 import { useAuth } from '../../shared/context/AuthContext';
@@ -20,6 +20,36 @@ const AUTH_MODES = {
 };
 
 const GOOGLE_OAUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/${import.meta.env.VITE_API_VERSION}/auth/google`;
+
+const initialState = {
+  authMode: AUTH_MODES.LOGIN,
+  emailInput: '',
+  passwordInput: '',
+  confirmPasswordInput: '',
+  recoveryToken: '',
+  isSubmitting: false,
+};
+
+function authReducer(state, action) {
+  switch (action.type) {
+    case 'SET_MODE':
+      return { ...state, authMode: action.payload };
+    case 'SET_EMAIL':
+      return { ...state, emailInput: action.payload };
+    case 'SET_PASSWORD':
+      return { ...state, passwordInput: action.payload };
+    case 'SET_CONFIRM_PASSWORD':
+      return { ...state, confirmPasswordInput: action.payload };
+    case 'SET_TOKEN':
+      return { ...state, recoveryToken: action.payload };
+    case 'SET_SUBMITTING':
+      return { ...state, isSubmitting: action.payload };
+    case 'RESET_FORM':
+      return { ...state, emailInput: '', passwordInput: '', confirmPasswordInput: '' };
+    default:
+      return state;
+  }
+}
 
 const AuthHeader = () => (
   <>
@@ -86,17 +116,33 @@ const SocialAuth = ({ onGoogleSignIn }) => (
   </>
 );
 
+const SpecialHeader = ({ mode }) => (
+  <div className='auth-header-special'>
+    <h2 className='auth-title-special'>
+      {mode === AUTH_MODES.FORGOT ? 'Recover Password' : 'Set new password'}
+    </h2>
+    <p className='auth-subtitle-special'>
+      {mode === AUTH_MODES.FORGOT 
+        ? "We'll send you a link to get back into your account"
+        : "Choose a new password for your account"}
+    </p>
+  </div>
+);
+
 export const Auth = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [authMode, setAuthMode] = useState(AUTH_MODES.LOGIN);
-  const [emailInput, setEmailInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
-  const [recoveryToken, setRecoveryToken] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  const {
+    authMode,
+    emailInput,
+    passwordInput,
+    confirmPasswordInput,
+    recoveryToken,
+    isSubmitting,
+  } = state;
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -107,8 +153,7 @@ export const Auth = () => {
     if (errorParam === 'oauth_failed') {
       sileo.error({
         title: 'Google sign-in failed',
-        description:
-          'Something went wrong with Google authentication. Please try again.',
+        description: 'Something went wrong with Google authentication. Please try again.',
         fill: '#ef4444',
         styles: {
           title: 'sileo-text-white',
@@ -119,14 +164,14 @@ export const Auth = () => {
     }
 
     if (modeParam === 'register') {
-      setAuthMode(AUTH_MODES.REGISTER);
+      dispatch({ type: 'SET_MODE', payload: AUTH_MODES.REGISTER });
     } else if (modeParam === 'reset' || tokenParam) {
-      setAuthMode(AUTH_MODES.RESET);
-      if (tokenParam) setRecoveryToken(tokenParam);
+      dispatch({ type: 'SET_MODE', payload: AUTH_MODES.RESET });
+      if (tokenParam) dispatch({ type: 'SET_TOKEN', payload: tokenParam });
     } else if (modeParam === 'forgot') {
-      setAuthMode(AUTH_MODES.FORGOT);
+      dispatch({ type: 'SET_MODE', payload: AUTH_MODES.FORGOT });
     } else {
-      setAuthMode(AUTH_MODES.LOGIN);
+      dispatch({ type: 'SET_MODE', payload: AUTH_MODES.LOGIN });
     }
   }, [location.search]);
 
@@ -153,11 +198,10 @@ export const Auth = () => {
 
   const handleAuthSubmit = async (event) => {
     event.preventDefault();
-    setIsSubmitting(true);
+    dispatch({ type: 'SET_SUBMITTING', payload: true });
 
     try {
       let authResponse;
-
       switch (authMode) {
         case AUTH_MODES.LOGIN:
           authResponse = await loginUser(emailInput, passwordInput);
@@ -170,19 +214,13 @@ export const Auth = () => {
           break;
         case AUTH_MODES.RESET:
           if (passwordInput !== confirmPasswordInput) {
-            showError(
-              "Passwords don't match",
-              'Re-enter your new password in both fields.',
-            );
-            setIsSubmitting(false);
+            showError("Passwords don't match", 'Re-enter your new password in both fields.');
+            dispatch({ type: 'SET_SUBMITTING', payload: false });
             return;
           }
           if (!recoveryToken) {
-            showError(
-              'Link expired',
-              'This reset link is no longer valid. Request a new one.',
-            );
-            setIsSubmitting(false);
+            showError('Link expired', 'This reset link is no longer valid. Request a new one.');
+            dispatch({ type: 'SET_SUBMITTING', payload: false });
             return;
           }
           authResponse = await resetPassword(recoveryToken, passwordInput);
@@ -197,26 +235,19 @@ export const Auth = () => {
         handleSuccessResponse(authResponse);
       }
     } catch (error) {
-      showError(
-        'Something went wrong',
-        'Try again in a moment. If this keeps happening, refresh the page.',
-      );
+      showError('Something went wrong', 'Try again in a moment.');
     } finally {
-      setIsSubmitting(false);
+      dispatch({ type: 'SET_SUBMITTING', payload: false });
     }
   };
 
   const handleSuccessResponse = (authResponse) => {
     if (authMode === AUTH_MODES.FORGOT) {
-      showSuccess(
-        'Reset Link Sent!',
-        'Check your email to recover your password.',
-      );
+      showSuccess('Reset Link Sent!', 'Check your email to recover your password.');
     } else if (authMode === AUTH_MODES.RESET) {
       showSuccess('Password updated', 'Taking you to sign in...');
       setTimeout(() => {
         navigate('/auth?mode=login');
-        setAuthMode(AUTH_MODES.LOGIN);
       }, 3000);
     } else {
       login(authResponse);
@@ -230,18 +261,15 @@ export const Auth = () => {
   };
 
   const changeMode = (newMode) => {
-    setAuthMode(newMode);
     navigate(`/auth?mode=${newMode}`);
   };
 
-  const isSpecialMode =
-    authMode === AUTH_MODES.FORGOT || authMode === AUTH_MODES.RESET;
+  const isSpecialMode = authMode === AUTH_MODES.FORGOT || authMode === AUTH_MODES.RESET;
 
   return (
     <div className='auth-page'>
       <div className='auth-wrapper'>
         <AuthHeader />
-
         <div className='auth-card'>
           {!isSpecialMode && (
             <>
@@ -250,30 +278,12 @@ export const Auth = () => {
             </>
           )}
 
-          {authMode === AUTH_MODES.FORGOT && (
-            <div className='auth-header-special'>
-              <h2 className='auth-title-special'>Recover Password</h2>
-              <p className='auth-subtitle-special'>
-                We'll send you a link to get back into your account
-              </p>
-            </div>
-          )}
-
-          {authMode === AUTH_MODES.RESET && (
-            <div className='auth-header-special'>
-              <h2 className='auth-title-special'>Set new password</h2>
-              <p className='auth-subtitle-special'>
-                Choose a new password for your account
-              </p>
-            </div>
-          )}
+          {isSpecialMode && <SpecialHeader mode={authMode} />}
 
           <form className='auth-form' onSubmit={handleAuthSubmit}>
             {authMode !== AUTH_MODES.RESET && (
               <div className='auth-field'>
-                <label className='auth-label' htmlFor='email'>
-                  Email Address
-                </label>
+                <label className='auth-label' htmlFor='email'>Email Address</label>
                 <div className='auth-input-box'>
                   <input
                     id='email'
@@ -281,7 +291,7 @@ export const Auth = () => {
                     placeholder='name@example.com'
                     className='auth-input'
                     value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
+                    onChange={(e) => dispatch({ type: 'SET_EMAIL', payload: e.target.value })}
                     required
                     autoComplete='email'
                   />
@@ -301,21 +311,14 @@ export const Auth = () => {
                     placeholder='••••••••'
                     className='auth-input'
                     value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
+                    onChange={(e) => dispatch({ type: 'SET_PASSWORD', payload: e.target.value })}
                     required
-                    autoComplete={
-                      authMode === AUTH_MODES.LOGIN
-                        ? 'current-password'
-                        : 'new-password'
-                    }
+                    autoComplete={authMode === AUTH_MODES.LOGIN ? 'current-password' : 'new-password'}
                   />
                 </div>
                 {authMode === AUTH_MODES.LOGIN && (
                   <div className='forgot-pass-container'>
-                    <button
-                      type='button'
-                      className='forgot-pass'
-                      onClick={() => changeMode(AUTH_MODES.FORGOT)}>
+                    <button type='button' className='forgot-pass' onClick={() => changeMode(AUTH_MODES.FORGOT)}>
                       Forgot password?
                     </button>
                   </div>
@@ -325,9 +328,7 @@ export const Auth = () => {
 
             {authMode === AUTH_MODES.RESET && (
               <div className='auth-field'>
-                <label className='auth-label' htmlFor='confirm-password'>
-                  Confirm New Password
-                </label>
+                <label className='auth-label' htmlFor='confirm-password'>Confirm New Password</label>
                 <div className='auth-input-box'>
                   <input
                     id='confirm-password'
@@ -335,7 +336,7 @@ export const Auth = () => {
                     placeholder='••••••••'
                     className='auth-input'
                     value={confirmPasswordInput}
-                    onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                    onChange={(e) => dispatch({ type: 'SET_CONFIRM_PASSWORD', payload: e.target.value })}
                     required
                     autoComplete='new-password'
                   />
@@ -343,45 +344,26 @@ export const Auth = () => {
               </div>
             )}
 
-            <button
-              type='submit'
-              className='btn-auth-submit'
-              disabled={isSubmitting}>
-              {isSubmitting
-                ? 'Processing...'
-                : authMode === AUTH_MODES.FORGOT
-                  ? 'Send reset link'
-                  : authMode === AUTH_MODES.RESET
-                    ? 'Set new password'
-                    : authMode === AUTH_MODES.LOGIN
-                      ? 'Continue'
-                      : 'Create Account'}
+            <button type='submit' className='btn-auth-submit' disabled={isSubmitting}>
+              {isSubmitting ? 'Processing...' : 
+               authMode === AUTH_MODES.FORGOT ? 'Send reset link' : 
+               authMode === AUTH_MODES.RESET ? 'Set new password' : 
+               authMode === AUTH_MODES.LOGIN ? 'Continue' : 'Create Account'}
             </button>
           </form>
 
           <div className='auth-footer'>
             {isSpecialMode ? (
-              <button
-                type='button'
-                className='auth-link'
-                onClick={() => changeMode(AUTH_MODES.LOGIN)}>
+              <button type='button' className='auth-link' onClick={() => changeMode(AUTH_MODES.LOGIN)}>
                 Back to Sign in
               </button>
             ) : (
               <p>
-                {authMode === AUTH_MODES.LOGIN
-                  ? "Don't have an account? "
-                  : 'Already have an account? '}
+                {authMode === AUTH_MODES.LOGIN ? "Don't have an account? " : 'Already have an account? '}
                 <button
                   type='button'
                   className='auth-link'
-                  onClick={() =>
-                    changeMode(
-                      authMode === AUTH_MODES.LOGIN
-                        ? AUTH_MODES.REGISTER
-                        : AUTH_MODES.LOGIN,
-                    )
-                  }>
+                  onClick={() => changeMode(authMode === AUTH_MODES.LOGIN ? AUTH_MODES.REGISTER : AUTH_MODES.LOGIN)}>
                   {authMode === AUTH_MODES.LOGIN ? 'Sign up' : 'Sign in'}
                 </button>
               </p>

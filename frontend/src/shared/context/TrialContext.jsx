@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, use, useState, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import {
   getCommand,
@@ -11,7 +11,7 @@ import {
 } from '../utils/commandUtils';
 
 const TRIAL_MAX_COMMANDS = 2;
-const LOCAL_STORAGE_KEY = 'commander_trial_commands';
+const LOCAL_STORAGE_KEY = 'commander_trial_commands:v1';
 
 const getInitialTrialCommands = () => {
   try {
@@ -142,7 +142,7 @@ export const TrialProvider = ({ children }) => {
 };
 
 export const useTrial = () => {
-  const trialContextValue = useContext(TrialContext);
+  const trialContextValue = use(TrialContext);
   if (!trialContextValue)
     throw new Error('useTrial must be used within TrialProvider');
   return trialContextValue;

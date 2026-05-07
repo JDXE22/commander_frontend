@@ -1,7 +1,7 @@
 import {
   createContext,
-  useContext,
-  useState,
+  use,
+  useReducer,
   useEffect,
   useCallback,
 } from 'react';
@@ -14,9 +14,29 @@ import apiClient, {
 
 const AuthContext = createContext(null);
 
+const initialState = {
+  activeUser: null,
+  isInitialLoading: true,
+};
+
+function authReducer(state, action) {
+  switch (action.type) {
+    case 'SET_USER':
+      return { ...state, activeUser: action.payload };
+    case 'SET_LOADING':
+      return { ...state, isInitialLoading: action.payload };
+    case 'INITIALIZE':
+      return { ...state, activeUser: action.payload, isInitialLoading: false };
+    case 'LOGOUT':
+      return { ...state, activeUser: null };
+    default:
+      return state;
+  }
+}
+
 export const AuthProvider = ({ children }) => {
-  const [activeUser, setActiveUser] = useState(null);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  const { activeUser, isInitialLoading } = state;
 
   const logoutSession = useCallback(async () => {
     try {
@@ -25,14 +45,14 @@ export const AuthProvider = ({ children }) => {
       return;
     } finally {
       clearAccessToken();
-      setActiveUser(null);
+      dispatch({ type: 'LOGOUT' });
     }
   }, []);
 
   useEffect(() => {
     setSessionExpiredHandler(() => {
       clearAccessToken();
-      setActiveUser(null);
+      dispatch({ type: 'LOGOUT' });
     });
   }, []);
 
@@ -40,15 +60,16 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       try {
         const data = await refreshSession();
-        setActiveUser({
-          userId: data.userId,
-          username: data.username,
-          email: data.email,
+        dispatch({
+          type: 'INITIALIZE',
+          payload: {
+            userId: data.userId,
+            username: data.username,
+            email: data.email,
+          }
         });
       } catch {
-        setActiveUser(null);
-      } finally {
-        setIsInitialLoading(false);
+        dispatch({ type: 'INITIALIZE', payload: null });
       }
     };
 
@@ -57,10 +78,13 @@ export const AuthProvider = ({ children }) => {
 
   const loginSession = useCallback((userData) => {
     setAccessToken(userData.accessToken);
-    setActiveUser({
-      userId: userData.userId,
-      username: userData.username,
-      email: userData.email,
+    dispatch({
+      type: 'SET_USER',
+      payload: {
+        userId: userData.userId,
+        username: userData.username,
+        email: userData.email,
+      }
     });
   }, []);
 
@@ -79,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  const authContextValue = useContext(AuthContext);
+  const authContextValue = use(AuthContext);
   if (!authContextValue) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
