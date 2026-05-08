@@ -32,6 +32,8 @@ const setAuth = (newAuth) => {
   emitChange();
 };
 
+let initializationPromise = null;
+
 setSessionExpiredHandler(() => {
   clearAccessToken();
   setAuth({ user: null, loading: false });
