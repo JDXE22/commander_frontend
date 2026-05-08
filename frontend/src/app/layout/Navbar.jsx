@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useMatch, useResolvedPath, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
 import { useAuth } from '../../shared/context/AuthContext';
@@ -7,13 +7,16 @@ import './Navbar.css';
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const userMenuRef = useRef(null);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => {
     setIsOpen(false);
     setIsMobileOpen(false);
+    setIsUserMenuOpen(false);
   };
 
   const toggleMobileSidebar = () => setIsMobileOpen((prev) => !prev);
@@ -29,13 +32,23 @@ export const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleUserClick = () => {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSettings = () => {
     closeSidebar();
     navigate('/settings');
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     closeSidebar();
     navigate('/');
   };
@@ -57,9 +70,12 @@ export const Navbar = () => {
         className='mobile-sidebar-toggle'
         onClick={toggleMobileSidebar}
         aria-label={isMobileOpen ? 'Close sidebar' : 'Open sidebar'}
-        aria-expanded={isMobileOpen}
-      >
-        <img src={buddyLogo} alt='Commander Logo' className='mobile-buddy-icon' />
+        aria-expanded={isMobileOpen}>
+        <img
+          src={buddyLogo}
+          alt='Commander Logo'
+          className='mobile-buddy-icon'
+        />
       </button>
 
       <button
@@ -83,7 +99,9 @@ export const Navbar = () => {
             aria-expanded={isOpen}>
             <img src={buddyLogo} alt='Commander Logo' className='buddy-icon' />
           </button>
-          {(isOpen || isMobileOpen) && <span className='sidebar-title'>Commander</span>}
+          {(isOpen || isMobileOpen) && (
+            <span className='sidebar-title'>Commander</span>
+          )}
         </div>
 
         {(isOpen || isMobileOpen) && (
@@ -105,13 +123,17 @@ export const Navbar = () => {
               )}
             </nav>
 
-            <div className='user-section' role='group' aria-label='User and system controls'>
+            <div
+              className='user-section'
+              role='group'
+              aria-label='User and system controls'
+              ref={userMenuRef}>
               {isAuthenticated ? (
-                <>
+                <div className='user-dropdown-wrapper'>
                   <button
-                    className='user-profile'
-                    onClick={handleUserClick}
-                    aria-label={`User profile: ${displayName}. Open settings.`}>
+                    className={`user-profile ${isUserMenuOpen ? 'active' : ''}`}
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    aria-label={`User profile: ${displayName}. Open account menu.`}>
                     <span className='user-avatar' aria-hidden='true'>
                       <svg
                         viewBox='0 0 24 24'
@@ -133,36 +155,74 @@ export const Navbar = () => {
                       </svg>
                     </span>
                     <span className='user-name'>{displayName}</span>
+                    <svg
+                      className={`dropdown-chevron ${isUserMenuOpen ? 'rotated' : ''}`}
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'>
+                      <polyline points='6 9 12 15 18 9'></polyline>
+                    </svg>
                   </button>
-                  <button
-                    className='user-logout'
-                    onClick={handleLogout}
-                    aria-label='Log out of system'>
-                    <span className='logout-icon' aria-hidden='true'>
-                      <svg
-                        viewBox='0 0 24 24'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'>
-                        <path
-                          d='M15 12H3m0 0l3-3m-3 3l3 3'
+
+                  {isUserMenuOpen && (
+                    <div className='user-menu-dropdown'>
+                      <button onClick={handleSettings} className='menu-item'>
+                        <svg
+                          className='menu-icon'
+                          viewBox='0 0 24 24'
+                          fill='none'
                           stroke='currentColor'
-                          strokeWidth='1.5'
+                          strokeWidth='2'
                           strokeLinecap='round'
-                          strokeLinejoin='round'
-                        />
-                        <path
-                          d='M9 21H17C18.1 21 19 20.1 19 19V5C19 3.9 18.1 3 17 3H9'
+                          strokeLinejoin='round'>
+                          <circle cx='12' cy='12' r='3'></circle>
+                          <path d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'></path>
+                        </svg>
+                        <span>Settings</span>
+                      </button>
+                      <button onClick={handleLogout} className='menu-item'>
+                        <svg
+                          className='menu-icon'
+                          viewBox='0 0 24 24'
+                          fill='none'
                           stroke='currentColor'
-                          strokeWidth='1.5'
+                          strokeWidth='2'
                           strokeLinecap='round'
-                        />
-                      </svg>
-                    </span>
-                    <span className='logout-text'>TERMINATE</span>
-                  </button>
-                </>
+                          strokeLinejoin='round'>
+                          <path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'></path>
+                          <polyline points='16 17 21 12 16 7'></polyline>
+                          <line x1='21' y1='12' x2='9' y2='12'></line>
+                        </svg>
+                        <span>Sign off</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className='menu-item terminate'>
+                        <svg
+                          className='menu-icon'
+                          viewBox='0 0 24 24'
+                          fill='none'
+                          stroke='currentColor'
+                          strokeWidth='2'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'>
+                          <path d='M18.36 6.64a9 9 0 1 1-12.73 0'></path>
+                          <line x1='12' y1='2' x2='12' y2='12'></line>
+                        </svg>
+                        <span>Terminate</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <Link to='/auth' className='user-signin' onClick={closeSidebar} aria-label='Sign in to account'>
+                <Link
+                  to='/auth'
+                  className='user-signin'
+                  onClick={closeSidebar}
+                  aria-label='Sign in to account'>
                   SIGN_IN
                 </Link>
               )}
