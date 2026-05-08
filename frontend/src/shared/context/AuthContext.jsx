@@ -1,4 +1,10 @@
-import { createContext, use, useCallback, useEffect, useSyncExternalStore } from 'react';
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useSyncExternalStore,
+} from 'react';
 import apiClient, {
   clearAccessToken,
   refreshSession,
@@ -34,8 +40,35 @@ const setAuth = (newAuth) => {
   emitChange();
 };
 
+let initializationPromise = null;
+
+const initSession = () => {
+  if (initializationPromise) return initializationPromise;
+
+  initializationPromise = refreshSession()
+    .then((data) => {
+      setAuth({
+        user: {
+          userId: data.userId,
+          username: data.username,
+          email: data.email,
+        },
+        loading: false,
+      });
+    })
+    .catch(() => {
+      setAuth({ user: null, loading: false });
+    })
+    .finally(() => {
+      initializationPromise = null;
+    });
+
+  return initializationPromise;
+};
+
 setSessionExpiredHandler(() => {
   clearAccessToken();
+  initializationPromise = null;
   setAuth({ user: null, loading: false });
 });
 
@@ -78,6 +111,7 @@ export const AuthProvider = ({ children }) => {
       return;
     } finally {
       clearAccessToken();
+      initializationPromise = null;
       setAuth({ user: null, loading: false });
     }
   }, []);
