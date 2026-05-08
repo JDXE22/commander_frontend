@@ -27,7 +27,7 @@ export const TrialModal = () => {
         className='trial-modal'
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
-        role='dialg'
+        role='dialog'
         aria-modal='true'
         aria-labelledby='trial-title'
         tabIndex='-1'>

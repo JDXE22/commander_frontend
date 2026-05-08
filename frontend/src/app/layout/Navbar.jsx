@@ -65,6 +65,7 @@ export const Navbar = () => {
       <div
         className={`sidebar-overlay ${isOpen || isMobileOpen ? 'visible' : ''}`}
         onClick={closeSidebar}
+        role='presentation'
         aria-hidden='true'
       />
 

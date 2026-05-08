@@ -14,12 +14,6 @@ export const Home = ({
   handleRecentClick,
   recentCommands,
 }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const hasCommands = commands && commands.length > 0;
   const hasHistory = recentCommands && recentCommands.length > 0;
   const isFirstTime = !hasCommands && !hasHistory;
@@ -96,7 +90,7 @@ export const Home = ({
                 <div className='terminal-login-header'>
                   <span className='login-text'>COMMANDER(8) System Manager COMMANDER(8)</span>
                   <span className='login-date' suppressHydrationWarning>
-                    {mounted ? new Date().toLocaleDateString() : ''}
+                    {new Date().toLocaleDateString()}
                   </span>
                 </div>
                 <div className='welcome-body'>
@@ -154,9 +148,9 @@ export const Home = ({
                   className='history-grid'
                   role='group'
                   aria-label='Recent command history'>
-                  {recentCommands.map((cmd, index) => (
+                  {recentCommands.map((cmd) => (
                     <button
-                      key={`recent-${cmd}-${index}`}
+                      key={cmd}
                       className='history-item'
                       onClick={() => handleRecentClick(cmd)}
                       aria-label={`Run recent command: ${cmd}`}>
