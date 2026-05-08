@@ -47,11 +47,11 @@ export const TrialModal = () => {
         <h2 id='trial-title' className='trial-modal-title'>
           Unlock Full Potential
         </h2>
-        <p className='trial-overlal-text'>
-          You're reached the free trial limit. Sign up or log in to have all
+        <p className='trial-modal-text'>
+          You've reached the free trial limit. Sign up or log in to have all
           your templates in one place!
         </p>
-        <div className='trial-overl-actions'>
+        <div className='trial-modal-actions'>
           <Link
             to='/auth?mode=register'
             className='trial-btn-primary'

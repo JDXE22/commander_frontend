@@ -1,6 +1,6 @@
 import { CommandList } from '../list/Command';
 import { Link } from 'react-router-dom';
-import { LazyMotion, domAnimation, m } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'motion/react';
 import { useSyncExternalStore } from 'react';
 import "./Home.css";
 

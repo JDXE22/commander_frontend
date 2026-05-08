@@ -67,7 +67,7 @@ function AppContentInner() {
       login({ accessToken, userId, username, email });
       navigate('/terminal', { replace: true });
     }
-  }, [loading, isAuthenticated, login, navigate]);
+  }, [loading, isAuthenticated, login, navigate, setCsrfToken]);
 
   const updateActiveCommands = useCallback((commands) => {
     setActiveCommands(commands);
