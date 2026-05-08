@@ -1,10 +1,4 @@
-import {
-  createContext,
-  use,
-  useReducer,
-  useEffect,
-  useCallback,
-} from 'react';
+import { createContext, use, useCallback, useSyncExternalStore } from 'react';
 import apiClient, {
   clearAccessToken,
   refreshSession,
@@ -14,29 +8,56 @@ import apiClient, {
 
 const AuthContext = createContext(null);
 
-const initialState = {
-  activeUser: null,
-  isInitialLoading: true,
+let authState = {
+  user: null,
+  loading: true,
 };
 
-function authReducer(state, action) {
-  switch (action.type) {
-    case 'SET_USER':
-      return { ...state, activeUser: action.payload };
-    case 'SET_LOADING':
-      return { ...state, isInitialLoading: action.payload };
-    case 'INITIALIZE':
-      return { ...state, activeUser: action.payload, isInitialLoading: false };
-    case 'LOGOUT':
-      return { ...state, activeUser: null };
-    default:
-      return state;
-  }
-}
+const listeners = new Set();
+
+const subscribe = (onStoreChange) => {
+  listeners.add(onStoreChange);
+  return () => listeners.delete(onStoreChange);
+};
+
+const getSnapshot = () => authState;
+const getServerSnapshot = () => ({ user: null, loading: true });
+
+const emitChange = () => {
+  listeners.forEach((listener) => listener());
+};
+
+const setAuth = (newAuth) => {
+  authState = { ...authState, ...newAuth };
+  emitChange();
+};
+
+setSessionExpiredHandler(() => {
+  clearAccessToken();
+  setAuth({ user: null, loading: false });
+});
+
+refreshSession()
+  .then((data) => {
+    setAuth({
+      user: {
+        userId: data.userId,
+        username: data.username,
+        email: data.email,
+      },
+      loading: false,
+    });
+  })
+  .catch(() => {
+    setAuth({ user: null, loading: false });
+  });
 
 export const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
-  const { activeUser, isInitialLoading } = state;
+  const { user, loading } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const logoutSession = useCallback(async () => {
     try {
@@ -45,57 +66,30 @@ export const AuthProvider = ({ children }) => {
       return;
     } finally {
       clearAccessToken();
-      dispatch({ type: 'LOGOUT' });
+      setAuth({ user: null, loading: false });
     }
-  }, []);
-
-  useEffect(() => {
-    setSessionExpiredHandler(() => {
-      clearAccessToken();
-      dispatch({ type: 'LOGOUT' });
-    });
-  }, []);
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const data = await refreshSession();
-        dispatch({
-          type: 'INITIALIZE',
-          payload: {
-            userId: data.userId,
-            username: data.username,
-            email: data.email,
-          }
-        });
-      } catch {
-        dispatch({ type: 'INITIALIZE', payload: null });
-      }
-    };
-
-    initializeAuth();
   }, []);
 
   const loginSession = useCallback((userData) => {
     setAccessToken(userData.accessToken);
-    dispatch({
-      type: 'SET_USER',
-      payload: {
+    setAuth({
+      user: {
         userId: userData.userId,
         username: userData.username,
         email: userData.email,
-      }
+      },
+      loading: false,
     });
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user: activeUser,
+        user,
         login: loginSession,
         logout: logoutSession,
-        isAuthenticated: !!activeUser,
-        loading: isInitialLoading,
+        isAuthenticated: !!user,
+        loading,
       }}>
       {children}
     </AuthContext.Provider>
