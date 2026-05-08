@@ -67,8 +67,8 @@ export const Navbar = () => {
         className={`sidebar-overlay ${isOpen || isMobileOpen ? 'visible' : ''}`}
         onClick={closeSidebar}
         aria-label='Close sidebar'
-        aria-hidden='true'
-        tabIndex='-1'
+        aria-hidden={!(isOpen || isMobileOpen)}
+        tabIndex={isOpen || isMobileOpen ? 0 : -1}
       />
 
       <aside
