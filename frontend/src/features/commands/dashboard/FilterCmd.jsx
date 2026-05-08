@@ -58,7 +58,10 @@ export const FilterCmd = () => {
   const { trialCommands, updateTrialCommand } = useTrial();
   const { isAuthenticated } = useAuth();
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    isLoadingCommands: isAuthenticated,
+  });
   const {
     persistentCommands,
     currentPage,

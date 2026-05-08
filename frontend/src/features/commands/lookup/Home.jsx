@@ -1,8 +1,14 @@
 import { CommandList } from '../list/Command';
 import { Link } from 'react-router-dom';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 import "./Home.css";
+
+const dateStore = {
+  subscribe: () => () => {},
+  getSnapshot: () => new Date().toLocaleDateString(),
+  getServerSnapshot: () => '',
+};
 
 export const Home = ({
   handleInput,
@@ -14,6 +20,11 @@ export const Home = ({
   handleRecentClick,
   recentCommands,
 }) => {
+  const date = useSyncExternalStore(
+    dateStore.subscribe,
+    dateStore.getSnapshot,
+    dateStore.getServerSnapshot,
+  );
   const hasCommands = commands && commands.length > 0;
   const hasHistory = recentCommands && recentCommands.length > 0;
   const isFirstTime = !hasCommands && !hasHistory;
@@ -90,7 +101,7 @@ export const Home = ({
                 <div className='terminal-login-header'>
                   <span className='login-text'>COMMANDER(8) System Manager COMMANDER(8)</span>
                   <span className='login-date' suppressHydrationWarning>
-                    {new Date().toLocaleDateString()}
+                    {date}
                   </span>
                 </div>
                 <div className='welcome-body'>

@@ -62,11 +62,13 @@ export const Navbar = () => {
         <img src={buddyLogo} alt='Commander Logo' className='mobile-buddy-icon' />
       </button>
 
-      <div
+      <button
+        type='button'
         className={`sidebar-overlay ${isOpen || isMobileOpen ? 'visible' : ''}`}
         onClick={closeSidebar}
-        role='presentation'
+        aria-label='Close sidebar'
         aria-hidden='true'
+        tabIndex='-1'
       />
 
       <aside
