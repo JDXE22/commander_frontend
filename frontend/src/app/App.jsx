@@ -150,7 +150,7 @@ function AppContentInner() {
     return (
       <div className='app-loading' suppressHydrationWarning>
         <div className='loader'></div>
-        <p>Initializing Commander...</p>
+        <p>Initializing Commander…</p>
       </div>
     );
   }

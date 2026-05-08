@@ -249,7 +249,7 @@ export const Hero = () => {
                     <div className='mockup-field'>
                       <div className='mockup-label'>TEXT RESPONSE</div>
                       <div className='mockup-textarea'>
-                        Custom macro ready to execute...
+                        Custom macro ready to execute…
                       </div>
                     </div>
                     <div className='mockup-btn-large'>Register Command</div>
