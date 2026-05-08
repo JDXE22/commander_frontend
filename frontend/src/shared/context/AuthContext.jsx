@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import { createContext, use, useCallback, useSyncExternalStore } from 'react';
 import apiClient, {
   clearAccessToken,
   refreshSession,
@@ -14,9 +8,56 @@ import apiClient, {
 
 const AuthContext = createContext(null);
 
+let authState = {
+  user: null,
+  loading: true,
+};
+
+const listeners = new Set();
+
+const subscribe = (onStoreChange) => {
+  listeners.add(onStoreChange);
+  return () => listeners.delete(onStoreChange);
+};
+
+const getSnapshot = () => authState;
+const getServerSnapshot = () => ({ user: null, loading: true });
+
+const emitChange = () => {
+  listeners.forEach((listener) => listener());
+};
+
+const setAuth = (newAuth) => {
+  authState = { ...authState, ...newAuth };
+  emitChange();
+};
+
+setSessionExpiredHandler(() => {
+  clearAccessToken();
+  setAuth({ user: null, loading: false });
+});
+
+refreshSession()
+  .then((data) => {
+    setAuth({
+      user: {
+        userId: data.userId,
+        username: data.username,
+        email: data.email,
+      },
+      loading: false,
+    });
+  })
+  .catch(() => {
+    setAuth({ user: null, loading: false });
+  });
+
 export const AuthProvider = ({ children }) => {
-  const [activeUser, setActiveUser] = useState(null);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const { user, loading } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const logoutSession = useCallback(async () => {
     try {
@@ -25,53 +66,30 @@ export const AuthProvider = ({ children }) => {
       return;
     } finally {
       clearAccessToken();
-      setActiveUser(null);
+      setAuth({ user: null, loading: false });
     }
-  }, []);
-
-  useEffect(() => {
-    setSessionExpiredHandler(() => {
-      clearAccessToken();
-      setActiveUser(null);
-    });
-  }, []);
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const data = await refreshSession();
-        setActiveUser({
-          userId: data.userId,
-          username: data.username,
-          email: data.email,
-        });
-      } catch {
-        setActiveUser(null);
-      } finally {
-        setIsInitialLoading(false);
-      }
-    };
-
-    initializeAuth();
   }, []);
 
   const loginSession = useCallback((userData) => {
     setAccessToken(userData.accessToken);
-    setActiveUser({
-      userId: userData.userId,
-      username: userData.username,
-      email: userData.email,
+    setAuth({
+      user: {
+        userId: userData.userId,
+        username: userData.username,
+        email: userData.email,
+      },
+      loading: false,
     });
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user: activeUser,
+        user,
         login: loginSession,
         logout: logoutSession,
-        isAuthenticated: !!activeUser,
-        loading: isInitialLoading,
+        isAuthenticated: !!user,
+        loading,
       }}>
       {children}
     </AuthContext.Provider>
@@ -79,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  const authContextValue = useContext(AuthContext);
+  const authContextValue = use(AuthContext);
   if (!authContextValue) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

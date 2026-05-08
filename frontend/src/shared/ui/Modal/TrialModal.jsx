@@ -7,14 +7,30 @@ export const TrialModal = () => {
 
   if (!showModal) return null;
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      closeModal();
+    }
+  };
+
   return (
-    <div className='trial-overlay' onClick={closeModal}>
+    <div 
+      className='trial-overlay' 
+      onClick={closeModal}
+      onKeyDown={handleKeyDown}
+      role='button'
+      tabIndex='0'
+      aria-label='Close modal'
+    >
       <div
         className='trial-modal'
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         role='dialog'
         aria-modal='true'
-        aria-labelledby='trial-title'>
+        aria-labelledby='trial-title'
+        tabIndex='-1'>
         <div className='trial-modal-icon'>
           <svg
             width='40'
@@ -31,11 +47,11 @@ export const TrialModal = () => {
         <h2 id='trial-title' className='trial-modal-title'>
           Unlock Full Potential
         </h2>
-        <p className='trial-modal-text'>
-          You've reached the free trial limit. Sign up or log in to have all
+        <p className='trial-overlal-text'>
+          You're reached the free trial limit. Sign up or log in to have all
           your templates in one place!
         </p>
-        <div className='trial-modal-actions'>
+        <div className='trial-overl-actions'>
           <Link
             to='/auth?mode=register'
             className='trial-btn-primary'
