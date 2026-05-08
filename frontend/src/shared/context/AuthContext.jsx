@@ -40,8 +40,6 @@ const setAuth = (newAuth) => {
   emitChange();
 };
 
-let initializationPromise = null;
-
 const initSession = () => {
   if (initializationPromise) return initializationPromise;
 
@@ -71,27 +69,6 @@ setSessionExpiredHandler(() => {
   initializationPromise = null;
   setAuth({ user: null, loading: false });
 });
-
-const initSession = () => {
-  if (initializationPromise) return initializationPromise;
-
-  initializationPromise = refreshSession()
-    .then((data) => {
-      setAuth({
-        user: {
-          userId: data.userId,
-          username: data.username,
-          email: data.email,
-        },
-        loading: false,
-      });
-    })
-    .catch(() => {
-      setAuth({ user: null, loading: false });
-    });
-
-  return initializationPromise;
-};
 
 export const AuthProvider = ({ children }) => {
   useEffect(() => {

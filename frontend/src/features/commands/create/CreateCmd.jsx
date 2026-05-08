@@ -5,11 +5,19 @@ import { normalizeCommandTrigger } from '../../../shared/utils/commandUtils';
 import './CreateCmd.css';
 
 export const CreateCmd = ({ onRefresh }) => {
-  const [triggerInput, setTriggerInput] = useState('');
+  const [triggerInput, setTriggerInput] = useState('/');
   const [nameInput, setNameInput] = useState('');
   const [contentInput, setContentInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { canCreate, addTrialCommand, openModal } = useTrial();
+
+  const handleTriggerChange = (event) => {
+    let value = event.target.value;
+    if (!value.startsWith('/')) {
+      value = '/' + value.replace(/^\/+/, '');
+    }
+    setTriggerInput(value);
+  };
 
   const handleCreateSubmit = async (event) => {
     event.preventDefault();
@@ -51,7 +59,7 @@ export const CreateCmd = ({ onRefresh }) => {
           styles: { description: 'sileo-text-white', badge: 'sileo-badge-fix' },
         });
         onRefresh && onRefresh();
-        setTriggerInput('');
+        setTriggerInput('/');
         setContentInput('');
         setNameInput('');
       } else {
@@ -120,16 +128,13 @@ export const CreateCmd = ({ onRefresh }) => {
             <div className='form-group'>
               <label htmlFor='trigger-trigger'>TRIGGER_PATH</label>
               <div className='input-container'>
-                <span className='input-prefix' aria-hidden='true'>
-                  /
-                </span>
                 <input
                   id='trigger-trigger'
                   type='text'
                   value={triggerInput}
-                  onChange={(event) => setTriggerInput(event.target.value)}
-                  placeholder='followup'
-                  className='form-input-prefixed'
+                  onChange={handleTriggerChange}
+                  placeholder='/followup'
+                  className='form-input'
                   maxLength={40}
                   required
                 />
