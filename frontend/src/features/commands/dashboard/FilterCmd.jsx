@@ -4,7 +4,7 @@ import { useTrial } from '../../../shared/context/TrialContext';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { getCommands, searchCommands } from '../api/apiCommands';
 import { sileo } from 'sileo';
-import { LazyMotion, domAnimation, M, AnimatePresence } from 'motion/react';
+import { LazyMotion, domAnimation, m as M, AnimatePresence } from 'motion/react';
 import './FilterCmd.css';
 
 const initialState = {
