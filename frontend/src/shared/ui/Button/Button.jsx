@@ -1,4 +1,3 @@
-import copyIcon from '../../../shared/utils/copyIcon.svg';
 import { useEffect, useRef, useState } from 'react';
 import { sileo } from 'sileo';
 
@@ -83,20 +82,6 @@ export const CopyButton = ({
         <path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'></path>
       </svg>
       <span>{copied ? 'TRANSFERRED' : 'COPY'}</span>
-    </button>
-  );
-};
-
-export const UpdateButton = ({
-  handle,
-  content = 'Update',
-  disabled = false,
-  className = '',
-  icon = <img src={copyIcon} alt='Update' />,
-}) => {
-  return (
-    <button onClick={handle} disabled={disabled} className={className}>
-      {content}
     </button>
   );
 };

@@ -4,7 +4,7 @@ import { useTrial } from '../../../shared/context/TrialContext';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { getCommands, searchCommands } from '../api/apiCommands';
 import { sileo } from 'sileo';
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'motion/react';
+import { LazyMotion, domAnimation, M, AnimatePresence } from 'motion/react';
 import './FilterCmd.css';
 
 const initialState = {
@@ -231,7 +231,7 @@ export const FilterCmd = () => {
           <div className='cmd-list' aria-busy={isLoadingCommands || isSearching}>
             <AnimatePresence mode='popLayout'>
               {isLoadingCommands || (isSearching && searchQuery) ? (
-                <m.div
+                <M.div
                   key='loader'
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -242,13 +242,13 @@ export const FilterCmd = () => {
                       ? 'FILTERING_RECORDS...'
                       : 'SYNCHRONIZING_DATABASE...'}
                   </span>
-                </m.div>
+                </M.div>
               ) : activeCommandList.length > 0 ? (
                 activeCommandList.map((command) => {
                   const currentContent =
                     pendingUpdateInput[command._id] ?? command.text;
                   return (
-                    <m.article
+                    <M.article
                       key={command._id}
                       layout
                       initial={{ opacity: 0, y: 10 }}
@@ -298,11 +298,11 @@ export const FilterCmd = () => {
                           <CopyButton textToCopy={command.text} />
                         </div>
                       </div>
-                    </m.article>
+                    </M.article>
                   );
                 })
               ) : (
-                <m.div
+                <M.div
                   key='empty'
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -312,7 +312,7 @@ export const FilterCmd = () => {
                       ? `_ NO_MATCHES_FOUND: "${searchQuery}" yielded no results.`
                       : '_ NO_DATA_FOUND: Create a template to begin initialization.'}
                   </p>
-                </m.div>
+                </M.div>
               )}
             </AnimatePresence>
           </div>
