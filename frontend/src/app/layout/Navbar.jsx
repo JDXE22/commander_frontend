@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useMatch, useResolvedPath, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
-import { useAuth } from '../../shared/context/AuthContext';
+import { useAuth, useTrial } from '../../shared/context';
 import './Navbar.css';
 
 export const Navbar = () => {
@@ -9,6 +9,7 @@ export const Navbar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const { exitTrial } = useTrial();
   const navigate = useNavigate();
   const userMenuRef = useRef(null);
 
@@ -49,6 +50,7 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     await logout();
+    exitTrial();
     closeSidebar();
     navigate('/');
   };

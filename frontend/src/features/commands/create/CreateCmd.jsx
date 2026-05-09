@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTrial } from '../../../shared/context/TrialContext';
+import { useTrial } from '../../../shared/context';
 import { sileo } from 'sileo';
 import { normalizeCommandTrigger } from '../../../shared/utils/commandUtils';
 import './CreateCmd.css';

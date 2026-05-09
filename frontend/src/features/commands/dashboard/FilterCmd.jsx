@@ -1,7 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import { Button, CopyButton } from '../../../shared/ui/Button/Button';
-import { useTrial } from '../../../shared/context/TrialContext';
-import { useAuth } from '../../../shared/context/AuthContext';
+import { useTrial, useAuth } from '../../../shared/context';
 import { getCommands, searchCommands } from '../api/apiCommands';
 import { sileo } from 'sileo';
 import { LazyMotion, domAnimation, m as M, AnimatePresence } from 'motion/react';

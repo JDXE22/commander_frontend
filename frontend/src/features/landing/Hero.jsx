@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import buddyLogo from '../../assets/buddy.svg';
+import { useTrial } from '../../shared/context';
 import './Hero.css';
 
 const containerVariants = {
@@ -42,6 +43,8 @@ const mockupVariants = {
 };
 
 export const Hero = () => {
+  const { startTrial } = useTrial();
+
   return (
     <LazyMotion features={domAnimation}>
       <div className='hero-page'>
@@ -76,7 +79,7 @@ export const Hero = () => {
               filter, and execute with terminal-grade precision.
             </M.p>
             <M.div variants={itemVariants}>
-              <Link to='/terminal' className='btn-cta'>
+              <Link to='/terminal' className='btn-cta' onClick={startTrial}>
                 <span className='btn-prompt'>$</span> Try it out
               </Link>
             </M.div>

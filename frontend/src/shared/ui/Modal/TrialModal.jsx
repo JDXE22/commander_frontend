@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useTrial } from '../../context/TrialContext';
+import { useTrial } from '../../context';
 import './TrialModal.css';
 
 export const TrialModal = () => {
