@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LazyMotion, domAnimation, m } from 'motion/react';
+import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import buddyLogo from '../../assets/buddy.svg';
 import './Hero.css';
 
@@ -58,31 +58,31 @@ export const Hero = () => {
         </nav>
 
         <div className='hero-content'>
-          <m.div
+          <M.div
             variants={containerVariants}
             initial='hidden'
             animate='visible'
             className='hero-text-group'>
-            <m.div variants={itemVariants} className='hero-brand-supertitle'>
+            <M.div variants={itemVariants} className='hero-brand-supertitle'>
               <span className='prompt-sign'>$</span>
               <span className='brand-text'>COMMANDER</span>
               <span className='terminal-cursor'></span>
-            </m.div>
-            <m.h1 variants={itemVariants} className='hero-title'>
+            </M.div>
+            <M.h1 variants={itemVariants} className='hero-title'>
               COMMAND YOUR WORKFLOW
-            </m.h1>
-            <m.p variants={itemVariants} className='hero-subtitle'>
+            </M.h1>
+            <M.p variants={itemVariants} className='hero-subtitle'>
               The ultimate command center for modern professionals. Organize,
               filter, and execute with terminal-grade precision.
-            </m.p>
-            <m.div variants={itemVariants}>
+            </M.p>
+            <M.div variants={itemVariants}>
               <Link to='/terminal' className='btn-cta'>
                 <span className='btn-prompt'>$</span> Try it out
               </Link>
-            </m.div>
-          </m.div>
+            </M.div>
+          </M.div>
 
-          <m.div
+          <M.div
             variants={mockupVariants}
             initial='hidden'
             whileInView='visible'
@@ -129,12 +129,12 @@ export const Hero = () => {
                 </div>
               </div>
             </div>
-          </m.div>
+          </M.div>
         </div>
 
         <section className='hero-section alt-bg'>
           <div className='section-container'>
-            <m.div
+            <M.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -146,8 +146,8 @@ export const Hero = () => {
                 filtering to stay organized and find exactly what you need in
                 seconds.
               </p>
-            </m.div>
-            <m.div
+            </M.div>
+            <M.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -197,13 +197,13 @@ export const Hero = () => {
                   </div>
                 </div>
               </div>
-            </m.div>
+            </M.div>
           </div>
         </section>
 
         <section className='hero-section'>
           <div className='section-container rev'>
-            <m.div
+            <M.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -215,8 +215,8 @@ export const Hero = () => {
                 interface guides you through creating powerful macros with custom
                 triggers and responses.
               </p>
-            </m.div>
-            <m.div
+            </M.div>
+            <M.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -256,7 +256,7 @@ export const Hero = () => {
                   </div>
                 </div>
               </div>
-            </m.div>
+            </M.div>
           </div>
         </section>
 

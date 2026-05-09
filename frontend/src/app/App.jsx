@@ -116,7 +116,7 @@ function AppContentInner() {
       const newHistory = [cleanedTrigger, ...filteredHistory].slice(0, 2);
       updateHistory(newHistory);
 
-    } catch (processError) {
+    } catch (_processError) {
       sileo.error({
         title: 'Something went wrong',
         description: "Couldn't retrieve that template.",

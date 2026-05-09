@@ -62,17 +62,23 @@ export const getCommand = async (cmd) => {
     (value, index, source) => value && source.indexOf(value) === index,
   );
 
-  let lastError;
-  for (const trigger of triggerVariants) {
-    try {
-      const response = await axios.get(
-        `${URL}?trigger=${encodeURIComponent(trigger)}`,
-      );
-      return response.data;
-    } catch (error) {
-      lastError = error;
-    }
-  }
+  const results = await Promise.all(
+    triggerVariants.map(async (trigger) => {
+      try {
+        const response = await axios.get(
+          `${URL}?trigger=${encodeURIComponent(trigger)}`,
+        );
+        return response.data;
+      } catch (error) {
+        return { error: true, details: error };
+      }
+    }),
+  );
+
+  const success = results.find((r) => !r.error);
+  if (success) return success;
+
+  const lastError = results[results.length - 1]?.details;
 
   return {
     error: true,
