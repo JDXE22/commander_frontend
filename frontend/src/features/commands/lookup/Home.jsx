@@ -4,9 +4,10 @@ import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import { useSyncExternalStore } from 'react';
 import "./Home.css";
 
+const currentDate = new Date().toLocaleDateString();
 const dateStore = {
   subscribe: () => () => {},
-  getSnapshot: () => new Date().toLocaleDateString(),
+  getSnapshot: () => currentDate,
   getServerSnapshot: () => '',
 };
 
