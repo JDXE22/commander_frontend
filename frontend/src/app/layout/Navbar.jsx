@@ -99,7 +99,10 @@ export const Navbar = () => {
             onClick={toggleSidebar}
             aria-label={isOpen ? 'Close Sidebar' : 'Open Sidebar'}
             aria-expanded={isOpen}>
-            <img src={buddyLogo} alt='Commander Logo' className='buddy-icon' />
+            <div className='toggle-icon-wrapper'>
+              <img src={buddyLogo} alt='Commander Logo' className='buddy-icon' />
+              {!isOpen && !isMobileOpen && <span className='toggle-hint'>MENU</span>}
+            </div>
           </button>
           {(isOpen || isMobileOpen) && (
             <span className='sidebar-title'>Commander</span>
@@ -225,7 +228,7 @@ export const Navbar = () => {
                   className='user-signin'
                   onClick={closeSidebar}
                   aria-label='Sign in to account'>
-                  SIGN_IN
+                  Sign In
                 </Link>
               )}
             </div>

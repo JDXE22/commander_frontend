@@ -138,7 +138,7 @@ export const Home = ({
                     transition={{ delay: 0.6, duration: 0.5 }}
                   >
                     <Link to='/create' className='welcome-cta'>
-                      INITIALIZE_FIRST_TEMPLATE
+                      Create your first command
                     </Link>
                   </M.div>
                 </div>
@@ -150,7 +150,7 @@ export const Home = ({
             <section className='recent-activity' aria-labelledby='recent-header'>
               <div className='history-section-header'>
                 <span id='recent-header' className='history-header'>
-                  RECENT_COMMANDS
+                  Recent History
                 </span>
                 <div className='header-line' />
               </div>
