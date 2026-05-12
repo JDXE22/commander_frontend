@@ -32,12 +32,20 @@ export const TrialProvider = ({ children }) => {
 
   const startTrial = useCallback(() => {
     setStartedTrial(true);
-    localStorage.setItem('commander_started_trial', 'true');
+    try {
+      localStorage.setItem('commander_started_trial', 'true');
+    } catch (error) {
+      console.error('Failed to persist trial start:', error);
+    }
   }, []);
 
   const exitTrial = useCallback(() => {
     setStartedTrial(false);
-    localStorage.removeItem('commander_started_trial');
+    try {
+      localStorage.removeItem('commander_started_trial');
+    } catch (e) {
+      console.error('Failed to clear trial state:', e);
+    }
   }, []);
 
   const trialCommandCount = trialCommandList.length;
