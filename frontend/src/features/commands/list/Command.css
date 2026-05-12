@@ -40,6 +40,27 @@
   white-space: nowrap;
 }
 
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--terminal-green);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.35);
+  flex-shrink: 0;
+}
+
+.status-dot.green {
+  background-color: var(--terminal-green);
+}
+
 .command-trigger {
   font-family: var(--font-mono);
   color: var(--terminal-green-bright);
@@ -52,6 +73,36 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: inline-block;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.command-text {
+  margin: 0;
+  padding: 16px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: transparent;
+}
+
+.card-footer {
+  padding: 10px 16px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: flex-end;
+  box-sizing: border-box;
 }
 
 /* Terminal View Results */
