@@ -20,10 +20,9 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async (username, email, password) => {
+export const registerUser = async (email, password) => {
   try {
     const { data } = await apiClient.post(`${AUTH_URL}/register`, {
-      username,
       email,
       password,
     });
