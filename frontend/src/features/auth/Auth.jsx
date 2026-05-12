@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect, useCallback } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
-import { useAuth } from '../../shared/context/AuthContext';
+import { useAuth } from '../../shared/context';
 import {
   loginUser,
   registerUser,
@@ -130,7 +130,7 @@ const SpecialHeader = ({ mode }) => (
 );
 
 export const Auth = () => {
-  const location = useLocation();
+  const routeLocation = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -145,7 +145,7 @@ export const Auth = () => {
   } = state;
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
+    const queryParams = new URLSearchParams(routeLocation.search);
     const modeParam = queryParams.get('mode');
     const tokenParam = queryParams.get('token');
     const errorParam = queryParams.get('error');
@@ -173,7 +173,7 @@ export const Auth = () => {
     } else {
       dispatch({ type: 'SET_MODE', payload: AUTH_MODES.LOGIN });
     }
-  }, [location.search]);
+  }, [routeLocation.search]);
 
   const showError = useCallback((title, description) => {
     sileo.error({
@@ -234,12 +234,13 @@ export const Auth = () => {
       } else if (authResponse) {
         handleSuccessResponse(authResponse);
       }
-    } catch (error) {
+      } catch {
       showError('Something went wrong', 'Try again in a moment.');
-    } finally {
+      } finally {
       dispatch({ type: 'SET_SUBMITTING', payload: false });
-    }
-  };
+      }
+      };
+
 
   const handleSuccessResponse = (authResponse) => {
     if (authMode === AUTH_MODES.FORGOT) {
@@ -345,7 +346,7 @@ export const Auth = () => {
             )}
 
             <button type='submit' className='btn-auth-submit' disabled={isSubmitting}>
-              {isSubmitting ? 'Processing...' : 
+              {isSubmitting ? 'Processing…' : 
                authMode === AUTH_MODES.FORGOT ? 'Send reset link' : 
                authMode === AUTH_MODES.RESET ? 'Set new password' : 
                authMode === AUTH_MODES.LOGIN ? 'Continue' : 'Create Account'}

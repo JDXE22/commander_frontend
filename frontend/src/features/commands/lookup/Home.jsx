@@ -1,12 +1,13 @@
 import { CommandList } from '../list/Command';
 import { Link } from 'react-router-dom';
-import { LazyMotion, domAnimation, m } from 'motion/react';
+import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import { useSyncExternalStore } from 'react';
 import "./Home.css";
 
+const currentDate = new Date().toLocaleDateString();
 const dateStore = {
   subscribe: () => () => {},
-  getSnapshot: () => new Date().toLocaleDateString(),
+  getSnapshot: () => currentDate,
   getServerSnapshot: () => '',
 };
 
@@ -105,21 +106,21 @@ export const Home = ({
                   </span>
                 </div>
                 <div className='welcome-body'>
-                  <m.p
+                  <M.p
                     className='welcome-intro'
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
                   >
                     {">"} Welcome to Commander. Initialization complete.
-                    <m.span
+                    <M.span
                       animate={{ opacity: [0, 1, 0] }}
                       transition={{ repeat: Infinity, duration: 0.8 }}
                     >
                       _
-                    </m.span>
-                  </m.p>
-                  <m.div
+                    </M.span>
+                  </M.p>
+                  <M.div
                     className='usage-box'
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -131,16 +132,16 @@ export const Home = ({
                       <div className='usage-step'>2. RUN    → Execute trigger retrieval</div>
                       <div className='usage-step'>3. COPY   → Update local clipboard</div>
                     </div>
-                  </m.div>
-                  <m.div
+                  </M.div>
+                  <M.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 0.5 }}
                   >
                     <Link to='/create' className='welcome-cta'>
-                      INITIALIZE_FIRST_TEMPLATE
+                      Create your first command
                     </Link>
-                  </m.div>
+                  </M.div>
                 </div>
               </div>
             </section>
@@ -150,7 +151,7 @@ export const Home = ({
             <section className='recent-activity' aria-labelledby='recent-header'>
               <div className='history-section-header'>
                 <span id='recent-header' className='history-header'>
-                  RECENT_COMMANDS
+                  Recent History
                 </span>
                 <div className='header-line' />
               </div>

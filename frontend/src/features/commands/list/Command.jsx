@@ -1,5 +1,5 @@
 import { CopyButton } from '../../../shared/ui/Button/Button';
-import { LazyMotion, domAnimation, m } from 'motion/react';
+import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import "./Command.css";
 
 export const CommandList = ({ command, className = '' }) => {
@@ -19,38 +19,43 @@ export const CommandList = ({ command, className = '' }) => {
       opacity: 1,
       x: 0,
       transition: {
-        type: 'spring',
-        damping: 25,
-        stiffness: 200
+        type: "spring",
+        stiffness: 100,
+        damping: 15
       }
     }
   };
 
   return (
     <LazyMotion features={domAnimation}>
-      <m.div
-        className={`command-result-container ${className}`}
+      <M.div 
         variants={containerVariants}
         initial="hidden"
         animate="show"
+        className={`command-list ${className}`}
       >
         {command.map((cmd) => (
-          <m.div
-            key={cmd._id}
-            className='terminal-result-item'
+          <M.article 
+            key={cmd._id} 
             variants={itemVariants}
+            className='card terminal-card'
           >
-            <div className='result-content'>
-              <pre className='result-text'>
-                {cmd.text}
-              </pre>
-              <div className='result-actions'>
+            <div className='card-header'>
+              <div className='card-meta'>
+                <span className='status-dot green' />
+                <span className='card-title'>{cmd.name}</span>
+              </div>
+              <span className='command-trigger'>{cmd.command}</span>
+            </div>
+            <div className='card-body'>
+              <p className='command-text'>{cmd.text}</p>
+              <div className='card-footer'>
                 <CopyButton textToCopy={cmd.text} />
               </div>
             </div>
-          </m.div>
+          </M.article>
         ))}
-      </m.div>
+      </M.div>
     </LazyMotion>
   );
 };

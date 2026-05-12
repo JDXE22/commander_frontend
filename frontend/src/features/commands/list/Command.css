@@ -55,7 +55,7 @@
 }
 
 /* Terminal View Results */
-.command-result-container {
+.command-list {
   width: 100%;
   display: flex;
   flex-direction: column;
