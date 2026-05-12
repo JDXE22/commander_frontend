@@ -11,8 +11,7 @@ import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
 import { Hero } from '../features/landing/Hero';
 import { Auth } from '../features/auth/Auth';
-import { TrialProvider, useTrial } from '../shared/context/TrialContext';
-import { AuthProvider, useAuth } from '../shared/context/AuthContext';
+import { AuthProvider, useAuth, TrialProvider, useTrial } from '../shared/context';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 import { Toaster, sileo } from 'sileo';
 import { setCsrfToken } from '../shared/api/apiClient';
@@ -47,7 +46,18 @@ function AppContentInner() {
   const currentLocation = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, loading, login } = useAuth();
-  const { getTrialCommand } = useTrial();
+  const { getTrialCommand, isTrial, exitTrial } = useTrial();
+
+  useEffect(() => {
+    if (loading) return;
+
+    const publicRoutes = ['/', '/auth'];
+    const isPublicRoute = publicRoutes.includes(currentLocation.pathname);
+
+    if (!isAuthenticated && !isTrial && !isPublicRoute) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isTrial, loading, currentLocation.pathname, navigate]);
 
   useEffect(() => {
     if (loading || isAuthenticated) return;
@@ -65,9 +75,10 @@ function AppContentInner() {
     if (accessToken && userId) {
       if (csrfToken) setCsrfToken(csrfToken);
       login({ accessToken, userId, username, email });
+      exitTrial();
       navigate('/terminal', { replace: true });
     }
-  }, [loading, isAuthenticated, login, navigate, setCsrfToken]);
+  }, [loading, isAuthenticated, login, navigate, setCsrfToken, exitTrial]);
 
   const updateActiveCommands = useCallback((commands) => {
     setActiveCommands(commands);
@@ -116,8 +127,9 @@ function AppContentInner() {
       const newHistory = [cleanedTrigger, ...filteredHistory].slice(0, 2);
       updateHistory(newHistory);
 
-    } catch (_processError) {
+      } catch {
       sileo.error({
+
         title: 'Something went wrong',
         description: "Couldn't retrieve that template.",
         fill: '#ef4444',

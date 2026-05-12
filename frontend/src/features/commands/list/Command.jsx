@@ -1,5 +1,5 @@
 import { CopyButton } from '../../../shared/ui/Button/Button';
-import { LazyMotion, domAnimation, M } from 'motion/react';
+import { LazyMotion, domAnimation, m as M } from 'motion/react';
 import "./Command.css";
 
 export const CommandList = ({ command, className = '' }) => {

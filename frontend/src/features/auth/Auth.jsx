@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect, useCallback } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import buddyLogo from '../../assets/buddy.svg';
-import { useAuth } from '../../shared/context/AuthContext';
+import { useAuth } from '../../shared/context';
 import {
   loginUser,
   registerUser,
@@ -234,12 +234,13 @@ export const Auth = () => {
       } else if (authResponse) {
         handleSuccessResponse(authResponse);
       }
-    } catch (_error) {
+      } catch {
       showError('Something went wrong', 'Try again in a moment.');
-    } finally {
+      } finally {
       dispatch({ type: 'SET_SUBMITTING', payload: false });
-    }
-  };
+      }
+      };
+
 
   const handleSuccessResponse = (authResponse) => {
     if (authMode === AUTH_MODES.FORGOT) {

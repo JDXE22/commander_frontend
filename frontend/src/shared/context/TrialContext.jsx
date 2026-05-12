@@ -1,5 +1,5 @@
-import { createContext, use, useState, useCallback } from 'react';
-import { useAuth } from './AuthContext';
+import { useState, useCallback } from 'react';
+import { useAuth } from './auth-context';
 import {
   getCommand,
   saveCommand,
@@ -9,31 +9,36 @@ import {
   normalizeCommandTrigger,
   normalizeTrialComparison,
 } from '../utils/commandUtils';
-
-const TRIAL_MAX_COMMANDS = 2;
-const LOCAL_STORAGE_KEY = 'commander_trial_commands:v1';
-
-const getInitialTrialCommands = () => {
-  try {
-    const storedCommands = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return storedCommands ? JSON.parse(storedCommands) : [];
-  } catch (initializationError) {
-    console.error(
-      'Failed to load trial commands from storage:',
-      initializationError,
-    );
-    return [];
-  }
-};
-
-const TrialContext = createContext(null);
+import {
+  TrialContext,
+  getInitialTrialCommands,
+  TRIAL_MAX_COMMANDS,
+  LOCAL_STORAGE_KEY,
+} from './trial-context';
 
 export const TrialProvider = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const [trialCommandList, setTrialCommandList] = useState(
     getInitialTrialCommands,
   );
+  const [startedTrial, setStartedTrial] = useState(() => {
+    try {
+      return localStorage.getItem('commander_started_trial') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [isLimitModalVisible, setIsLimitModalVisible] = useState(false);
+
+  const startTrial = useCallback(() => {
+    setStartedTrial(true);
+    localStorage.setItem('commander_started_trial', 'true');
+  }, []);
+
+  const exitTrial = useCallback(() => {
+    setStartedTrial(false);
+    localStorage.removeItem('commander_started_trial');
+  }, []);
 
   const trialCommandCount = trialCommandList.length;
   const isCreationAllowed =
@@ -135,15 +140,11 @@ export const TrialProvider = ({ children }) => {
         openModal: showLimitModal,
         closeModal: hideLimitModal,
         TRIAL_MAX: TRIAL_MAX_COMMANDS,
+        isTrial: startedTrial,
+        startTrial,
+        exitTrial,
       }}>
       {children}
     </TrialContext.Provider>
   );
-};
-
-export const useTrial = () => {
-  const trialContextValue = use(TrialContext);
-  if (!trialContextValue)
-    throw new Error('useTrial must be used within TrialProvider');
-  return trialContextValue;
 };

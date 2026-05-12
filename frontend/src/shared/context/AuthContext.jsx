@@ -1,74 +1,21 @@
 import {
-  createContext,
-  use,
   useCallback,
   useEffect,
   useSyncExternalStore,
 } from 'react';
 import apiClient, {
   clearAccessToken,
-  refreshSession,
   setAccessToken,
-  setSessionExpiredHandler,
 } from '../api/apiClient';
-
-const AuthContext = createContext(null);
-
-let authState = {
-  user: null,
-  loading: true,
-};
-
-let initializationPromise = null;
-
-const listeners = new Set();
-
-const subscribe = (onStoreChange) => {
-  listeners.add(onStoreChange);
-  return () => listeners.delete(onStoreChange);
-};
-
-const getSnapshot = () => authState;
-const getServerSnapshot = () => ({ user: null, loading: true });
-
-const emitChange = () => {
-  listeners.forEach((listener) => listener());
-};
-
-const setAuth = (newAuth) => {
-  authState = { ...authState, ...newAuth };
-  emitChange();
-};
-
-const initSession = () => {
-  if (initializationPromise) return initializationPromise;
-
-  initializationPromise = refreshSession()
-    .then((data) => {
-      setAuth({
-        user: {
-          userId: data.userId,
-          username: data.username,
-          email: data.email,
-        },
-        loading: false,
-      });
-    })
-    .catch(() => {
-      setAuth({ user: null, loading: false });
-    })
-    .finally(() => {
-      initializationPromise = null;
-    });
-
-  return initializationPromise;
-};
-
-setSessionExpiredHandler(() => {
-  clearAccessToken();
-  initializationPromise = null;
-  setAuth({ user: null, loading: false });
-});
+import {
+  AuthContext,
+  initSession,
+  subscribe,
+  getSnapshot,
+  getServerSnapshot,
+  setAuth,
+  initializationState,
+} from './auth-context';
 
 export const AuthProvider = ({ children }) => {
   useEffect(() => {
@@ -88,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       return;
     } finally {
       clearAccessToken();
-      initializationPromise = null;
+      initializationState.promise = null;
       setAuth({ user: null, loading: false });
     }
   }, []);
@@ -117,12 +64,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const authContextValue = use(AuthContext);
-  if (!authContextValue) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return authContextValue;
 };

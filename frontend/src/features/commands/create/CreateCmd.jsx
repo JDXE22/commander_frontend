@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTrial } from '../../../shared/context/TrialContext';
+import { useTrial } from '../../../shared/context';
 import { sileo } from 'sileo';
 import { normalizeCommandTrigger } from '../../../shared/utils/commandUtils';
 import './CreateCmd.css';
@@ -109,7 +109,7 @@ export const CreateCmd = ({ onRefresh }) => {
         <form onSubmit={handleCreateSubmit} className='create-form'>
           <div className='form-grid'>
             <div className='form-group'>
-              <label htmlFor='command-name'>NAME_LABEL</label>
+              <label htmlFor='command-name'>Command Name</label>
               <input
                 id='command-name'
                 type='text'
@@ -126,7 +126,7 @@ export const CreateCmd = ({ onRefresh }) => {
             </div>
 
             <div className='form-group'>
-              <label htmlFor='trigger-trigger'>TRIGGER_PATH</label>
+              <label htmlFor='trigger-trigger'>Trigger Shortcut</label>
               <div className='input-container'>
                 <input
                   id='trigger-trigger'
@@ -145,7 +145,7 @@ export const CreateCmd = ({ onRefresh }) => {
             </div>
 
             <div className='form-group full-width'>
-              <label htmlFor='content-textarea'>DATA_CONTENT</label>
+              <label htmlFor='content-textarea'>Template Content</label>
               <textarea
                 id='content-textarea'
                 value={contentInput}
@@ -167,10 +167,10 @@ export const CreateCmd = ({ onRefresh }) => {
             disabled={isSubmitting}
             aria-live='polite'>
             {isSubmitting
-              ? 'EXECUTING_SAVE...'
+              ? 'Registering...'
               : !canCreate
-                ? 'LIMIT_REACHED'
-                : 'INITIALIZE_TEMPLATE'}
+                ? 'Limit Reached'
+                : 'Create Command'}
           </button>
         </form>
       </div>
