@@ -1,0 +1,192 @@
+.settings-container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 20px 0;
+}
+
+/* ============================================ */
+/* Header                                      */
+/* ============================================ */
+.settings-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.settings-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ============================================ */
+/* Section                                     */
+/* ============================================ */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--terminal-green);
+  opacity: 0.8;
+}
+
+.section-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================ */
+/* Card                                        */
+/* ============================================ */
+.settings-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================ */
+/* Setting Row                                 */
+/* ============================================ */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.setting-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.setting-description {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.setting-description strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ============================================ */
+/* Reset Password Button                       */
+/* ============================================ */
+.btn-reset-password {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 20px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
+  white-space: nowrap;
+}
+
+.btn-reset-password:hover:not(:disabled) {
+  border-color: var(--terminal-green);
+  background-color: var(--color-green-soft);
+  box-shadow: 0 0 0 1px var(--terminal-green);
+}
+
+.btn-reset-password:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-reset-password:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-loading,
+.btn-sent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-sent {
+  color: var(--terminal-green);
+}
+
+/* ============================================ */
+/* Spinner                                     */
+/* ============================================ */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--terminal-green);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================ */
+/* Responsive                                  */
+/* ============================================ */
+@media (max-width: 480px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .btn-reset-password {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+}

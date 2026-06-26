@@ -11,6 +11,7 @@ import { FilterCmd } from '../features/commands/dashboard/FilterCmd';
 import { CreateCmd } from '../features/commands/create/CreateCmd';
 import { Hero } from '../features/landing/Hero';
 import { Auth } from '../features/auth/Auth';
+import { Settings } from '../features/settings/Settings';
 import { AuthProvider, useAuth, TrialProvider, useTrial } from '../shared/context';
 import { TrialModal } from '../shared/ui/Modal/TrialModal';
 import { Toaster, sileo } from 'sileo';
@@ -193,6 +194,7 @@ function AppContentInner() {
         />
         <Route path='/filter' element={<FilterCmd />} />
         <Route path='/create' element={<CreateCmd />} />
+        <Route path='/settings' element={<Settings />} />
         <Route path='/login' element={<NavigateWithQuery to='/auth' />} />
       </Routes>
       <TrialModal />
