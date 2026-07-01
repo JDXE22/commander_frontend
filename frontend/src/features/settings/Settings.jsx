@@ -56,9 +56,6 @@ export const Settings = () => {
 
   return (
     <main className='main-content'>
-      <div style={{ position: 'fixed', top: '20px', right: '20px', background: 'red', color: 'white', padding: '20px', zIndex: 999999, fontSize: '24px' }}>
-        IF YOU CAN READ THIS, SETTINGS IS MOUNTED
-      </div>
       <div className='page-container settings-container'>
         <div className='settings-header'>
           <h1 className='settings-title'>Settings</h1>
